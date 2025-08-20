@@ -166,12 +166,24 @@
 
   /* Mobile-first responsive containers */
   .mobile-container {
-    @apply px-4 py-6 max-w-sm mx-auto;
+    @apply px-3 py-4 max-w-md mx-auto;
   }
   
-  /* Music stat cards */
+  @screen sm {
+    .mobile-container {
+      @apply px-4 py-6;
+    }
+  }
+  
+  /* Music stat cards - mobile responsive */
   .stat-card {
-    @apply bg-card/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 transition-smooth hover:shadow-primary;
+    @apply bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-smooth hover:shadow-primary;
+  }
+  
+  @screen sm {
+    .stat-card {
+      @apply rounded-2xl p-6;
+    }
   }
   
   /* Music action buttons */
@@ -179,8 +191,46 @@
     @apply relative overflow-hidden transition-smooth hover:scale-105 active:scale-95;
   }
   
-  /* Floating action button */
+  /* Floating action button - responsive positioning */
   .fab {
-    @apply fixed bottom-20 right-6 w-14 h-14 rounded-full shadow-primary transition-bounce z-50;
+    @apply fixed bottom-16 right-3 w-12 h-12 rounded-full shadow-primary transition-bounce z-50;
+  }
+  
+  @screen sm {
+    .fab {
+      @apply bottom-20 right-6 w-14 h-14;
+    }
+  }
+  
+  /* Mobile responsive text and spacing */
+  .mobile-heading {
+    @apply text-xl font-bold;
+  }
+  
+  @screen sm {
+    .mobile-heading {
+      @apply text-2xl;
+    }
+  }
+  
+  .mobile-card-grid {
+    @apply grid grid-cols-2 gap-3;
+  }
+  
+  @screen sm {
+    .mobile-card-grid {
+      @apply gap-4;
+    }
+  }
+  
+  /* Mobile bottom navigation safe area */
+  .mobile-safe-bottom {
+    @apply pb-16;
+  }
+  
+  @screen sm {
+    .mobile-safe-bottom {
+      @apply pb-20;
+    }
   }
 }

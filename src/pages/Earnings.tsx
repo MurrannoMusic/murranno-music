@@ -8,14 +8,14 @@ import { BottomNavigation } from '@/components/mobile/BottomNavigation';
 
 export const Earnings = () => {
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background mobile-safe-bottom">
       <div className="mobile-container">
         {/* Header */}
-        <div className="flex items-center mb-6">
-          <Link to="/" className="mr-4">
-            <ArrowLeft className="h-6 w-6 text-muted-foreground" />
+        <div className="flex items-center mb-4 sm:mb-6">
+          <Link to="/" className="mr-3 sm:mr-4">
+            <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
           </Link>
-          <h1 className="text-2xl font-bold">Earnings</h1>
+          <h1 className="mobile-heading">Earnings</h1>
         </div>
 
         {/* Wallet Balance */}
@@ -43,7 +43,7 @@ export const Earnings = () => {
         </Card>
 
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="mobile-card-grid mb-4 sm:mb-6">
           <StatCard
             icon={TrendingUp}
             title="This Month"

@@ -8,23 +8,23 @@ import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 
 export const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background mobile-safe-bottom">
       {/* Header */}
-      <div className="gradient-primary p-6 text-white">
-        <div className="flex items-center justify-between mb-4">
+      <div className="gradient-primary p-4 text-white sm:p-6">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
           <div>
-            <h1 className="text-2xl font-bold">Welcome back, Artist</h1>
-            <p className="text-white/80">Let's make some music magic</p>
+            <h1 className="mobile-heading sm:text-2xl font-bold">Welcome back, Artist</h1>
+            <p className="text-white/80 text-sm sm:text-base">Let's make some music magic</p>
           </div>
-          <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-            <Music className="h-6 w-6" />
+          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center">
+            <Music className="h-5 w-5 sm:h-6 sm:w-6" />
           </div>
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-4 sm:space-y-6 -mt-6 sm:-mt-8">
         {/* Quick Stats */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="mobile-card-grid">
           <StatCard
             icon={Play}
             title="Total Streams"
@@ -58,7 +58,7 @@ export const Dashboard = () => {
         {/* Recent Activity */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center">
+            <CardTitle className="flex items-center text-base sm:text-lg">
               <Clock className="h-5 w-5 mr-2 text-primary" />
               Recent Activity
             </CardTitle>
@@ -91,9 +91,9 @@ export const Dashboard = () => {
         {/* Quick Actions */}
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
+          <CardContent className="mobile-card-grid">
             <Link to="/upload">
               <Button className="w-full gradient-primary music-button" variant="default">
                 Upload Track

@@ -8,24 +8,24 @@ import { BottomNavigation } from '@/components/mobile/BottomNavigation';
 
 export const Analytics = () => {
   return (
-    <div className="min-h-screen bg-background pb-20">
+    <div className="min-h-screen bg-background mobile-safe-bottom">
       <div className="mobile-container">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 sm:mb-6">
           <div className="flex items-center">
-            <Link to="/" className="mr-4">
-              <ArrowLeft className="h-6 w-6 text-muted-foreground" />
+            <Link to="/" className="mr-3 sm:mr-4">
+              <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
             </Link>
-            <h1 className="text-2xl font-bold">Analytics</h1>
+            <h1 className="mobile-heading">Analytics</h1>
           </div>
           <Button variant="outline" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
+            <Download className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+            <span className="text-xs sm:text-sm">Export</span>
           </Button>
         </div>
 
         {/* Overview Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="mobile-card-grid mb-4 sm:mb-6">
           <StatCard
             icon={BarChart3}
             title="Total Streams"
@@ -57,22 +57,22 @@ export const Analytics = () => {
         </div>
 
         {/* Performance Chart */}
-        <Card className="mb-6">
+        <Card className="mb-4 sm:mb-6">
           <CardHeader>
-            <CardTitle className="text-lg">Streams Over Time</CardTitle>
+            <CardTitle className="text-base sm:text-lg">Streams Over Time</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="h-40 bg-gradient-primary/10 rounded-lg flex items-end justify-around p-4">
+            <div className="h-32 sm:h-40 bg-gradient-primary/10 rounded-lg flex items-end justify-around p-3 sm:p-4">
               {/* Simplified bar chart representation */}
-              <div className="w-6 bg-primary rounded-t" style={{height: '60%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '80%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '45%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '90%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '75%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '100%'}}></div>
-              <div className="w-6 bg-primary rounded-t" style={{height: '85%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '60%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '80%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '45%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '90%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '75%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '100%'}}></div>
+              <div className="w-4 sm:w-6 bg-primary rounded-t" style={{height: '85%'}}></div>
             </div>
-            <div className="flex justify-between text-xs text-muted-foreground mt-2">
+            <div className="flex justify-between text-[10px] sm:text-xs text-muted-foreground mt-2">
               <span>Mon</span>
               <span>Tue</span>
               <span>Wed</span>
@@ -86,20 +86,20 @@ export const Analytics = () => {
 
         {/* Detailed Analytics */}
         <Tabs defaultValue="audience" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="audience">Audience</TabsTrigger>
-            <TabsTrigger value="geography">Geography</TabsTrigger>
-            <TabsTrigger value="tracks">Tracks</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 h-8 sm:h-10">
+            <TabsTrigger value="audience" className="text-xs sm:text-sm">Audience</TabsTrigger>
+            <TabsTrigger value="geography" className="text-xs sm:text-sm">Geography</TabsTrigger>
+            <TabsTrigger value="tracks" className="text-xs sm:text-sm">Tracks</TabsTrigger>
           </TabsList>
           
           <TabsContent value="audience" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Fan Demographics</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Fan Demographics</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 sm:space-y-4">
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-xs sm:text-sm mb-2">
                     <span>Age 18-24</span>
                     <span>42%</span>
                   </div>
@@ -109,7 +109,7 @@ export const Analytics = () => {
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-xs sm:text-sm mb-2">
                     <span>Age 25-34</span>
                     <span>35%</span>
                   </div>
@@ -119,7 +119,7 @@ export const Analytics = () => {
                 </div>
                 
                 <div>
-                  <div className="flex justify-between text-sm mb-2">
+                  <div className="flex justify-between text-xs sm:text-sm mb-2">
                     <span>Age 35+</span>
                     <span>23%</span>
                   </div>
@@ -134,40 +134,40 @@ export const Analytics = () => {
           <TabsContent value="geography" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Top Countries</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Top Countries</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-2xl">🇳🇬</div>
+              <CardContent className="space-y-3 sm:space-y-4">
+                <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/30 rounded-lg">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="text-xl sm:text-2xl">🇳🇬</div>
                     <div>
-                      <p className="font-medium">Nigeria</p>
-                      <p className="text-sm text-muted-foreground">4.2K streams</p>
+                      <p className="font-medium text-sm sm:text-base">Nigeria</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">4.2K streams</p>
                     </div>
                   </div>
-                  <p className="font-semibold">34%</p>
+                  <p className="font-semibold text-sm sm:text-base">34%</p>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-2xl">🇺🇸</div>
+                <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/30 rounded-lg">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="text-xl sm:text-2xl">🇺🇸</div>
                     <div>
-                      <p className="font-medium">United States</p>
-                      <p className="text-sm text-muted-foreground">2.8K streams</p>
+                      <p className="font-medium text-sm sm:text-base">United States</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">2.8K streams</p>
                     </div>
                   </div>
-                  <p className="font-semibold">22%</p>
+                  <p className="font-semibold text-sm sm:text-base">22%</p>
                 </div>
                 
-                <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
-                  <div className="flex items-center space-x-3">
-                    <div className="text-2xl">🇬🇧</div>
+                <div className="flex items-center justify-between p-2 sm:p-3 bg-muted/30 rounded-lg">
+                  <div className="flex items-center space-x-2 sm:space-x-3">
+                    <div className="text-xl sm:text-2xl">🇬🇧</div>
                     <div>
-                      <p className="font-medium">United Kingdom</p>
-                      <p className="text-sm text-muted-foreground">1.5K streams</p>
+                      <p className="font-medium text-sm sm:text-base">United Kingdom</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">1.5K streams</p>
                     </div>
                   </div>
-                  <p className="font-semibold">12%</p>
+                  <p className="font-semibold text-sm sm:text-base">12%</p>
                 </div>
               </CardContent>
             </Card>
@@ -176,7 +176,7 @@ export const Analytics = () => {
           <TabsContent value="tracks" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Top Performing Tracks</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Top Performing Tracks</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
