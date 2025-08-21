@@ -6,7 +6,7 @@
 
 @layer base {
   :root {
-    /* Core brand colors - Gen Z vibrant theme */
+    /* Core brand colors - Pink/Purple Gen Z theme */
     --background: 0 0% 98%;
     --foreground: 240 10% 3.9%;
 
@@ -17,19 +17,19 @@
     --popover-foreground: 240 10% 3.9%;
 
     /* Primary - Electric Purple */
-    --primary: 270 95% 75%;
+    --primary: 280 100% 70%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 270 85% 85%;
+    --primary-glow: 280 90% 80%;
 
     /* Secondary - Hot Pink */
-    --secondary: 330 85% 75%;
+    --secondary: 320 100% 75%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - Neon Green */
-    --accent: 142 76% 70%;
+    /* Accent - Vibrant Pink */
+    --accent: 330 90% 70%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -37,29 +37,29 @@
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 270 95% 75%;
+    --ring: 280 100% 70%;
 
-    /* Gen Z specific colors */
-    --success: 142 76% 70%;
+    /* Success/Warning with pink/purple theme */
+    --success: 280 60% 60%;
     --success-foreground: 0 0% 100%;
     --warning: 45 93% 70%;
     --warning-foreground: 0 0% 0%;
 
-    /* Modern Gen Z gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(270 95% 75%), hsl(330 85% 75%));
-    --gradient-secondary: linear-gradient(135deg, hsl(330 85% 75%), hsl(45 93% 75%));
-    --gradient-accent: linear-gradient(135deg, hsl(142 76% 70%), hsl(190 95% 75%));
-    --gradient-dark: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(270 95% 25%));
-    --gradient-glow: linear-gradient(135deg, hsl(270 85% 85% / 0.4), hsl(330 85% 85% / 0.4));
-    --gradient-mesh: radial-gradient(at 40% 20%, hsl(270 95% 75% / 0.3) 0px, transparent 50%), 
-                     radial-gradient(at 80% 0%, hsl(330 85% 75% / 0.3) 0px, transparent 50%), 
-                     radial-gradient(at 0% 50%, hsl(142 76% 70% / 0.3) 0px, transparent 50%);
+    /* Pink/Purple gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 70%), hsl(320 100% 75%));
+    --gradient-secondary: linear-gradient(135deg, hsl(320 100% 75%), hsl(330 90% 70%));
+    --gradient-accent: linear-gradient(135deg, hsl(330 90% 70%), hsl(280 100% 70%));
+    --gradient-dark: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(280 100% 25%));
+    --gradient-glow: linear-gradient(135deg, hsl(280 90% 80% / 0.4), hsl(320 100% 85% / 0.4));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(280 100% 70% / 0.3) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsl(320 100% 75% / 0.3) 0px, transparent 50%), 
+                     radial-gradient(at 0% 50%, hsl(330 90% 70% / 0.3) 0px, transparent 50%);
 
-    /* Gen Z shadows and effects */
-    --shadow-primary: 0 20px 40px -12px hsl(270 95% 75% / 0.4);
-    --shadow-secondary: 0 20px 40px -12px hsl(330 85% 75% / 0.4);
-    --shadow-accent: 0 20px 40px -12px hsl(142 76% 70% / 0.4);
-    --shadow-glow: 0 0 60px hsl(270 85% 85% / 0.6);
+    /* Pink/Purple shadows */
+    --shadow-primary: 0 20px 40px -12px hsl(280 100% 70% / 0.4);
+    --shadow-secondary: 0 20px 40px -12px hsl(320 100% 75% / 0.4);
+    --shadow-accent: 0 20px 40px -12px hsl(330 90% 70% / 0.4);
+    --shadow-glow: 0 0 60px hsl(280 90% 80% / 0.6);
     --shadow-soft: 0 8px 32px hsl(240 10% 3.9% / 0.12);
 
     /* Modern transitions and animations */
@@ -87,7 +87,7 @@
   }
 
   .dark {
-    /* Dark theme optimized for Gen Z vibes */
+    /* Dark theme with pink/purple vibes */
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
 
@@ -97,17 +97,18 @@
     --popover: 240 10% 8%;
     --popover-foreground: 0 0% 98%;
 
-    /* Dark theme keeps vibrant Gen Z colors */
-    --primary: 270 95% 75%;
+    /* Dark theme enhanced pink/purple */
+    --primary: 280 100% 75%;
     --primary-foreground: 0 0% 100%;
+    --primary-glow: 280 90% 85%;
 
-    --secondary: 330 85% 75%;
+    --secondary: 320 100% 80%;
     --secondary-foreground: 0 0% 100%;
 
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 142 76% 70%;
+    --accent: 330 90% 75%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
@@ -115,7 +116,30 @@
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 270 95% 75%;
+    --ring: 280 100% 75%;
+
+    /* Dark theme success/warning */
+    --success: 280 60% 70%;
+    --success-foreground: 0 0% 100%;
+    --warning: 45 93% 70%;
+    --warning-foreground: 0 0% 0%;
+
+    /* Dark mode pink/purple gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(280 100% 75%), hsl(320 100% 80%));
+    --gradient-secondary: linear-gradient(135deg, hsl(320 100% 80%), hsl(330 90% 75%));
+    --gradient-accent: linear-gradient(135deg, hsl(330 90% 75%), hsl(280 100% 75%));
+    --gradient-dark: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(280 100% 15%));
+    --gradient-glow: linear-gradient(135deg, hsl(280 90% 85% / 0.3), hsl(320 100% 85% / 0.3));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(280 100% 75% / 0.2) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsl(320 100% 80% / 0.2) 0px, transparent 50%), 
+                     radial-gradient(at 0% 50%, hsl(330 90% 75% / 0.2) 0px, transparent 50%);
+
+    /* Dark mode shadows */
+    --shadow-primary: 0 20px 40px -12px hsl(280 100% 75% / 0.3);
+    --shadow-secondary: 0 20px 40px -12px hsl(320 100% 80% / 0.3);
+    --shadow-accent: 0 20px 40px -12px hsl(330 90% 75% / 0.3);
+    --shadow-glow: 0 0 60px hsl(280 90% 85% / 0.4);
+    --shadow-soft: 0 8px 32px hsl(0 0% 0% / 0.3);
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
