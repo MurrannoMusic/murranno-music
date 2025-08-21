@@ -8,21 +8,21 @@ import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 
 export const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-background mobile-safe-bottom">
+    <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom smooth-scroll">
       {/* Header */}
-      <div className="gradient-primary p-4 text-white sm:p-6">
-        <div className="flex items-center justify-between mb-3 sm:mb-4">
+      <div className="gradient-primary p-6 text-white mobile-safe-top">
+        <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="mobile-heading sm:text-2xl font-bold">Welcome back, Artist</h1>
-            <p className="text-white/80 text-sm sm:text-base">Let's make some music magic</p>
+            <h1 className="mobile-heading">Welcome back, Artist</h1>
+            <p className="text-white/80 text-base">Let's make some music magic ✨</p>
           </div>
-          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white/20 rounded-full flex items-center justify-center">
-            <Music className="h-5 w-5 sm:h-6 sm:w-6" />
+          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
+            <Music className="h-6 w-6" />
           </div>
         </div>
       </div>
 
-      <div className="mobile-container space-y-4 sm:space-y-6 -mt-6 sm:-mt-8">
+      <div className="mobile-container space-y-6 -mt-8">
         {/* Quick Stats */}
         <div className="mobile-card-grid">
           <StatCard
@@ -56,32 +56,32 @@ export const Dashboard = () => {
         </div>
 
         {/* Recent Activity */}
-        <Card>
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="flex items-center text-base sm:text-lg">
+            <CardTitle className="flex items-center mobile-subheading">
               <Clock className="h-5 w-5 mr-2 text-primary" />
               Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+            <div className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
               <div>
-                <p className="font-medium">New streams detected</p>
+                <p className="font-semibold">New streams detected</p>
                 <p className="text-sm text-muted-foreground">Your track "Summer Vibes" gained 150 new streams</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-success">+150</p>
+                <p className="text-sm text-success font-bold">+150</p>
                 <p className="text-xs text-muted-foreground">2h ago</p>
               </div>
             </div>
             
-            <div className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
+            <div className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
               <div>
-                <p className="font-medium">Promotion campaign</p>
+                <p className="font-semibold">Promotion campaign</p>
                 <p className="text-sm text-muted-foreground">TikTok campaign reached 5K users</p>
               </div>
               <div className="text-right">
-                <p className="text-sm text-primary">Active</p>
+                <p className="text-sm text-primary font-bold">Active</p>
                 <p className="text-xs text-muted-foreground">6h ago</p>
               </div>
             </div>
@@ -89,28 +89,28 @@ export const Dashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card>
+        <Card className="glass-card">
           <CardHeader>
-            <CardTitle className="text-base sm:text-lg">Quick Actions</CardTitle>
+            <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="mobile-card-grid">
             <Link to="/upload">
-              <Button className="w-full gradient-primary music-button" variant="default">
+              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold" variant="default">
                 Upload Track
               </Button>
             </Link>
             <Link to="/promotions">
-              <Button className="w-full gradient-secondary music-button" variant="default">
+              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold" variant="default">
                 Start Campaign
               </Button>
             </Link>
             <Link to="/analytics">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-accent/10">
                 View Analytics
               </Button>
             </Link>
             <Link to="/earnings">
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-primary/10">
                 Check Earnings
               </Button>
             </Link>

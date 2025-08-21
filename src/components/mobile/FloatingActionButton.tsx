@@ -8,6 +8,7 @@ export const FloatingActionButton = () => {
       <Button 
         size="icon" 
         className="fab gradient-primary music-button shadow-glow hover:shadow-primary"
+        aria-label="Upload music"
       >
         <Plus className="h-6 w-6" />
       </Button>

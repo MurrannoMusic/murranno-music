@@ -2,63 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Murranno Music Design System - Music Industry Inspired */
+/* Murranno Music Design System - Gen Z Modern Vibes */
 
 @layer base {
   :root {
-    /* Core brand colors - Music industry purple/pink theme */
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core brand colors - Gen Z vibrant theme */
+    --background: 0 0% 98%;
+    --foreground: 240 10% 3.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 3.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 3.9%;
 
-    /* Music brand primary - vibrant purple */
-    --primary: 271 91% 65%;
+    /* Primary - Electric Purple */
+    --primary: 270 95% 75%;
     --primary-foreground: 0 0% 100%;
-    --primary-glow: 271 81% 75%;
+    --primary-glow: 270 85% 85%;
 
-    /* Secondary - elegant pink */
-    --secondary: 320 65% 68%;
+    /* Secondary - Hot Pink */
+    --secondary: 330 85% 75%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-    /* Accent - music orange */
-    --accent: 24 95% 65%;
+    /* Accent - Neon Green */
+    --accent: 142 76% 70%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 271 91% 65%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 270 95% 75%;
 
-    /* Music-specific colors */
-    --success: 142 76% 36%;
+    /* Gen Z specific colors */
+    --success: 142 76% 70%;
     --success-foreground: 0 0% 100%;
-    --warning: 45 93% 58%;
+    --warning: 45 93% 70%;
     --warning-foreground: 0 0% 0%;
 
-    /* Gradients for music industry feel */
-    --gradient-primary: linear-gradient(135deg, hsl(271 91% 65%), hsl(320 65% 68%));
-    --gradient-secondary: linear-gradient(135deg, hsl(320 65% 68%), hsl(24 95% 65%));
-    --gradient-dark: linear-gradient(135deg, hsl(222.2 84% 4.9%), hsl(271 91% 25%));
-    --gradient-glow: linear-gradient(135deg, hsl(271 81% 75% / 0.3), hsl(320 65% 68% / 0.3));
+    /* Modern Gen Z gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(270 95% 75%), hsl(330 85% 75%));
+    --gradient-secondary: linear-gradient(135deg, hsl(330 85% 75%), hsl(45 93% 75%));
+    --gradient-accent: linear-gradient(135deg, hsl(142 76% 70%), hsl(190 95% 75%));
+    --gradient-dark: linear-gradient(135deg, hsl(240 10% 3.9%), hsl(270 95% 25%));
+    --gradient-glow: linear-gradient(135deg, hsl(270 85% 85% / 0.4), hsl(330 85% 85% / 0.4));
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(270 95% 75% / 0.3) 0px, transparent 50%), 
+                     radial-gradient(at 80% 0%, hsl(330 85% 75% / 0.3) 0px, transparent 50%), 
+                     radial-gradient(at 0% 50%, hsl(142 76% 70% / 0.3) 0px, transparent 50%);
 
-    /* Shadows with brand colors */
-    --shadow-primary: 0 10px 30px -5px hsl(271 91% 65% / 0.3);
-    --shadow-secondary: 0 10px 30px -5px hsl(320 65% 68% / 0.3);
-    --shadow-glow: 0 0 40px hsl(271 81% 75% / 0.4);
+    /* Gen Z shadows and effects */
+    --shadow-primary: 0 20px 40px -12px hsl(270 95% 75% / 0.4);
+    --shadow-secondary: 0 20px 40px -12px hsl(330 85% 75% / 0.4);
+    --shadow-accent: 0 20px 40px -12px hsl(142 76% 70% / 0.4);
+    --shadow-glow: 0 0 60px hsl(270 85% 85% / 0.6);
+    --shadow-soft: 0 8px 32px hsl(240 10% 3.9% / 0.12);
 
-    /* Transitions */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* Modern transitions and animations */
+    --transition-smooth: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    --transition-bounce: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --transition-elastic: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
     --radius: 1rem;
 
@@ -80,35 +87,35 @@
   }
 
   .dark {
-    /* Dark theme optimized for music industry */
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark theme optimized for Gen Z vibes */
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
 
     --card: 240 10% 8%;
-    --card-foreground: 210 40% 98%;
+    --card-foreground: 0 0% 98%;
 
     --popover: 240 10% 8%;
-    --popover-foreground: 210 40% 98%;
+    --popover-foreground: 0 0% 98%;
 
-    /* Dark theme keeps vibrant brand colors */
-    --primary: 271 91% 65%;
+    /* Dark theme keeps vibrant Gen Z colors */
+    --primary: 270 95% 75%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 320 65% 68%;
+    --secondary: 330 85% 75%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 10% 12%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
 
-    --accent: 24 95% 65%;
+    --accent: 142 76% 70%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 240 10% 12%;
-    --input: 240 10% 12%;
-    --ring: 271 91% 65%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 270 95% 75%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -131,7 +138,7 @@
 }
 
 @layer components {
-  /* Music Industry Component Styles */
+  /* Gen Z Modern Component Styles */
   .gradient-primary {
     background: var(--gradient-primary);
   }
@@ -140,8 +147,16 @@
     background: var(--gradient-secondary);
   }
   
+  .gradient-accent {
+    background: var(--gradient-accent);
+  }
+  
   .gradient-dark {
     background: var(--gradient-dark);
+  }
+  
+  .gradient-mesh {
+    background: var(--gradient-mesh);
   }
   
   .shadow-primary {
@@ -152,8 +167,16 @@
     box-shadow: var(--shadow-secondary);
   }
   
+  .shadow-accent {
+    box-shadow: var(--shadow-accent);
+  }
+  
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-soft {
+    box-shadow: var(--shadow-soft);
   }
   
   .transition-smooth {
@@ -163,74 +186,89 @@
   .transition-bounce {
     transition: var(--transition-bounce);
   }
+  
+  .transition-elastic {
+    transition: var(--transition-elastic);
+  }
 
-  /* Mobile-first responsive containers */
+  /* Mobile-first containers - Gen Z optimized */
   .mobile-container {
-    @apply px-3 py-4 max-w-md mx-auto;
+    @apply px-4 py-6 max-w-sm mx-auto;
   }
   
-  @screen sm {
-    .mobile-container {
-      @apply px-4 py-6;
-    }
-  }
-  
-  /* Music stat cards - mobile responsive */
+  /* Gen Z stat cards - glassmorphism effect */
   .stat-card {
-    @apply bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-4 transition-smooth hover:shadow-primary;
+    @apply bg-card/60 backdrop-blur-xl border border-border/30 rounded-2xl p-4 transition-elastic hover:shadow-soft hover:scale-[1.02] active:scale-[0.98];
   }
   
-  @screen sm {
-    .stat-card {
-      @apply rounded-2xl p-6;
-    }
-  }
-  
-  /* Music action buttons */
+  /* Gen Z action buttons with modern effects */
   .music-button {
-    @apply relative overflow-hidden transition-smooth hover:scale-105 active:scale-95;
+    @apply relative overflow-hidden transition-elastic hover:scale-105 active:scale-95 shadow-soft;
   }
   
-  /* Floating action button - responsive positioning */
+  .music-button::before {
+    content: '';
+    @apply absolute inset-0 bg-white/20 translate-x-[-100%] skew-x-12 transition-transform duration-700;
+  }
+  
+  .music-button:hover::before {
+    @apply translate-x-[100%];
+  }
+  
+  /* Floating action button - modern positioning */
   .fab {
-    @apply fixed bottom-16 right-3 w-12 h-12 rounded-full shadow-primary transition-bounce z-50;
+    @apply fixed bottom-20 right-4 w-14 h-14 rounded-2xl shadow-glow transition-elastic z-50 backdrop-blur-xl;
   }
   
-  @screen sm {
-    .fab {
-      @apply bottom-20 right-6 w-14 h-14;
-    }
-  }
-  
-  /* Mobile responsive text and spacing */
+  /* Gen Z typography */
   .mobile-heading {
-    @apply text-xl font-bold;
+    @apply text-2xl font-bold tracking-tight;
   }
   
-  @screen sm {
-    .mobile-heading {
-      @apply text-2xl;
-    }
+  .mobile-subheading {
+    @apply text-lg font-semibold;
   }
   
   .mobile-card-grid {
-    @apply grid grid-cols-2 gap-3;
+    @apply grid grid-cols-2 gap-4;
   }
   
-  @screen sm {
-    .mobile-card-grid {
-      @apply gap-4;
-    }
-  }
-  
-  /* Mobile bottom navigation safe area */
+  /* Mobile safe areas for iOS/Android */
   .mobile-safe-bottom {
-    @apply pb-16;
+    @apply pb-20;
   }
   
-  @screen sm {
-    .mobile-safe-bottom {
-      @apply pb-20;
-    }
+  .mobile-safe-top {
+    @apply pt-12;
+  }
+  
+  /* Modern glass cards */
+  .glass-card {
+    @apply bg-card/40 backdrop-blur-2xl border border-border/20 rounded-3xl shadow-soft;
+  }
+  
+  /* Gen Z interactive elements */
+  .interactive-element {
+    @apply transition-elastic hover:scale-105 active:scale-95 cursor-pointer;
+  }
+  
+  /* Modern navigation */
+  .nav-item {
+    @apply relative transition-elastic hover:scale-110 active:scale-95;
+  }
+  
+  .nav-item.active {
+    @apply text-primary;
+  }
+  
+  .nav-item.active::after {
+    content: '';
+    @apply absolute -bottom-1 left-1/2 w-1 h-1 bg-primary rounded-full transform -translate-x-1/2;
+  }
+  
+  /* Smooth scroll for mobile */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
   }
 }
