@@ -14,6 +14,9 @@ import { Earnings } from "./pages/Earnings";
 import { Analytics } from "./pages/Analytics";
 import { LabelAnalytics } from "./pages/LabelAnalytics";
 import { AgencyDashboard } from "./pages/AgencyDashboard";
+import { ArtistManagement } from "./pages/ArtistManagement";
+import { CampaignManager } from "./pages/CampaignManager";
+import { PayoutManager } from "./pages/PayoutManager";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +39,9 @@ const App = () => (
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/label-analytics" element={<LabelAnalytics />} />
             <Route path="/agency-dashboard" element={<AgencyDashboard />} />
+            <Route path="/artist-management" element={<ArtistManagement />} />
+            <Route path="/campaign-manager" element={<CampaignManager />} />
+            <Route path="/payout-manager" element={<PayoutManager />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

@@ -138,14 +138,16 @@ export const AgencyDashboard = () => {
                 Create Campaign
               </Button>
             </Link>
-            <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold">
+            <Link to="/campaign-manager">
+              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold">
+                Manage Campaigns
+              </Button>
+            </Link>
+            <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
               Export Reports
             </Button>
             <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
-              Manage Clients
-            </Button>
-            <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
-              View Analytics
+              Client Analytics
             </Button>
           </CardContent>
         </Card>

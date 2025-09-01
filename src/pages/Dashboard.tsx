@@ -138,11 +138,25 @@ export const Dashboard = () => {
                 View Analytics
               </Button>
             </Link>
-            <Link to="/earnings">
+            <Link to={isLabel ? "/payout-manager" : "/earnings"}>
               <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-primary/10">
-                {isLabel ? 'Label Earnings' : isAgency ? 'Campaign Results' : 'Check Earnings'}
+                {isLabel ? 'Manage Payouts' : isAgency ? 'Campaign Results' : 'Check Earnings'}
               </Button>
             </Link>
+            {isLabel && (
+              <Link to="/artist-management">
+                <Button className="w-full gradient-accent music-button h-12 rounded-xl font-semibold">
+                  Manage Artists
+                </Button>
+              </Link>
+            )}
+            {isAgency && (
+              <Link to="/campaign-manager">
+                <Button className="w-full gradient-accent music-button h-12 rounded-xl font-semibold">
+                  Track Campaigns
+                </Button>
+              </Link>
+            )}
           </CardContent>
         </Card>
       </div>
