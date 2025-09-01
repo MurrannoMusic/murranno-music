@@ -5,16 +5,37 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { BottomNavigation } from '@/components/mobile/BottomNavigation';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
+import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
+import { ArtistSelector } from '@/components/mobile/ArtistSelector';
+import { useUserType } from '@/hooks/useUserType';
 
 export const Dashboard = () => {
+  const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
+
+  const getWelcomeMessage = () => {
+    if (isArtist) return `Welcome back, ${currentUser.name}`;
+    if (isLabel) return selectedArtist 
+      ? `Managing: ${(currentUser as any).artists.find((a: any) => a.id === selectedArtist)?.stageName}`
+      : `Welcome back, ${currentUser.name}`;
+    if (isAgency) return `Agency Dashboard - ${currentUser.name}`;
+    return 'Welcome back';
+  };
+
+  const getSubtitle = () => {
+    if (isArtist) return "Let's make some music magic ✨";
+    if (isLabel) return selectedArtist ? "Artist management dashboard" : "Label dashboard - manage all artists";
+    if (isAgency) return "Campaign management hub";
+    return "Dashboard";
+  };
+
   return (
     <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom smooth-scroll">
       {/* Header */}
       <div className="gradient-primary p-6 text-white mobile-safe-top">
         <div className="flex items-center justify-between mb-4">
-          <div>
-            <h1 className="mobile-heading">Welcome back, Artist</h1>
-            <p className="text-white/80 text-base">Let's make some music magic ✨</p>
+          <div className="flex-1">
+            <h1 className="mobile-heading">{getWelcomeMessage()}</h1>
+            <p className="text-white/80 text-base">{getSubtitle()}</p>
           </div>
           <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
             <Music className="h-6 w-6" />
@@ -23,6 +44,12 @@ export const Dashboard = () => {
       </div>
 
       <div className="mobile-container space-y-6 -mt-8">
+        {/* Demo User Type Switcher */}
+        <UserTypeDemo />
+        
+        {/* Artist Selector for Labels */}
+        {isLabel && <ArtistSelector />}
+        
         {/* Quick Stats */}
         <div className="mobile-card-grid">
           <StatCard
@@ -94,24 +121,26 @@ export const Dashboard = () => {
             <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="mobile-card-grid">
-            <Link to="/upload">
-              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold" variant="default">
-                Upload Track
-              </Button>
-            </Link>
+            {(isArtist || isLabel) && (
+              <Link to="/upload">
+                <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold" variant="default">
+                  Upload Track
+                </Button>
+              </Link>
+            )}
             <Link to="/promotions">
               <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold" variant="default">
-                Start Campaign
+                {isAgency ? 'Create Campaign' : 'Start Campaign'}
               </Button>
             </Link>
-            <Link to="/analytics">
+            <Link to={isLabel ? "/label-analytics" : isAgency ? "/agency-dashboard" : "/analytics"}>
               <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-accent/10">
                 View Analytics
               </Button>
             </Link>
             <Link to="/earnings">
               <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-primary/10">
-                Check Earnings
+                {isLabel ? 'Label Earnings' : isAgency ? 'Campaign Results' : 'Check Earnings'}
               </Button>
             </Link>
           </CardContent>

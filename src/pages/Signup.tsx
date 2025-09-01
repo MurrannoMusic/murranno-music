@@ -75,9 +75,8 @@ export const Signup = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="artist">Independent Artist</SelectItem>
-                      <SelectItem value="label">Record Label</SelectItem>
-                      <SelectItem value="manager">Manager/Agent</SelectItem>
-                      <SelectItem value="promoter">Promoter/PR Agency</SelectItem>
+                      <SelectItem value="label">Record Label / Manager</SelectItem>
+                      <SelectItem value="agency">Promoter / PR Agency</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
