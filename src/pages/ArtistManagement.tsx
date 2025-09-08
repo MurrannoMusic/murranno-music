@@ -1,15 +1,13 @@
 import { useState } from 'react';
-import { ArrowLeft, Plus, Edit, MoreVertical, Music } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
+import { ArtistCard } from '@/components/cards/ArtistCard';
+import { AddArtistForm } from '@/components/forms/AddArtistForm';
 
 export const ArtistManagement = () => {
   const [artists, setArtists] = useState([
@@ -18,98 +16,45 @@ export const ArtistManagement = () => {
     { id: 'a3', name: 'Midnight Drive', stageName: 'Midnight Drive', status: 'Active', releases: 4, streams: '6.2K', revenue: '$178' }
   ]);
 
-  const [newArtist, setNewArtist] = useState({ name: '', stageName: '', email: '' });
   const [showAddDialog, setShowAddDialog] = useState(false);
 
-  const handleAddArtist = () => {
-    if (newArtist.name && newArtist.stageName) {
-      const artist = {
-        id: `a${Date.now()}`,
-        name: newArtist.name,
-        stageName: newArtist.stageName,
-        status: 'Active',
-        releases: 0,
-        streams: '0',
-        revenue: '$0'
-      };
-      setArtists([...artists, artist]);
-      setNewArtist({ name: '', stageName: '', email: '' });
-      setShowAddDialog(false);
-    }
+  const handleAddArtist = (newArtist: { name: string; stageName: string; email?: string }) => {
+    const artist = {
+      id: `a${Date.now()}`,
+      name: newArtist.name,
+      stageName: newArtist.stageName,
+      status: 'Active',
+      releases: 0,
+      streams: '0',
+      revenue: '$0'
+    };
+    setArtists([...artists, artist]);
+    setShowAddDialog(false);
   };
 
+  const headerActions = (
+    <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
+      <DialogTrigger asChild>
+        <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
+          <Plus className="h-4 w-4 mr-1" />
+          Add Artist
+        </Button>
+      </DialogTrigger>
+      <AddArtistForm 
+        onAdd={handleAddArtist}
+        onCancel={() => setShowAddDialog(false)}
+      />
+    </Dialog>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom">
-      {/* Header */}
-      <div className="gradient-primary p-6 text-white mobile-safe-top">
-        <div className="flex items-center gap-4 mb-4">
-          <Link to="/">
-            <ArrowLeft className="h-6 w-6" />
-          </Link>
-          <div className="flex-1">
-            <h1 className="mobile-heading">Artist Management</h1>
-            <p className="text-white/80 text-base">Manage your label's artists</p>
-          </div>
-          <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-            <DialogTrigger asChild>
-              <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
-                <Plus className="h-4 w-4 mr-1" />
-                Add Artist
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="mobile-container glass-card border-border/20">
-              <DialogHeader>
-                <DialogTitle>Add New Artist</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <div>
-                  <Label htmlFor="artistName">Artist Name</Label>
-                  <Input
-                    id="artistName"
-                    placeholder="Real name"
-                    value={newArtist.name}
-                    onChange={(e) => setNewArtist({...newArtist, name: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="stageName">Stage Name</Label>
-                  <Input
-                    id="stageName"
-                    placeholder="Performance name"
-                    value={newArtist.stageName}
-                    onChange={(e) => setNewArtist({...newArtist, stageName: e.target.value})}
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="email">Email (Optional)</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="artist@example.com"
-                    value={newArtist.email}
-                    onChange={(e) => setNewArtist({...newArtist, email: e.target.value})}
-                  />
-                </div>
-                <div className="flex gap-3 pt-2">
-                  <Button 
-                    onClick={handleAddArtist}
-                    className="flex-1 gradient-primary"
-                  >
-                    Add Artist
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowAddDialog(false)}
-                    className="flex-1"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-      </div>
+    <PageContainer>
+      <PageHeader 
+        title="Artist Management"
+        subtitle="Manage your label's artists"
+        backTo="/dashboard"
+        actions={headerActions}
+      />
 
       <div className="mobile-container space-y-6 -mt-8">
         {/* Summary Stats */}
@@ -139,56 +84,14 @@ export const ArtistManagement = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             {artists.map((artist) => (
-              <div key={artist.id} className="interactive-element p-4 bg-muted/20 rounded-xl border border-border/10">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
-                    <AvatarImage src="" />
-                    <AvatarFallback className="bg-primary/20 text-primary font-semibold">
-                      {artist.stageName.charAt(0)}
-                    </AvatarFallback>
-                  </Avatar>
-                  
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold">{artist.stageName}</h3>
-                      <Badge variant="secondary" className="text-xs">
-                        {artist.status}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{artist.name}</p>
-                    
-                    <div className="flex gap-4 mt-2 text-xs">
-                      <span><strong>{artist.releases}</strong> releases</span>
-                      <span><strong>{artist.streams}</strong> streams</span>
-                      <span className="text-primary font-semibold">{artist.revenue}</span>
-                    </div>
-                  </div>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreVertical className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="glass-card border-border/20">
-                      <DropdownMenuItem>
-                        <Edit className="h-4 w-4 mr-2" />
-                        Edit Profile
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        <Music className="h-4 w-4 mr-2" />
-                        View Releases
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        View Analytics
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        Manage Payouts
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
-              </div>
+              <ArtistCard
+                key={artist.id}
+                artist={artist}
+                onEdit={(id) => console.log('Edit artist:', id)}
+                onViewReleases={(id) => console.log('View releases:', id)}
+                onViewAnalytics={(id) => console.log('View analytics:', id)}
+                onManagePayouts={(id) => console.log('Manage payouts:', id)}
+              />
             ))}
           </CardContent>
         </Card>
@@ -199,9 +102,11 @@ export const ArtistManagement = () => {
             <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="mobile-card-grid">
-            <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold">
-              Bulk Payout Request
-            </Button>
+            <Link to="/payout-manager">
+              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold">
+                Bulk Payout Request
+              </Button>
+            </Link>
             <Link to="/label-analytics">
               <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold">
                 Label Analytics
@@ -218,8 +123,6 @@ export const ArtistManagement = () => {
           </CardContent>
         </Card>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };

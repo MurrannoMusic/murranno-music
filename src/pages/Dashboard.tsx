@@ -1,16 +1,18 @@
-import { Music, TrendingUp, DollarSign, Users, Play, Clock } from 'lucide-react';
-import { StatCard } from '@/components/mobile/StatCard';
+import { Music, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
 import { ArtistSelector } from '@/components/mobile/ArtistSelector';
+import { StatsGrid } from '@/components/stats/StatsGrid';
+import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
+import { useStats } from '@/hooks/useStats';
 
 export const Dashboard = () => {
   const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
+  const { getStatsAsItems } = useStats();
 
   const getWelcomeMessage = () => {
     if (isArtist) return `Welcome back, ${currentUser.name}`;
@@ -28,8 +30,10 @@ export const Dashboard = () => {
     return "Dashboard";
   };
 
+  const stats = getStatsAsItems(selectedArtist);
+
   return (
-    <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom smooth-scroll">
+    <PageContainer className="smooth-scroll">
       {/* Header */}
       <div className="gradient-primary p-6 text-white mobile-safe-top">
         <div className="flex items-center justify-between mb-4">
@@ -51,36 +55,7 @@ export const Dashboard = () => {
         {isLabel && <ArtistSelector />}
         
         {/* Quick Stats */}
-        <div className="mobile-card-grid">
-          <StatCard
-            icon={Play}
-            title="Total Streams"
-            value="12.5K"
-            change="+23%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={DollarSign}
-            title="Earnings"
-            value="$342"
-            change="+12%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={Users}
-            title="Followers"
-            value="2.1K"
-            change="+5%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={Music}
-            title="Releases"
-            value="8"
-            change="+2"
-            changeType="positive"
-          />
-        </div>
+        <StatsGrid stats={stats} />
 
         {/* Recent Activity */}
         <Card className="glass-card">
@@ -162,7 +137,6 @@ export const Dashboard = () => {
       </div>
 
       <FloatingActionButton />
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };
