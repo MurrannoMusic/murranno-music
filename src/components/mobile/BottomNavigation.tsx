@@ -1,23 +1,58 @@
-import { Home, Upload, Megaphone, DollarSign, BarChart3 } from 'lucide-react';
+import { Home, Upload, Megaphone, DollarSign, BarChart3, Users, TrendingUp } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { icon: Home, label: 'Home', path: '/' },
-  { icon: Upload, label: 'Upload', path: '/upload' },
-  { icon: Megaphone, label: 'Promo', path: '/promotions' },
-  { icon: DollarSign, label: 'Earnings', path: '/earnings' },
-  { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-];
+import { useUserType } from '@/hooks/useUserType';
 
 export const BottomNavigation = () => {
   const location = useLocation();
+  const { isArtist, isLabel, isAgency } = useUserType();
+
+  // Dynamic navigation based on user type
+  const getNavItems = () => {
+    const baseItems = [
+      { icon: Home, label: 'Home', path: '/dashboard' },
+    ];
+
+    if (isArtist) {
+      return [
+        ...baseItems,
+        { icon: Upload, label: 'Upload', path: '/upload' },
+        { icon: Megaphone, label: 'Promo', path: '/promotions' },
+        { icon: DollarSign, label: 'Earnings', path: '/earnings' },
+        { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+      ];
+    }
+
+    if (isLabel) {
+      return [
+        ...baseItems,
+        { icon: Users, label: 'Artists', path: '/artist-management' },
+        { icon: Upload, label: 'Upload', path: '/upload' },
+        { icon: DollarSign, label: 'Payouts', path: '/payout-manager' },
+        { icon: TrendingUp, label: 'Analytics', path: '/label-analytics' },
+      ];
+    }
+
+    if (isAgency) {
+      return [
+        ...baseItems,
+        { icon: Megaphone, label: 'Campaigns', path: '/campaign-manager' },
+        { icon: Upload, label: 'Create', path: '/promotions' },
+        { icon: BarChart3, label: 'Results', path: '/agency-dashboard' },
+      ];
+    }
+
+    // Default fallback
+    return baseItems;
+  };
+
+  const navItems = getNavItems();
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-card/60 backdrop-blur-2xl border-t border-border/20 z-40 shadow-soft">
       <div className="flex items-center justify-around py-3 px-4 max-w-sm mx-auto">
         {navItems.map(({ icon: Icon, label, path }) => {
-          const isActive = location.pathname === path;
+          const isActive = location.pathname === path || (path === '/dashboard' && location.pathname === '/');
           return (
             <Link
               key={path}
