@@ -1,6 +1,7 @@
-import { Music, Clock } from 'lucide-react';
+import { Music, Clock, TrendingUp, Users, Zap, BarChart3, Upload, Play } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
@@ -14,35 +15,108 @@ export const Dashboard = () => {
   const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
   const { getStatsAsItems } = useStats();
 
-  const getWelcomeMessage = () => {
-    if (isArtist) return `Welcome back, ${currentUser.name}`;
-    if (isLabel) return selectedArtist 
-      ? `Managing: ${(currentUser as any).artists.find((a: any) => a.id === selectedArtist)?.stageName}`
-      : `Welcome back, ${currentUser.name}`;
-    if (isAgency) return `Agency Dashboard - ${currentUser.name}`;
-    return 'Welcome back';
+  const getHeaderContent = () => {
+    if (isArtist) return {
+      title: `Welcome back, ${currentUser.name}`,
+      subtitle: "Let's make some music magic ✨",
+      icon: Music,
+      gradient: "gradient-primary"
+    };
+    if (isLabel) return {
+      title: selectedArtist 
+        ? `Managing: ${(currentUser as any).artists.find((a: any) => a.id === selectedArtist)?.stageName}`
+        : `${(currentUser as any).companyName}`,
+      subtitle: selectedArtist ? "Artist management dashboard" : "Label dashboard - manage all artists",
+      icon: Users,
+      gradient: "gradient-secondary"
+    };
+    if (isAgency) return {
+      title: `${(currentUser as any).companyName}`,
+      subtitle: "Campaign management hub",
+      icon: Zap,
+      gradient: "gradient-accent"
+    };
+    return {
+      title: 'Welcome back',
+      subtitle: "Dashboard",
+      icon: Music,
+      gradient: "gradient-primary"
+    };
   };
 
-  const getSubtitle = () => {
-    if (isArtist) return "Let's make some music magic ✨";
-    if (isLabel) return selectedArtist ? "Artist management dashboard" : "Label dashboard - manage all artists";
-    if (isAgency) return "Campaign management hub";
-    return "Dashboard";
+  const getRecentActivity = () => {
+    if (isArtist) return [
+      {
+        title: "New streams detected",
+        description: 'Your track "Summer Vibes" gained 150 new streams',
+        value: "+150",
+        time: "2h ago",
+        type: "success"
+      },
+      {
+        title: "Playlist placement",
+        description: "Added to 'Indie Discoveries' playlist",
+        value: "New",
+        time: "4h ago", 
+        type: "primary"
+      }
+    ];
+    if (isLabel) return [
+      {
+        title: "Artist payout processed",
+        description: "Monthly payouts sent to 3 artists",
+        value: "$2,450",
+        time: "1h ago",
+        type: "success"
+      },
+      {
+        title: "New release uploaded",
+        description: "Luna Sol uploaded new single",
+        value: "Live",
+        time: "3h ago",
+        type: "primary"
+      }
+    ];
+    if (isAgency) return [
+      {
+        title: "Campaign milestone",
+        description: "TikTok campaign reached 10K impressions",
+        value: "10K",
+        time: "30m ago",
+        type: "success"
+      },
+      {
+        title: "New client inquiry",
+        description: "Potential new artist campaign request",
+        value: "Review",
+        time: "2h ago",
+        type: "primary"
+      }
+    ];
+    return [];
   };
 
   const stats = getStatsAsItems(selectedArtist);
+  const headerContent = getHeaderContent();
+  const recentActivity = getRecentActivity();
+  const HeaderIcon = headerContent.icon;
 
   return (
     <PageContainer className="smooth-scroll">
-      {/* Header */}
-      <div className="gradient-primary p-6 text-white mobile-safe-top">
+      {/* Dynamic Header based on user type */}
+      <div className={`${headerContent.gradient} p-6 text-white mobile-safe-top`}>
         <div className="flex items-center justify-between mb-4">
           <div className="flex-1">
-            <h1 className="mobile-heading">{getWelcomeMessage()}</h1>
-            <p className="text-white/80 text-base">{getSubtitle()}</p>
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="mobile-heading">{headerContent.title}</h1>
+              <Badge variant="secondary" className="text-xs">
+                {currentUser.accountType.toUpperCase()}
+              </Badge>
+            </div>
+            <p className="text-white/80 text-base">{headerContent.subtitle}</p>
           </div>
           <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
-            <Music className="h-6 w-6" />
+            <HeaderIcon className="h-6 w-6" />
           </div>
         </div>
       </div>
@@ -66,27 +140,20 @@ export const Dashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
-              <div>
-                <p className="font-semibold">New streams detected</p>
-                <p className="text-sm text-muted-foreground">Your track "Summer Vibes" gained 150 new streams</p>
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
+                <div className="flex-1">
+                  <p className="font-semibold">{activity.title}</p>
+                  <p className="text-sm text-muted-foreground">{activity.description}</p>
+                </div>
+                <div className="text-right">
+                  <p className={`text-sm font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
+                    {activity.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                </div>
               </div>
-              <div className="text-right">
-                <p className="text-sm text-success font-bold">+150</p>
-                <p className="text-xs text-muted-foreground">2h ago</p>
-              </div>
-            </div>
-            
-            <div className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
-              <div>
-                <p className="font-semibold">Promotion campaign</p>
-                <p className="text-sm text-muted-foreground">TikTok campaign reached 5K users</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-primary font-bold">Active</p>
-                <p className="text-xs text-muted-foreground">6h ago</p>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
 
