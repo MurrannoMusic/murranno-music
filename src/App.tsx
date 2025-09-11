@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
+import { UserTypeSelection } from "./pages/UserTypeSelection";
 import { Dashboard } from "./pages/Dashboard";
 import { Upload } from "./pages/Upload";
 import { Promotions } from "./pages/Promotions";
@@ -33,6 +34,7 @@ const App = () => (
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/user-type-selection" element={<UserTypeSelection />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/promotions" element={<Promotions />} />
             <Route path="/earnings" element={<Earnings />} />
