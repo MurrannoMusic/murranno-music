@@ -42,10 +42,10 @@ export const AgencyDashboard = () => {
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          {/* Avatar (Left) */}
-          <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
-            <Zap className="h-5 w-5 text-accent" />
-          </div>
+          {/* Menu Icon (Left) */}
+          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
           
           {/* User Type (Center) */}
           <div className="flex-1 text-center">
@@ -54,16 +54,10 @@ export const AgencyDashboard = () => {
             </Badge>
           </div>
           
-          {/* Menu Icon (Right) */}
-          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-        </div>
-        
-        {/* Welcome Text */}
-        <div className="text-center mt-4">
-          <h1 className="heading-lg">Promo Masters</h1>
-          <p className="body-md text-muted-foreground">Campaign management hub</p>
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+            <Zap className="h-5 w-5 text-accent" />
+          </div>
         </div>
       </div>
 
