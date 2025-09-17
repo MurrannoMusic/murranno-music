@@ -1,6 +1,7 @@
 import { ArrowLeft, Users, DollarSign, TrendingUp, Music } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatCard } from '@/components/mobile/StatCard';
 import { BottomNavigation } from '@/components/mobile/BottomNavigation';
@@ -33,24 +34,29 @@ export const LabelAnalytics = () => {
 
   return (
     <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom">
-      {/* Header */}
-      <div className="gradient-primary p-6 text-white mobile-safe-top">
-        <div className="flex items-center gap-4 mb-4">
-          <Link to="/">
-            <ArrowLeft className="h-6 w-6" />
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to="/label-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="flex-1">
-            <h1 className="mobile-heading">
-              {selectedArtist ? 'Artist Analytics' : 'Label Analytics'}
-            </h1>
-            <p className="text-white/80 text-base">
-              {selectedArtist ? 'Individual performance metrics' : 'Combined performance overview'}
-            </p>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-4 py-1">
+              {selectedArtist ? 'ARTIST ANALYTICS' : 'LABEL ANALYTICS'}
+            </Badge>
+          </div>
+          
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center">
+            <TrendingUp className="h-5 w-5 text-primary" />
           </div>
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-6 mt-6">
         {/* Artist Selector for Labels */}
         {isLabel && <ArtistSelector />}
 

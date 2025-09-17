@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft, Users } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { ArtistCard } from '@/components/cards/ArtistCard';
 import { AddArtistForm } from '@/components/forms/AddArtistForm';
 
@@ -49,14 +49,34 @@ export const ArtistManagement = () => {
 
   return (
     <PageContainer>
-      <PageHeader 
-        title="Artist Management"
-        subtitle="Manage your label's artists"
-        backTo="/dashboard"
-        actions={headerActions}
-      />
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to="/label-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-4 py-1">
+              ARTIST MANAGEMENT
+            </Badge>
+          </div>
+          
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center">
+            <Users className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+        
+        {/* Actions */}
+        <div className="flex justify-end mt-4">
+          {headerActions}
+        </div>
+      </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-6 mt-6">
         {/* Summary Stats */}
         <Card className="glass-card">
           <CardContent className="p-4">

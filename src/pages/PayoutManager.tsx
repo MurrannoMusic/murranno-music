@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { DollarSign, Download, Calendar } from 'lucide-react';
+import { DollarSign, Download, Calendar, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { ArtistFilter } from '@/components/filters/ArtistFilter';
 import { PayoutCard } from '@/components/cards/PayoutCard';
 import { useUserType } from '@/hooks/useUserType';
@@ -39,13 +40,29 @@ export const PayoutManager = () => {
 
   return (
     <PageContainer>
-      <PageHeader 
-        title="Payout Manager"
-        subtitle={isLabel ? 'Manage artist payouts' : 'Request payouts'}
-        backTo={isLabel ? "/artist-management" : "/earnings"}
-      />
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to={isLabel ? "/artist-management" : "/earnings"} className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
+              PAYOUT MANAGER
+            </Badge>
+          </div>
+          
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+            <DollarSign className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+      </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-6 mt-6">
         {/* Payout Summary */}
         <Card className="glass-card">
           <CardContent className="p-4">

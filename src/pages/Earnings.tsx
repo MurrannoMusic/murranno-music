@@ -1,22 +1,38 @@
 import { ArrowLeft, DollarSign, TrendingUp, Download, CreditCard, Smartphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ModernStatCard } from '@/components/modern/ModernStatCard';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 
 export const Earnings = () => {
   return (
     <PageContainer>
-      <PageHeader 
-        title="Earnings"
-        subtitle="Track your revenue and payouts"
-        backTo="/artist-dashboard"
-      />
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
+              EARNINGS
+            </Badge>
+          </div>
+          
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+            <DollarSign className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+      </div>
 
-      <div className="mobile-container space-y-6 -mt-4">
+      <div className="mobile-container space-y-6 mt-6">
         {/* Wallet Balance */}
         <Card className="modern-card bg-gradient-primary text-white border-primary/30">
           <CardContent className="p-6">

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ArrowLeft, Upload as UploadIcon, Music, Image, Calendar, Info } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -9,7 +10,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 
 export const Upload = () => {
   const [trackTitle, setTrackTitle] = useState('');
@@ -40,13 +40,29 @@ export const Upload = () => {
 
   return (
     <PageContainer>
-      <PageHeader 
-        title="Upload Track"
-        subtitle="Share your music with the world"
-        backTo="/artist-dashboard"
-      />
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
+              UPLOAD
+            </Badge>
+          </div>
+          
+          {/* Avatar (Right) */}
+          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+            <UploadIcon className="h-5 w-5 text-primary" />
+          </div>
+        </div>
+      </div>
 
-      <div className="mobile-container space-y-6 -mt-4">
+      <div className="mobile-container space-y-6 mt-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* File Upload Section */}
           <Card className="modern-card">
