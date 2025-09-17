@@ -11,6 +11,7 @@ import { UserTypeSelection } from "./pages/UserTypeSelection";
 import { Dashboard } from "./pages/Dashboard";
 import { ArtistDashboard } from "./pages/ArtistDashboard";
 import { LabelDashboard } from "./pages/LabelDashboard";
+import { UserTypeSwitcher } from "./pages/UserTypeSwitcher";
 import { Upload } from "./pages/Upload";
 import { Promotions } from "./pages/Promotions";
 import { Earnings } from "./pages/Earnings";
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/user-type-selection" element={<UserTypeSelection />} />
+            <Route path="/user-type-switcher" element={<UserTypeSwitcher />} />
             <Route path="/upload" element={<Upload />} />
             <Route path="/promotions" element={<Promotions />} />
             <Route path="/earnings" element={<Earnings />} />
