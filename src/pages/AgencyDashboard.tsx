@@ -39,26 +39,31 @@ export const AgencyDashboard = () => {
 
   return (
     <PageContainer>
-      {/* Modern Agency Header */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
-        <div className="flex items-center gap-4 mb-4">
+      {/* Modern Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Avatar (Left) */}
+          <div className="w-10 h-10 bg-accent/20 rounded-full flex items-center justify-center">
+            <Zap className="h-5 w-5 text-accent" />
+          </div>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-accent/15 text-accent border-accent/30 px-4 py-1">
+              AGENCY
+            </Badge>
+          </div>
+          
+          {/* Menu Icon (Right) */}
           <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center">
-                <Zap className="h-5 w-5 text-accent" />
-              </div>
-              <div>
-                <h1 className="heading-lg">Promo Masters</h1>
-                <p className="body-md text-muted-foreground">Campaign management hub</p>
-              </div>
-            </div>
-          </div>
-          <Badge className="bg-accent/15 text-accent border-accent/30">
-            AGENCY
-          </Badge>
+        </div>
+        
+        {/* Welcome Text */}
+        <div className="text-center mt-4">
+          <h1 className="heading-lg">Promo Masters</h1>
+          <p className="body-md text-muted-foreground">Campaign management hub</p>
         </div>
       </div>
 

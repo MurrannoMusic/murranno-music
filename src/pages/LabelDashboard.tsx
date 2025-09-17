@@ -44,26 +44,31 @@ export const LabelDashboard = () => {
 
   return (
     <PageContainer className="smooth-scroll">
-      {/* Modern Label Header */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
-        <div className="flex items-center gap-4 mb-4">
+      {/* Modern Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Avatar (Left) */}
+          <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center">
+            <Users className="h-5 w-5 text-primary" />
+          </div>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-4 py-1">
+              LABEL
+            </Badge>
+          </div>
+          
+          {/* Menu Icon (Right) */}
           <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-secondary/30 rounded-xl flex items-center justify-center">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <h1 className="heading-lg">{headerTitle}</h1>
-                <p className="body-md text-muted-foreground">{headerSubtitle}</p>
-              </div>
-            </div>
-          </div>
-          <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30">
-            LABEL
-          </Badge>
+        </div>
+        
+        {/* Welcome Text */}
+        <div className="text-center mt-4">
+          <h1 className="heading-lg">{headerTitle}</h1>
+          <p className="body-md text-muted-foreground">{headerSubtitle}</p>
         </div>
       </div>
 

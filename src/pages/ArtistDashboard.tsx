@@ -35,28 +35,33 @@ export const ArtistDashboard = () => {
 
   return (
     <PageContainer className="smooth-scroll">
-      {/* Modern Artist Header */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
-        <div className="flex items-center gap-4 mb-4">
+      {/* Modern Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Avatar (Left) */}
+          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+            <span className="text-primary font-bold text-sm">
+              {currentUser.name.slice(0, 2).toUpperCase()}
+            </span>
+          </div>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
+              ARTIST
+            </Badge>
+          </div>
+          
+          {/* Menu Icon (Right) */}
           <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <span className="text-primary font-bold text-sm">
-                  {currentUser.name.slice(0, 2).toUpperCase()}
-                </span>
-              </div>
-              <div>
-                <h1 className="heading-lg">Welcome back</h1>
-                <p className="body-md text-muted-foreground">{currentUser.name}</p>
-              </div>
-            </div>
-          </div>
-          <Badge className="bg-primary/10 text-primary border-primary/20">
-            ARTIST
-          </Badge>
+        </div>
+        
+        {/* Welcome Text */}
+        <div className="text-center mt-4">
+          <h1 className="heading-lg">Welcome back</h1>
+          <p className="body-md text-muted-foreground">{currentUser.name}</p>
         </div>
       </div>
 
