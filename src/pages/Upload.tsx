@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 
 export const Upload = () => {
@@ -55,10 +56,8 @@ export const Upload = () => {
             </Badge>
           </div>
           
-          {/* Avatar (Right) */}
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-            <UploadIcon className="h-5 w-5 text-primary" />
-          </div>
+          {/* Avatar Dropdown (Right) */}
+          <AvatarDropdown />
         </div>
       </div>
 

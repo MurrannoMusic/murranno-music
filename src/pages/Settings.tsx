@@ -2,6 +2,7 @@ import { ArrowLeft, Settings as SettingsIcon, Moon, Sun, Monitor } from 'lucide-
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useTheme } from '@/components/ThemeProvider';
 
@@ -22,9 +23,8 @@ export const Settings = () => {
             </Badge>
           </div>
           
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-            <SettingsIcon className="h-5 w-5 text-primary" />
-          </div>
+          {/* Avatar Dropdown (Right) */}
+          <AvatarDropdown />
         </div>
       </div>
 

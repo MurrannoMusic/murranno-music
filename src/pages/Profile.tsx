@@ -2,6 +2,7 @@ import { ArrowLeft, User } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 
@@ -22,9 +23,8 @@ export const Profile = () => {
             </Badge>
           </div>
           
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-            <User className="h-5 w-5 text-primary" />
-          </div>
+          {/* Avatar Dropdown (Right) */}
+          <AvatarDropdown />
         </div>
       </div>
 
