@@ -9,6 +9,8 @@ import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { UserTypeSelection } from "./pages/UserTypeSelection";
 import { Dashboard } from "./pages/Dashboard";
+import { ArtistDashboard } from "./pages/ArtistDashboard";
+import { LabelDashboard } from "./pages/LabelDashboard";
 import { Upload } from "./pages/Upload";
 import { Promotions } from "./pages/Promotions";
 import { Earnings } from "./pages/Earnings";
@@ -31,6 +33,10 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/artist-dashboard" element={<ArtistDashboard />} />
+            <Route path="/label-dashboard" element={<LabelDashboard />} />
+            <Route path="/agency-dashboard" element={<AgencyDashboard />} />
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
@@ -40,7 +46,6 @@ const App = () => (
             <Route path="/earnings" element={<Earnings />} />
             <Route path="/analytics" element={<Analytics />} />
             <Route path="/label-analytics" element={<LabelAnalytics />} />
-            <Route path="/agency-dashboard" element={<AgencyDashboard />} />
             <Route path="/artist-management" element={<ArtistManagement />} />
             <Route path="/campaign-manager" element={<CampaignManager />} />
             <Route path="/payout-manager" element={<PayoutManager />} />
