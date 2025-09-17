@@ -121,7 +121,7 @@ export const Dashboard = () => {
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-4 -mt-6">
         {/* Demo User Type Switcher */}
         <UserTypeDemo />
         
@@ -129,8 +129,8 @@ export const Dashboard = () => {
         {isLabel && <ArtistSelector />}
         
         {/* Crypto-style Stats Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <DollarSign className="h-4 w-4 text-[#6c5ce7]" />
@@ -147,7 +147,7 @@ export const Dashboard = () => {
             </div>
           </div>
           
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <BarChart3 className="h-4 w-4 text-[#6c5ce7]" />
@@ -199,7 +199,7 @@ export const Dashboard = () => {
             <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {(isArtist || isLabel) && (
                 <Link to="/upload">
                   <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
@@ -215,7 +215,7 @@ export const Dashboard = () => {
               </Link>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               <Link to={isLabel ? "/label-analytics" : isAgency ? "/agency-dashboard" : "/analytics"}>
                 <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
                   View Analytics

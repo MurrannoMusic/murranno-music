@@ -61,11 +61,11 @@ export const ArtistDashboard = () => {
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 mt-6">
+      <div className="mobile-container space-y-4 mt-4">
         
         {/* Crypto-style Stats Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <DollarSign className="h-4 w-4 text-[#6c5ce7]" />
@@ -82,7 +82,7 @@ export const ArtistDashboard = () => {
             </div>
           </div>
           
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <BarChart3 className="h-4 w-4 text-[#6c5ce7]" />

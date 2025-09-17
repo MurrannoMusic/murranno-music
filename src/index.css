@@ -183,16 +183,16 @@
 
   /* Modern Mobile Container */
   .mobile-container {
-    @apply max-w-sm mx-auto px-6;
+    @apply max-w-md mx-auto px-4;
   }
 
   /* Modern Card System */
   .modern-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-6 shadow-primary transition-smooth;
+    @apply bg-card/80 backdrop-blur-xl border border-border/30 rounded-3xl p-4 shadow-primary transition-smooth;
   }
 
   .stat-card {
-    @apply bg-card/90 backdrop-blur-xl border border-border/20 rounded-2xl p-5 shadow-soft transition-smooth hover:shadow-primary;
+    @apply bg-card/90 backdrop-blur-xl border border-border/20 rounded-2xl p-4 shadow-soft transition-smooth hover:shadow-primary;
   }
 
   /* Button System */
@@ -235,11 +235,11 @@
 
   /* Layout Utilities */
   .mobile-safe-bottom {
-    @apply pb-24;
+    @apply pb-20;
   }
 
   .mobile-safe-top {
-    @apply pt-12;
+    @apply pt-8;
   }
 
   /* Modern Glass Effects */
