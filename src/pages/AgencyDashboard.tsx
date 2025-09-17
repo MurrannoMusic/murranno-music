@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { StatCard } from '@/components/mobile/StatCard';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
+import { ModernStatCard } from '@/components/modern/ModernStatCard';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 export const AgencyDashboard = () => {
   const activeCampaigns = [
@@ -38,54 +38,56 @@ export const AgencyDashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom">
-      {/* Header */}
-      <div className="gradient-accent p-6 text-white mobile-safe-top">
+    <PageContainer>
+      {/* Modern Agency Header */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/">
-            <ArrowLeft className="h-6 w-6" />
+          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h1 className="mobile-heading">Promo Masters</h1>
-              <Badge variant="secondary" className="text-xs">
-                AGENCY
-              </Badge>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-accent/20 rounded-xl flex items-center justify-center">
+                <Zap className="h-5 w-5 text-accent" />
+              </div>
+              <div>
+                <h1 className="heading-lg">Promo Masters</h1>
+                <p className="body-md text-muted-foreground">Campaign management hub</p>
+              </div>
             </div>
-            <p className="text-white/80 text-base">Campaign management hub</p>
           </div>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
-            <Zap className="h-6 w-6" />
-          </div>
+          <Badge className="bg-accent/15 text-accent border-accent/30">
+            AGENCY
+          </Badge>
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-6 -mt-4">
         {/* Campaign Stats */}
-        <div className="mobile-card-grid">
-          <StatCard
-            icon={Target}
+        <div className="grid grid-cols-2 gap-4">
+          <ModernStatCard
+            icon={<Target className="h-5 w-5 text-primary" />}
             title="Active Campaigns"
             value="8"
             change="+3"
             changeType="positive"
           />
-          <StatCard
-            icon={Users}
+          <ModernStatCard
+            icon={<Users className="h-5 w-5 text-primary" />}
             title="Total Reach"
             value="156K"
             change="+28%"
             changeType="positive"
           />
-          <StatCard
-            icon={BarChart3}
+          <ModernStatCard
+            icon={<BarChart3 className="h-5 w-5 text-primary" />}
             title="Conversion Rate"
             value="3.2%"
             change="+0.5%"
             changeType="positive"
           />
-          <StatCard
-            icon={Download}
+          <ModernStatCard
+            icon={<Download className="h-5 w-5 text-primary" />}
             title="Reports Generated"
             value="24"
             change="+6"
@@ -94,17 +96,20 @@ export const AgencyDashboard = () => {
         </div>
 
         {/* Active Campaigns */}
-        <Card className="glass-card">
+        <Card className="modern-card">
           <CardHeader>
-            <CardTitle className="mobile-subheading">Active Campaigns</CardTitle>
+            <CardTitle className="heading-md">Active Campaigns</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {activeCampaigns.map((campaign) => (
-              <div key={campaign.id} className="interactive-element p-4 bg-muted/20 rounded-xl border border-border/10 space-y-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-sm">{campaign.artist}</h3>
+              <div key={campaign.id} className="list-item">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <Target className="h-5 w-5 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <h3 className="body-lg font-semibold">{campaign.artist}</h3>
                       <Badge 
                         variant={campaign.status === 'Active' ? 'default' : 'secondary'}
                         className="text-xs"
@@ -112,22 +117,12 @@ export const AgencyDashboard = () => {
                         {campaign.status}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground">{campaign.campaign}</p>
+                    <span className="body-md font-bold">{campaign.reach}</span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Reach</p>
-                    <p className="font-semibold text-sm">{campaign.reach}</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between pt-2 border-t border-border/10">
-                  <div>
-                    <p className="text-xs text-muted-foreground">Budget</p>
-                    <p className="font-semibold text-sm">{campaign.budget}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Time Remaining</p>
-                    <p className="font-semibold text-sm">{campaign.remaining}</p>
+                  <p className="body-sm text-muted-foreground">{campaign.campaign}</p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/20">
+                    <span className="body-sm text-muted-foreground">Budget: {campaign.budget}</span>
+                    <span className="body-sm font-medium">{campaign.remaining}</span>
                   </div>
                 </div>
               </div>
@@ -136,32 +131,30 @@ export const AgencyDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card">
+        <Card className="modern-card">
           <CardHeader>
-            <CardTitle className="mobile-subheading">Agency Tools</CardTitle>
+            <CardTitle className="heading-md">Agency Tools</CardTitle>
           </CardHeader>
-          <CardContent className="mobile-card-grid">
+          <CardContent className="grid grid-cols-2 gap-3">
             <Link to="/promotions">
-              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold">
+              <Button variant="pill" className="w-full h-12">
                 Create Campaign
               </Button>
             </Link>
             <Link to="/campaign-manager">
-              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold">
+              <Button variant="glass" className="w-full h-12">
                 Manage Campaigns
               </Button>
             </Link>
-            <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
+            <Button variant="outline" className="w-full h-12">
               Export Reports
             </Button>
-            <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
+            <Button variant="outline" className="w-full h-12">
               Client Analytics
             </Button>
           </CardContent>
         </Card>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };

@@ -8,7 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { PageHeader } from '@/components/layout/PageHeader';
 
 export const Upload = () => {
   const [trackTitle, setTrackTitle] = useState('');
@@ -38,33 +39,31 @@ export const Upload = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background mobile-safe-bottom">
-      <div className="mobile-container">
-        {/* Header */}
-        <div className="flex items-center mb-4 sm:mb-6">
-          <Link to="/" className="mr-3 sm:mr-4">
-            <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
-          </Link>
-          <h1 className="mobile-heading">Upload Track</h1>
-        </div>
+    <PageContainer>
+      <PageHeader 
+        title="Upload Track"
+        subtitle="Share your music with the world"
+        backTo="/artist-dashboard"
+      />
 
+      <div className="mobile-container space-y-6 -mt-4">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* File Upload Section */}
-          <Card>
+          <Card className="modern-card">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Music className="h-5 w-5 mr-2 text-primary" />
+              <CardTitle className="heading-md flex items-center gap-3">
+                <Music className="h-5 w-5 text-primary" />
                 Audio File
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center">
+              <div className="border-2 border-dashed border-border/30 rounded-2xl p-8 text-center bg-secondary/10">
                 <UploadIcon className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-lg font-medium mb-2">Upload your track</p>
-                <p className="text-sm text-muted-foreground mb-4">
+                <p className="body-lg font-semibold mb-2">Upload your track</p>
+                <p className="body-sm text-muted-foreground mb-4">
                   Supports MP3, WAV, FLAC (Max 100MB)
                 </p>
-                <Button type="button" variant="outline" className="music-button">
+                <Button type="button" variant="pill" size="lg">
                   Choose File
                 </Button>
               </div>
@@ -72,17 +71,17 @@ export const Upload = () => {
           </Card>
 
           {/* Artwork Upload */}
-          <Card>
+          <Card className="modern-card">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Image className="h-5 w-5 mr-2 text-primary" />
+              <CardTitle className="heading-md flex items-center gap-3">
+                <Image className="h-5 w-5 text-primary" />
                 Artwork
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center">
-                <Image className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                <p className="text-sm text-muted-foreground mb-3">
+              <div className="border-2 border-dashed border-border/30 rounded-2xl p-6 text-center bg-secondary/10">
+                <Image className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
+                <p className="body-sm text-muted-foreground mb-3">
                   3000x3000px recommended
                 </p>
                 <Button type="button" variant="outline" size="sm">
@@ -93,40 +92,42 @@ export const Upload = () => {
           </Card>
 
           {/* Track Information */}
-          <Card>
+          <Card className="modern-card">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Info className="h-5 w-5 mr-2 text-primary" />
+              <CardTitle className="heading-md flex items-center gap-3">
+                <Info className="h-5 w-5 text-primary" />
                 Track Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="title">Track Title</Label>
+                <Label htmlFor="title" className="body-md font-semibold">Track Title</Label>
                 <Input
                   id="title"
                   value={trackTitle}
                   onChange={(e) => setTrackTitle(e.target.value)}
                   placeholder="Enter track title"
+                  className="mt-1 h-12 rounded-xl border-border/30"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="artist">Artist Name</Label>
+                <Label htmlFor="artist" className="body-md font-semibold">Artist Name</Label>
                 <Input
                   id="artist"
                   value={artist}
                   onChange={(e) => setArtist(e.target.value)}
                   placeholder="Enter artist name"
+                  className="mt-1 h-12 rounded-xl border-border/30"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="genre">Genre</Label>
+                <Label htmlFor="genre" className="body-md font-semibold">Genre</Label>
                 <Select value={genre} onValueChange={setGenre}>
-                  <SelectTrigger>
+                  <SelectTrigger className="mt-1 h-12 rounded-xl border-border/30">
                     <SelectValue placeholder="Select genre" />
                   </SelectTrigger>
                   <SelectContent>
@@ -142,23 +143,25 @@ export const Upload = () => {
               </div>
 
               <div>
-                <Label htmlFor="releaseDate">Release Date</Label>
+                <Label htmlFor="releaseDate" className="body-md font-semibold">Release Date</Label>
                 <Input
                   id="releaseDate"
                   type="date"
                   value={releaseDate}
                   onChange={(e) => setReleaseDate(e.target.value)}
+                  className="mt-1 h-12 rounded-xl border-border/30"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">Description (Optional)</Label>
+                <Label htmlFor="description" className="body-md font-semibold">Description (Optional)</Label>
                 <Textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell your fans about this track..."
+                  className="mt-1 rounded-xl border-border/30"
                   rows={3}
                 />
               </div>
@@ -166,18 +169,20 @@ export const Upload = () => {
           </Card>
 
           {/* Distribution Platforms */}
-          <Card>
+          <Card className="modern-card">
             <CardHeader>
-              <CardTitle>Distribution Platforms</CardTitle>
+              <CardTitle className="heading-md">Distribution Platforms</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {Object.entries(dsps).map(([platform, enabled]) => (
-                <div key={platform} className="flex items-center justify-between">
-                  <Label htmlFor={platform} className="capitalize font-medium">
-                    {platform === 'appleMusic' ? 'Apple Music' : 
-                     platform === 'youtubeMusic' ? 'YouTube Music' : 
-                     platform}
-                  </Label>
+                <div key={platform} className="list-item">
+                  <div className="flex-1">
+                    <Label htmlFor={platform} className="body-lg font-semibold capitalize">
+                      {platform === 'appleMusic' ? 'Apple Music' : 
+                       platform === 'youtubeMusic' ? 'YouTube Music' : 
+                       platform}
+                    </Label>
+                  </div>
                   <Switch
                     id={platform}
                     checked={enabled}
@@ -191,15 +196,14 @@ export const Upload = () => {
           {/* Submit Button */}
           <Button 
             type="submit" 
-            className="w-full gradient-primary music-button shadow-primary" 
+            variant="pill"
+            className="w-full h-14"
             size="lg"
           >
             Submit for Review
           </Button>
         </form>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };

@@ -44,57 +44,73 @@ export const LabelDashboard = () => {
 
   return (
     <PageContainer className="smooth-scroll">
-      {/* Label Header */}
-      <div className="gradient-secondary p-6 text-white mobile-safe-top">
+      {/* Modern Label Header */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/">
-            <ArrowLeft className="h-6 w-6" />
+          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h1 className="mobile-heading">{headerTitle}</h1>
-              <Badge variant="secondary" className="text-xs">
-                LABEL
-              </Badge>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-secondary/30 rounded-xl flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
+              </div>
+              <div>
+                <h1 className="heading-lg">{headerTitle}</h1>
+                <p className="body-md text-muted-foreground">{headerSubtitle}</p>
+              </div>
             </div>
-            <p className="text-white/80 text-base">{headerSubtitle}</p>
           </div>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
-            <Users className="h-6 w-6" />
-          </div>
+          <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30">
+            LABEL
+          </Badge>
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
-        {/* Demo User Type Switcher */}
-        <UserTypeDemo />
-        
+      <div className="mobile-container space-y-6 -mt-4">
         {/* Artist Selector */}
         <ArtistSelector />
         
-        {/* Quick Stats */}
-        <StatsGrid stats={stats} />
+        {/* Enhanced Stats */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="modern-card">
+            <div className="p-5">
+              <div className="portfolio-value">{stats[1]?.value}</div>
+              <div className="body-sm text-muted-foreground">Total Earnings</div>
+              <div className="portfolio-change positive">{stats[1]?.change}</div>
+            </div>
+          </div>
+          <div className="modern-card">
+            <div className="p-5">
+              <div className="portfolio-value">{stats[0]?.value}</div>
+              <div className="body-sm text-muted-foreground">Total Streams</div>
+              <div className="portfolio-change positive">{stats[0]?.change}</div>
+            </div>
+          </div>
+        </div>
 
         {/* Recent Activity */}
-        <Card className="glass-card">
+        <Card className="modern-card">
           <CardHeader>
-            <CardTitle className="flex items-center mobile-subheading">
-              <Clock className="h-5 w-5 mr-2 text-primary" />
+            <CardTitle className="heading-md flex items-center gap-3">
+              <Clock className="h-5 w-5 text-primary" />
               Recent Activity
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
-                <div className="flex-1">
-                  <p className="font-semibold">{activity.title}</p>
-                  <p className="text-sm text-muted-foreground">{activity.description}</p>
+              <div key={index} className="list-item">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-primary" />
                 </div>
-                <div className="text-right">
-                  <p className={`text-sm font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
-                    {activity.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="body-lg font-semibold truncate">{activity.title}</p>
+                    <span className={`body-md font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
+                      {activity.value}
+                    </span>
+                  </div>
+                  <p className="body-sm text-muted-foreground">{activity.description}</p>
                 </div>
               </div>
             ))}
@@ -102,33 +118,33 @@ export const LabelDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card">
+        <Card className="modern-card">
           <CardHeader>
-            <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
+            <CardTitle className="heading-md">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="mobile-card-grid">
+          <CardContent className="grid grid-cols-2 gap-3">
             <Link to="/upload">
-              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold" variant="default">
+              <Button variant="pill" className="w-full h-12">
                 Upload Track
               </Button>
             </Link>
             <Link to="/promotions">
-              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold" variant="default">
+              <Button variant="glass" className="w-full h-12">
                 Start Campaign
               </Button>
             </Link>
             <Link to="/label-analytics">
-              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-accent/10">
+              <Button variant="outline" className="w-full h-12">
                 View Analytics
               </Button>
             </Link>
             <Link to="/payout-manager">
-              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-primary/10">
+              <Button variant="outline" className="w-full h-12">
                 Manage Payouts
               </Button>
             </Link>
-            <Link to="/artist-management">
-              <Button className="w-full gradient-accent music-button h-12 rounded-xl font-semibold">
+            <Link to="/artist-management" className="col-span-2">
+              <Button variant="pill" className="w-full h-12 bg-gradient-accent">
                 Manage Artists
               </Button>
             </Link>
