@@ -1,4 +1,4 @@
-import { Music, Clock, Upload, Play, ArrowLeft } from 'lucide-react';
+import { Music, Clock, Upload, Play, ArrowLeft, DollarSign, BarChart3 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -59,22 +59,41 @@ export const ArtistDashboard = () => {
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-4">
+      <div className="mobile-container space-y-6 mt-6">
         
-        {/* Quick Stats */}
+        {/* Enhanced Stats Cards */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="modern-card">
-            <div className="p-5">
-              <div className="portfolio-value">{stats[1]?.value}</div>
-              <div className="body-sm text-muted-foreground">Total Earnings</div>
-              <div className="portfolio-change positive">+12%</div>
+          <div className="bg-card/90 backdrop-blur-xl border border-border/20 rounded-3xl p-6 shadow-soft hover:shadow-primary transition-smooth">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-8 h-8 bg-primary/15 rounded-xl flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-primary" />
+              </div>
+              <div className="text-right">
+                <div className="portfolio-change positive text-xs">+12%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+                {stats[1]?.value}
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
             </div>
           </div>
-          <div className="modern-card">
-            <div className="p-5">
-              <div className="portfolio-value">{stats[0]?.value}</div>
-              <div className="body-sm text-muted-foreground">Total Streams</div>
-              <div className="portfolio-change positive">+23%</div>
+          
+          <div className="bg-card/90 backdrop-blur-xl border border-border/20 rounded-3xl p-6 shadow-soft hover:shadow-primary transition-smooth">
+            <div className="flex items-center justify-between mb-3">
+              <div className="w-8 h-8 bg-accent/15 rounded-xl flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-accent" />
+              </div>
+              <div className="text-right">
+                <div className="portfolio-change positive text-xs">+23%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold bg-gradient-accent bg-clip-text text-transparent">
+                {stats[0]?.value}
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Total Streams</div>
             </div>
           </div>
         </div>
