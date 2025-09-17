@@ -100,3 +100,34 @@ export const mockPayoutSummary: PayoutSummary = {
   thisMonth: 3,
   totalAvailable: '$195.60'
 };
+
+export const mockTopTracks = [
+  {
+    id: '1',
+    name: 'Summer Vibes',
+    plays: '12.5K',
+    change: '+23%',
+    changeType: 'positive' as const
+  },
+  {
+    id: '2',
+    name: 'Midnight Dreams',
+    plays: '8.2K',
+    change: '+15%',
+    changeType: 'positive' as const
+  },
+  {
+    id: '3',
+    name: 'City Lights',
+    plays: '6.8K',
+    change: '-5%',
+    changeType: 'negative' as const
+  },
+  {
+    id: '4',
+    name: 'Ocean Breeze',
+    plays: '4.1K',
+    change: '+8%',
+    changeType: 'positive' as const
+  }
+];

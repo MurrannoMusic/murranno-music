@@ -9,6 +9,8 @@ import { StatsGrid } from '@/components/stats/StatsGrid';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
+import { TopTracksCard } from '@/components/modern/TopTracksCard';
+import { mockTopTracks } from '@/utils/mockData';
 
 export const ArtistDashboard = () => {
   const { currentUser } = useUserType();
@@ -135,42 +137,8 @@ export const ArtistDashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Quick Actions */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="grid grid-cols-2 gap-3">
-              {/* Crypto-style Buttons */}
-              <Link to="/upload">
-                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
-                  Upload Track
-                </button>
-              </Link>
-              
-              <Link to="/analytics">
-                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                  Analytics
-                </button>
-              </Link>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-3">
-              <Link to="/earnings">
-                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                  Earnings
-                </button>
-              </Link>
-              
-              <Link to="/promotions">
-                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                  Promote
-                </button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Top Tracks Performance */}
+        <TopTracksCard tracks={mockTopTracks} />
       </div>
 
       <FloatingActionButton />
