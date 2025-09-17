@@ -60,93 +60,108 @@ export const LabelAnalytics = () => {
         {/* Artist Selector for Labels */}
         {isLabel && <ArtistSelector />}
 
-        {/* Overview Stats */}
-        <div className="mobile-card-grid">
-          <StatCard
-            icon={Music}
-            title="Total Streams"
-            value={stats.streams}
-            change="+23%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={DollarSign}
-            title="Earnings"
-            value={stats.earnings}
-            change="+12%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={Users}
-            title="Followers"
-            value={stats.followers}
-            change="+8%"
-            changeType="positive"
-          />
-          <StatCard
-            icon={TrendingUp}
-            title="Releases"
-            value={stats.releases}
-            change="+2"
-            changeType="positive"
-          />
+        {/* Crypto-style Stats Cards */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+5</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">24</div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Artists</div>
+            </div>
+          </div>
+          
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Music className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+15</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">156</div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Tracks</div>
+            </div>
+          </div>
         </div>
 
-        {/* Artist Performance Table (for labels) */}
-        {!selectedArtist && isLabel && (
-          <Card className="glass-card">
-            <CardHeader>
-              <CardTitle className="mobile-subheading">Artist Performance</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {(currentUser as any).artists?.map((artist: any) => (
-                  <div key={artist.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
-                    <div>
-                      <p className="font-semibold">{artist.stageName}</p>
-                      <p className="text-sm text-muted-foreground">1.2K streams this month</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-bold text-primary">$45</p>
-                      <p className="text-xs text-success">+12%</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Revenue Breakdown */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="mobile-subheading">Revenue Breakdown</CardTitle>
+        {/* Top Artists */}
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-[#6c5ce7]" />
+              Top Performing Artists
+            </CardTitle>
           </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="monthly" className="w-full">
-              <TabsList className="grid w-full grid-cols-3 bg-muted/20">
-                <TabsTrigger value="weekly" className="text-xs">Weekly</TabsTrigger>
-                <TabsTrigger value="monthly" className="text-xs">Monthly</TabsTrigger>
-                <TabsTrigger value="yearly" className="text-xs">Yearly</TabsTrigger>
-              </TabsList>
-              <TabsContent value="monthly" className="mt-4">
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Streaming Revenue</span>
-                    <span className="font-semibold">${selectedArtist ? '67' : '890'}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm">Promotion Revenue</span>
-                    <span className="font-semibold">${selectedArtist ? '22' : '344'}</span>
-                  </div>
-                  <div className="h-px bg-border"></div>
-                  <div className="flex justify-between items-center font-semibold">
-                    <span>Total</span>
-                    <span className="text-primary">${stats.earnings}</span>
-                  </div>
+          <CardContent className="space-y-3">
+            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#6c5ce7]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-white truncate">Luna Sol</p>
+                  <span className="text-sm font-bold text-[#00b894]">1.2M streams</span>
                 </div>
-              </TabsContent>
-            </Tabs>
+                <p className="text-xs text-[#8b8ba3]">+25% growth this month</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#6c5ce7]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-white truncate">The Echoes</p>
+                  <span className="text-sm font-bold text-[#00b894]">890K streams</span>
+                </div>
+                <p className="text-xs text-[#8b8ba3]">+18% growth this month</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-[#6c5ce7]" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-semibold text-white truncate">Midnight Drive</p>
+                  <span className="text-sm font-bold text-[#00b894]">645K streams</span>
+                </div>
+                <p className="text-xs text-[#8b8ba3]">+12% growth this month</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Analytics Tools */}
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Analytics Tools</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                Generate Report
+              </button>
+              
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                Export Data
+              </button>
+            </div>
+            
+            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              View Detailed Metrics
+            </button>
           </CardContent>
         </Card>
       </div>

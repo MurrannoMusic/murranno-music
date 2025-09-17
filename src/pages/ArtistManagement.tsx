@@ -77,69 +77,74 @@ export const ArtistManagement = () => {
       </div>
 
       <div className="mobile-container space-y-6 mt-6">
-        {/* Summary Stats */}
-        <Card className="glass-card">
+        {/* Artist Stats */}
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-2xl font-bold text-primary">{artists.length}</p>
-                <p className="text-xs text-muted-foreground">Total Artists</p>
+                <p className="text-xl font-bold text-white">{artists.length}</p>
+                <p className="text-xs text-[#8b8ba3]">Artists</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-primary">18</p>
-                <p className="text-xs text-muted-foreground">Total Releases</p>
+                <p className="text-xl font-bold text-white">18</p>
+                <p className="text-xs text-[#8b8ba3]">Total Releases</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-primary">$754</p>
-                <p className="text-xs text-muted-foreground">Combined Revenue</p>
+                <p className="text-xl font-bold text-white">$754</p>
+                <p className="text-xs text-[#8b8ba3]">Combined Revenue</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Artist List */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="mobile-subheading">Your Artists</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Your Artists</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {artists.map((artist) => (
-              <ArtistCard
-                key={artist.id}
-                artist={artist}
-                onEdit={(id) => console.log('Edit artist:', id)}
-                onViewReleases={(id) => console.log('View releases:', id)}
-                onViewAnalytics={(id) => console.log('View analytics:', id)}
-                onManagePayouts={(id) => console.log('Manage payouts:', id)}
-              />
+              <div key={artist.id} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                  <Users className="h-5 w-5 text-[#6c5ce7]" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-white truncate">{artist.stageName}</p>
+                    <span className="px-2 py-1 bg-[#00b894]/20 text-[#00b894] rounded-full text-xs">{artist.status}</span>
+                  </div>
+                  <p className="text-xs text-[#8b8ba3]">{artist.releases} tracks • {artist.streams} streams</p>
+                </div>
+              </div>
             ))}
           </CardContent>
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="mobile-card-grid">
-            <Link to="/payout-manager">
-              <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold">
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
                 Bulk Payout Request
-              </Button>
-            </Link>
-            <Link to="/label-analytics">
-              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold">
+              </button>
+              
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
                 Label Analytics
-              </Button>
-            </Link>
-            <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
-              Export Reports
-            </Button>
-            <Link to="/upload">
-              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30">
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                Export Reports
+              </button>
+              
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
                 Upload for Artist
-              </Button>
-            </Link>
+              </button>
+            </div>
           </CardContent>
         </Card>
       </div>
