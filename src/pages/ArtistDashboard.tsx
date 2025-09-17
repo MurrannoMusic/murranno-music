@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 import { StatsGrid } from '@/components/stats/StatsGrid';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -52,12 +53,8 @@ export const ArtistDashboard = () => {
             </Badge>
           </div>
           
-          {/* Avatar (Right) */}
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-            <span className="text-primary font-bold text-sm">
-              {currentUser.name.slice(0, 2).toUpperCase()}
-            </span>
-          </div>
+          {/* Avatar Dropdown (Right) */}
+          <AvatarDropdown />
         </div>
       </div>
 

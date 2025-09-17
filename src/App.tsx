@@ -21,6 +21,8 @@ import { AgencyDashboard } from "./pages/AgencyDashboard";
 import { ArtistManagement } from "./pages/ArtistManagement";
 import { CampaignManager } from "./pages/CampaignManager";
 import { PayoutManager } from "./pages/PayoutManager";
+import { Profile } from "./pages/Profile";
+import { Settings } from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +53,8 @@ const App = () => (
             <Route path="/artist-management" element={<ArtistManagement />} />
             <Route path="/campaign-manager" element={<CampaignManager />} />
             <Route path="/payout-manager" element={<PayoutManager />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
