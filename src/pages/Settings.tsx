@@ -29,10 +29,10 @@ export const Settings = () => {
       </div>
 
       <div className="mobile-container space-y-4 mt-4">
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-white flex items-center gap-3">
-              <Moon className="h-5 w-5 text-[#6c5ce7]" />
+            <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
+              <Moon className="h-5 w-5 text-primary" />
               Theme Settings
             </CardTitle>
           </CardHeader>
@@ -41,8 +41,8 @@ export const Settings = () => {
               onClick={() => setTheme('light')}
               className={`w-full flex items-center gap-3 p-4 rounded-[16px] border transition-all ${
                 theme === 'light' 
-                  ? 'bg-[#6c5ce7] border-[#6c5ce7] text-white' 
-                  : 'bg-[#0d0d1b] border-[#2d2d44] text-white hover:bg-[#2d2d44]'
+                  ? 'bg-primary border-primary text-primary-foreground' 
+                  : 'bg-secondary/20 border-border text-card-foreground hover:bg-secondary/40'
               }`}
             >
               <Sun className="h-5 w-5" />
@@ -53,8 +53,8 @@ export const Settings = () => {
               onClick={() => setTheme('dark')}
               className={`w-full flex items-center gap-3 p-4 rounded-[16px] border transition-all ${
                 theme === 'dark' 
-                  ? 'bg-[#6c5ce7] border-[#6c5ce7] text-white' 
-                  : 'bg-[#0d0d1b] border-[#2d2d44] text-white hover:bg-[#2d2d44]'
+                  ? 'bg-primary border-primary text-primary-foreground' 
+                  : 'bg-secondary/20 border-border text-card-foreground hover:bg-secondary/40'
               }`}
             >
               <Moon className="h-5 w-5" />
@@ -65,8 +65,8 @@ export const Settings = () => {
               onClick={() => setTheme('system')}
               className={`w-full flex items-center gap-3 p-4 rounded-[16px] border transition-all ${
                 theme === 'system' 
-                  ? 'bg-[#6c5ce7] border-[#6c5ce7] text-white' 
-                  : 'bg-[#0d0d1b] border-[#2d2d44] text-white hover:bg-[#2d2d44]'
+                  ? 'bg-primary border-primary text-primary-foreground' 
+                  : 'bg-secondary/20 border-border text-card-foreground hover:bg-secondary/40'
               }`}
             >
               <Monitor className="h-5 w-5" />
@@ -75,9 +75,9 @@ export const Settings = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardContent className="p-4">
-            <p className="text-center text-[#8b8ba3]">
+            <p className="text-center text-muted-foreground">
               More settings options coming soon...
             </p>
           </CardContent>
