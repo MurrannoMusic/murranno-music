@@ -1,4 +1,4 @@
-import { ArrowLeft, Target, Users, BarChart3, Download } from 'lucide-react';
+import { ArrowLeft, Target, Users, BarChart3, Download, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -40,14 +40,22 @@ export const AgencyDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom">
       {/* Header */}
-      <div className="gradient-primary p-6 text-white mobile-safe-top">
+      <div className="gradient-accent p-6 text-white mobile-safe-top">
         <div className="flex items-center gap-4 mb-4">
           <Link to="/">
             <ArrowLeft className="h-6 w-6" />
           </Link>
           <div className="flex-1">
-            <h1 className="mobile-heading">Agency Dashboard</h1>
+            <div className="flex items-center gap-2 mb-2">
+              <h1 className="mobile-heading">Promo Masters</h1>
+              <Badge variant="secondary" className="text-xs">
+                AGENCY
+              </Badge>
+            </div>
             <p className="text-white/80 text-base">Campaign management hub</p>
+          </div>
+          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
+            <Zap className="h-6 w-6" />
           </div>
         </div>
       </div>

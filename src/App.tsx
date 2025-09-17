@@ -33,7 +33,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Dashboard />} />
+            <Route path="/" element={<UserTypeSwitcher />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/artist-dashboard" element={<ArtistDashboard />} />
             <Route path="/label-dashboard" element={<LabelDashboard />} />

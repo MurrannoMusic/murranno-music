@@ -1,15 +1,15 @@
-import { Music, Users, Zap, ArrowLeft } from 'lucide-react';
+import { Music, Users, Zap } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { useUserType } from '@/hooks/useUserType';
 import { UserType } from '@/types/user';
 
 export const UserTypeSwitcher = () => {
   const { currentUserType, switchUserType } = useUserType();
+  const navigate = useNavigate();
 
   const userTypes = [
     {
@@ -40,6 +40,9 @@ export const UserTypeSwitcher = () => {
 
   const handleUserTypeSwitch = (type: UserType) => {
     switchUserType(type);
+    // Navigate to the appropriate dashboard
+    const redirectPath = getRedirectPath(type);
+    navigate(redirectPath);
   };
 
   const getRedirectPath = (type: UserType) => {
@@ -57,28 +60,15 @@ export const UserTypeSwitcher = () => {
 
   return (
     <PageContainer>
-      <PageHeader
-        title="Switch User Type"
-        subtitle="Experience the platform from different perspectives"
-        backTo="/"
-      />
+      {/* Header */}
+      <div className="gradient-primary p-6 text-white mobile-safe-top">
+        <div className="text-center">
+          <h1 className="mobile-heading mb-2">Choose Your Experience</h1>
+          <p className="text-white/80 text-base">Select how you want to use the platform</p>
+        </div>
+      </div>
 
       <div className="mobile-container space-y-6 -mt-8">
-        {/* Current User Type Indicator */}
-        <Card className="glass-card">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Currently viewing as</p>
-                <p className="font-semibold text-lg">{currentUserType.charAt(0).toUpperCase() + currentUserType.slice(1)}</p>
-              </div>
-              <Badge variant="secondary" className="text-xs">
-                ACTIVE
-              </Badge>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* User Type Cards */}
         <div className="space-y-4">
           {userTypes.map(({ type, title, description, icon: Icon, gradient, features }) => {
@@ -117,20 +107,13 @@ export const UserTypeSwitcher = () => {
 
                       {/* Action Button */}
                       <div className="pt-2">
-                        {isActive ? (
-                          <Link to={getRedirectPath(type)}>
-                            <Button variant="outline" className="w-full">
-                              Go to {title} Dashboard
-                            </Button>
-                          </Link>
-                        ) : (
-                          <Button 
-                            onClick={() => handleUserTypeSwitch(type)}
-                            className={`w-full ${gradient} text-white hover:opacity-90`}
-                          >
-                            Switch to {title}
-                          </Button>
-                        )}
+                        <Button 
+                          onClick={() => handleUserTypeSwitch(type)}
+                          className={`w-full ${gradient} text-white hover:opacity-90`}
+                          disabled={isActive}
+                        >
+                          {isActive ? 'Currently Selected' : `Select ${title}`}
+                        </Button>
                       </div>
                     </div>
                   </div>
@@ -148,10 +131,9 @@ export const UserTypeSwitcher = () => {
                 <span className="text-amber-600 text-sm">ℹ️</span>
               </div>
               <div>
-                <h4 className="font-medium text-sm mb-1">Demo Mode</h4>
+                <h4 className="font-medium text-sm mb-1">Demo Platform</h4>
                 <p className="text-xs text-muted-foreground">
-                  This is a demo feature to showcase different user perspectives. 
-                  In a production app, user types would be set during account creation.
+                  Experience different user perspectives. Select a role above to explore the platform's features.
                 </p>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import { Music, Clock, Upload, Play } from 'lucide-react';
+import { Music, Clock, Upload, Play, ArrowLeft } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -37,7 +37,10 @@ export const ArtistDashboard = () => {
     <PageContainer className="smooth-scroll">
       {/* Artist Header */}
       <div className="gradient-primary p-6 text-white mobile-safe-top">
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-4 mb-4">
+          <Link to="/">
+            <ArrowLeft className="h-6 w-6" />
+          </Link>
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2">
               <h1 className="mobile-heading">Welcome back, {currentUser.name}</h1>
