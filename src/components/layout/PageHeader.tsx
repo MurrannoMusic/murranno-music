@@ -10,17 +10,17 @@ interface PageHeaderProps {
 
 export const PageHeader = ({ title, subtitle, backTo, actions }: PageHeaderProps) => {
   return (
-    <div className="gradient-primary p-6 text-white mobile-safe-top">
-      <div className="flex items-center gap-4 mb-4">
+    <div className="bg-gradient-dark backdrop-blur-xl border-b border-border/20 p-6 text-foreground mobile-safe-top">
+      <div className="flex items-center gap-4 mb-2">
         {backTo && (
-          <Link to={backTo}>
-            <ArrowLeft className="h-6 w-6" />
+          <Link to={backTo} className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
         )}
         <div className="flex-1">
-          <h1 className="mobile-heading">{title}</h1>
+          <h1 className="heading-lg">{title}</h1>
           {subtitle && (
-            <p className="text-white/80 text-base">{subtitle}</p>
+            <p className="body-md text-muted-foreground mt-1">{subtitle}</p>
           )}
         </div>
         {actions}

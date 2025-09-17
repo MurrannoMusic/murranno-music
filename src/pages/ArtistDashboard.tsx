@@ -35,31 +35,50 @@ export const ArtistDashboard = () => {
 
   return (
     <PageContainer className="smooth-scroll">
-      {/* Artist Header */}
-      <div className="gradient-primary p-6 text-white mobile-safe-top">
+      {/* Modern Artist Header */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
         <div className="flex items-center gap-4 mb-4">
-          <Link to="/">
-            <ArrowLeft className="h-6 w-6" />
+          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h1 className="mobile-heading">Welcome back, {currentUser.name}</h1>
-              <Badge variant="secondary" className="text-xs">
-                ARTIST
-              </Badge>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <span className="text-primary font-bold text-sm">
+                  {currentUser.name.slice(0, 2).toUpperCase()}
+                </span>
+              </div>
+              <div>
+                <h1 className="heading-lg">Welcome back</h1>
+                <p className="body-md text-muted-foreground">{currentUser.name}</p>
+              </div>
             </div>
-            <p className="text-white/80 text-base">Let's make some music magic ✨</p>
           </div>
-          <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center shadow-soft">
-            <Music className="h-6 w-6" />
-          </div>
+          <Badge className="bg-primary/10 text-primary border-primary/20">
+            ARTIST
+          </Badge>
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-6 -mt-4">
         
         {/* Quick Stats */}
-        <StatsGrid stats={stats} />
+        <div className="grid grid-cols-2 gap-4">
+          <div className="modern-card">
+            <div className="p-5">
+              <div className="portfolio-value">{stats[1]?.value}</div>
+              <div className="body-sm text-muted-foreground">Total Earnings</div>
+              <div className="portfolio-change positive">+12%</div>
+            </div>
+          </div>
+          <div className="modern-card">
+            <div className="p-5">
+              <div className="portfolio-value">{stats[0]?.value}</div>
+              <div className="body-sm text-muted-foreground">Total Streams</div>
+              <div className="portfolio-change positive">+23%</div>
+            </div>
+          </div>
+        </div>
 
         {/* Recent Activity */}
         <Card className="glass-card">
