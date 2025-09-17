@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
-import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
+
 import { StatsGrid } from '@/components/stats/StatsGrid';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
@@ -57,8 +57,6 @@ export const ArtistDashboard = () => {
       </div>
 
       <div className="mobile-container space-y-6 -mt-8">
-        {/* Demo User Type Switcher */}
-        <UserTypeDemo />
         
         {/* Quick Stats */}
         <StatsGrid stats={stats} />
