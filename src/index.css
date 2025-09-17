@@ -79,6 +79,70 @@
     --sidebar-ring: 263 70% 50%;
   }
 
+  .light {
+    /* Light Mode Theme */
+    --background: 0 0% 98%;
+    --foreground: 222 84% 4%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 84% 4%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 84% 4%;
+
+    --primary: 263 70% 50%;
+    --primary-foreground: 0 0% 98%;
+    --primary-glow: 263 85% 60%;
+
+    --secondary: 210 40% 95%;
+    --secondary-foreground: 222 84% 10%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 263 70% 50%;
+
+    /* Light Status Colors */
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 98%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 98%;
+
+    /* Light Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(263 70% 50%), hsl(262 83% 58%));
+    --gradient-secondary: linear-gradient(135deg, hsl(210 40% 95%), hsl(0 0% 100%));
+    --gradient-accent: linear-gradient(135deg, hsl(262 83% 58%), hsl(263 85% 60%));
+    --gradient-dark: linear-gradient(135deg, hsl(210 40% 95%), hsl(214 32% 91%));
+    --gradient-glow: linear-gradient(135deg, hsl(263 85% 60% / 0.1), hsl(262 83% 58% / 0.1));
+    --gradient-mesh: radial-gradient(ellipse at top, hsl(263 70% 50% / 0.05), transparent 50%), 
+                     radial-gradient(ellipse at bottom, hsl(0 0% 100% / 0.9), transparent 50%),
+                     linear-gradient(180deg, hsl(0 0% 98%), hsl(0 0% 96%));
+
+    /* Light Shadows */
+    --shadow-primary: 0 25px 50px -12px hsl(263 70% 50% / 0.15);
+    --shadow-secondary: 0 8px 30px -8px hsl(0 0% 0% / 0.1);
+    --shadow-accent: 0 20px 40px -12px hsl(262 83% 58% / 0.2);
+    --shadow-glow: 0 0 60px hsl(263 85% 60% / 0.2);
+    --shadow-soft: 0 4px 20px -4px hsl(0 0% 0% / 0.1);
+
+    /* Light Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 222 84% 4%;
+    --sidebar-primary: 263 70% 50%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 210 40% 95%;
+    --sidebar-accent-foreground: 222 84% 10%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 263 70% 50%;
+  }
   .dark {
     /* Enhanced Dark Mode */
     --background: 222 84% 4%;
