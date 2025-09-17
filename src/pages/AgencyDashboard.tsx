@@ -62,53 +62,54 @@ export const AgencyDashboard = () => {
       </div>
 
       <div className="mobile-container space-y-6 -mt-4">
-        {/* Campaign Stats */}
+        {/* Crypto-style Stats Cards */}
         <div className="grid grid-cols-2 gap-4">
-          <ModernStatCard
-            icon={<Target className="h-5 w-5 text-primary" />}
-            title="Active Campaigns"
-            value="8"
-            change="+3"
-            changeType="positive"
-          />
-          <ModernStatCard
-            icon={<Users className="h-5 w-5 text-primary" />}
-            title="Total Reach"
-            value="156K"
-            change="+28%"
-            changeType="positive"
-          />
-          <ModernStatCard
-            icon={<BarChart3 className="h-5 w-5 text-primary" />}
-            title="Conversion Rate"
-            value="3.2%"
-            change="+0.5%"
-            changeType="positive"
-          />
-          <ModernStatCard
-            icon={<Download className="h-5 w-5 text-primary" />}
-            title="Reports Generated"
-            value="24"
-            change="+6"
-            changeType="positive"
-          />
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Target className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+3</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">8</div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Active Campaigns</div>
+            </div>
+          </div>
+          
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+28%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">156K</div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Reach</div>
+            </div>
+          </div>
         </div>
 
         {/* Active Campaigns */}
-        <Card className="modern-card">
-          <CardHeader>
-            <CardTitle className="heading-md">Active Campaigns</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Active Campaigns</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {activeCampaigns.map((campaign) => (
-              <div key={campaign.id} className="list-item">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Target className="h-5 w-5 text-primary" />
+              <div key={campaign.id} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                  <Target className="h-5 w-5 text-[#6c5ce7]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="body-lg font-semibold">{campaign.artist}</h3>
+                      <h3 className="text-sm font-semibold text-white">{campaign.artist}</h3>
                       <Badge 
                         variant={campaign.status === 'Active' ? 'default' : 'secondary'}
                         className="text-xs"
@@ -116,12 +117,12 @@ export const AgencyDashboard = () => {
                         {campaign.status}
                       </Badge>
                     </div>
-                    <span className="body-md font-bold">{campaign.reach}</span>
+                    <span className="text-sm font-bold text-[#00b894]">{campaign.reach}</span>
                   </div>
-                  <p className="body-sm text-muted-foreground">{campaign.campaign}</p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/20">
-                    <span className="body-sm text-muted-foreground">Budget: {campaign.budget}</span>
-                    <span className="body-sm font-medium">{campaign.remaining}</span>
+                  <p className="text-xs text-[#8b8ba3]">{campaign.campaign}</p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#2d2d44]">
+                    <span className="text-xs text-[#8b8ba3]">Budget: {campaign.budget}</span>
+                    <span className="text-xs font-medium text-white">{campaign.remaining}</span>
                   </div>
                 </div>
               </div>
@@ -130,27 +131,34 @@ export const AgencyDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="modern-card">
-          <CardHeader>
-            <CardTitle className="heading-md">Agency Tools</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Agency Tools</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
-            <Link to="/promotions">
-              <Button variant="pill" className="w-full h-12">
-                Create Campaign
-              </Button>
-            </Link>
-            <Link to="/campaign-manager">
-              <Button variant="glass" className="w-full h-12">
-                Manage Campaigns
-              </Button>
-            </Link>
-            <Button variant="outline" className="w-full h-12">
-              Export Reports
-            </Button>
-            <Button variant="outline" className="w-full h-12">
-              Client Analytics
-            </Button>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Link to="/promotions">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                  Create Campaign
+                </button>
+              </Link>
+              
+              <Link to="/campaign-manager">
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  Manage Campaigns
+                </button>
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                Export Reports
+              </button>
+              
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                Client Analytics
+              </button>
+            </div>
           </CardContent>
         </Card>
       </div>

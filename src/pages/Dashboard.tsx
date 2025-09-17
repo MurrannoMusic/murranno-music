@@ -1,4 +1,4 @@
-import { Music, Clock, TrendingUp, Users, Zap, BarChart3, Upload, Play } from 'lucide-react';
+import { Music, Clock, TrendingUp, Users, Zap, BarChart3, Upload, Play, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -128,29 +128,65 @@ export const Dashboard = () => {
         {/* Artist Selector for Labels */}
         {isLabel && <ArtistSelector />}
         
-        {/* Quick Stats */}
-        <StatsGrid stats={stats} />
+        {/* Crypto-style Stats Cards */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+12%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">
+                {stats[1]?.value}
+              </div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Earnings</div>
+            </div>
+          </div>
+          
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <BarChart3 className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+23%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">
+                {stats[0]?.value}
+              </div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Streams</div>
+            </div>
+          </div>
+        </div>
 
         {/* Recent Activity */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="flex items-center mobile-subheading">
-              <Clock className="h-5 w-5 mr-2 text-primary" />
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white flex items-center gap-3">
+              <Clock className="h-5 w-5 text-[#6c5ce7]" />
               Recent Activity
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-3">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="interactive-element flex items-center justify-between p-4 bg-muted/20 rounded-xl border border-border/10">
-                <div className="flex-1">
-                  <p className="font-semibold">{activity.title}</p>
-                  <p className="text-sm text-muted-foreground">{activity.description}</p>
+              <div key={index} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-[#6c5ce7]" />
                 </div>
-                <div className="text-right">
-                  <p className={`text-sm font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
-                    {activity.value}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold text-white truncate">{activity.title}</p>
+                    <span className={`text-sm font-bold ${activity.type === 'success' ? 'text-[#00b894]' : 'text-[#6c5ce7]'}`}>
+                      {activity.value}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#8b8ba3]">{activity.description}</p>
                 </div>
               </div>
             ))}
@@ -158,45 +194,53 @@ export const Dashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card">
-          <CardHeader>
-            <CardTitle className="mobile-subheading">Quick Actions</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="mobile-card-grid">
-            {(isArtist || isLabel) && (
-              <Link to="/upload">
-                <Button className="w-full gradient-primary music-button h-12 rounded-xl font-semibold" variant="default">
-                  Upload Track
-                </Button>
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              {(isArtist || isLabel) && (
+                <Link to="/upload">
+                  <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                    Upload Track
+                  </button>
+                </Link>
+              )}
+              
+              <Link to="/promotions">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                  {isAgency ? 'Create Campaign' : 'Start Campaign'}
+                </button>
               </Link>
-            )}
-            <Link to="/promotions">
-              <Button className="w-full gradient-secondary music-button h-12 rounded-xl font-semibold" variant="default">
-                {isAgency ? 'Create Campaign' : 'Start Campaign'}
-              </Button>
-            </Link>
-            <Link to={isLabel ? "/label-analytics" : isAgency ? "/agency-dashboard" : "/analytics"}>
-              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-accent/10">
-                View Analytics
-              </Button>
-            </Link>
-            <Link to={isLabel ? "/payout-manager" : "/earnings"}>
-              <Button variant="outline" className="w-full h-12 rounded-xl font-semibold border-border/30 hover:bg-primary/10">
-                {isLabel ? 'Manage Payouts' : isAgency ? 'Campaign Results' : 'Check Earnings'}
-              </Button>
-            </Link>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <Link to={isLabel ? "/label-analytics" : isAgency ? "/agency-dashboard" : "/analytics"}>
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  View Analytics
+                </button>
+              </Link>
+              
+              <Link to={isLabel ? "/payout-manager" : "/earnings"}>
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  {isLabel ? 'Manage Payouts' : isAgency ? 'Campaign Results' : 'Check Earnings'}
+                </button>
+              </Link>
+            </div>
+
             {isLabel && (
               <Link to="/artist-management">
-                <Button className="w-full gradient-accent music-button h-12 rounded-xl font-semibold">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
                   Manage Artists
-                </Button>
+                </button>
               </Link>
             )}
             {isAgency && (
               <Link to="/campaign-manager">
-                <Button className="w-full gradient-accent music-button h-12 rounded-xl font-semibold">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
                   Track Campaigns
-                </Button>
+                </button>
               </Link>
             )}
           </CardContent>

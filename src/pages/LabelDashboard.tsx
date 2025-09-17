@@ -70,46 +70,65 @@ export const LabelDashboard = () => {
         {/* Artist Selector */}
         <ArtistSelector />
         
-        {/* Enhanced Stats */}
+        {/* Crypto-style Stats Cards */}
         <div className="grid grid-cols-2 gap-4">
-          <div className="modern-card">
-            <div className="p-5">
-              <div className="portfolio-value">{stats[1]?.value}</div>
-              <div className="body-sm text-muted-foreground">Total Earnings</div>
-              <div className="portfolio-change positive">{stats[1]?.change}</div>
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <DollarSign className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+12%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">
+                {stats[1]?.value}
+              </div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Earnings</div>
             </div>
           </div>
-          <div className="modern-card">
-            <div className="p-5">
-              <div className="portfolio-value">{stats[0]?.value}</div>
-              <div className="body-sm text-muted-foreground">Total Streams</div>
-              <div className="portfolio-change positive">{stats[0]?.change}</div>
+          
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-[#6c5ce7]" />
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-[#00b894] font-medium">+23%</div>
+              </div>
+            </div>
+            <div className="space-y-1">
+              <div className="text-xl font-bold text-white">
+                {stats[0]?.value}
+              </div>
+              <div className="text-xs text-[#8b8ba3] font-medium">Total Streams</div>
             </div>
           </div>
         </div>
 
         {/* Recent Activity */}
-        <Card className="modern-card">
-          <CardHeader>
-            <CardTitle className="heading-md flex items-center gap-3">
-              <Clock className="h-5 w-5 text-primary" />
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white flex items-center gap-3">
+              <Clock className="h-5 w-5 text-[#6c5ce7]" />
               Recent Activity
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {recentActivity.map((activity, index) => (
-              <div key={index} className="list-item">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-primary" />
+              <div key={index} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
+                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-[#6c5ce7]" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="body-lg font-semibold truncate">{activity.title}</p>
-                    <span className={`body-md font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
+                    <p className="text-sm font-semibold text-white truncate">{activity.title}</p>
+                    <span className={`text-sm font-bold ${activity.type === 'success' ? 'text-[#00b894]' : 'text-[#6c5ce7]'}`}>
                       {activity.value}
                     </span>
                   </div>
-                  <p className="body-sm text-muted-foreground">{activity.description}</p>
+                  <p className="text-xs text-[#8b8ba3]">{activity.description}</p>
                 </div>
               </div>
             ))}
@@ -117,35 +136,43 @@ export const LabelDashboard = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="modern-card">
-          <CardHeader>
-            <CardTitle className="heading-md">Quick Actions</CardTitle>
+        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-2 gap-3">
-            <Link to="/upload">
-              <Button variant="pill" className="w-full h-12">
-                Upload Track
-              </Button>
-            </Link>
-            <Link to="/promotions">
-              <Button variant="glass" className="w-full h-12">
-                Start Campaign
-              </Button>
-            </Link>
-            <Link to="/label-analytics">
-              <Button variant="outline" className="w-full h-12">
-                View Analytics
-              </Button>
-            </Link>
-            <Link to="/payout-manager">
-              <Button variant="outline" className="w-full h-12">
-                Manage Payouts
-              </Button>
-            </Link>
-            <Link to="/artist-management" className="col-span-2">
-              <Button variant="pill" className="w-full h-12 bg-gradient-accent">
+          <CardContent className="space-y-3">
+            <div className="grid grid-cols-2 gap-3">
+              <Link to="/upload">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+                  Upload Track
+                </button>
+              </Link>
+              
+              <Link to="/promotions">
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  Start Campaign
+                </button>
+              </Link>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <Link to="/label-analytics">
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  View Analytics
+                </button>
+              </Link>
+              
+              <Link to="/payout-manager">
+                <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+                  Manage Payouts
+                </button>
+              </Link>
+            </div>
+
+            <Link to="/artist-management">
+              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
                 Manage Artists
-              </Button>
+              </button>
             </Link>
           </CardContent>
         </Card>
