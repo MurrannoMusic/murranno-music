@@ -20,7 +20,7 @@ export const PageHeader = ({ title, subtitle, backTo, actions }: PageHeaderProps
         <div className="flex-1">
           <h1 className="heading-lg">{title}</h1>
           {subtitle && (
-            <p className="body-md text-muted-foreground mt-1">{subtitle}</p>
+            <p className="text-sm text-muted-foreground/80 mt-1">{subtitle}</p>
           )}
         </div>
         {actions}
