@@ -47,7 +47,7 @@ export const BottomNavigation = () => {
         { icon: Home, label: 'Home', path: '/agency-dashboard' },
         { icon: Megaphone, label: 'Campaigns', path: '/campaign-manager' },
         { icon: Upload, label: 'Create', path: '/promotions' },
-        { icon: BarChart3, label: 'Results', path: '/agency-dashboard' },
+        { icon: BarChart3, label: 'Results', path: '/results' },
       ];
     }
 
