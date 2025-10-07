@@ -16,7 +16,7 @@ export const Welcome = () => {
           <p className="text-lg text-white/80">Your Music, Your Revenue, Your World</p>
         </div>
         
-        <div className="w-full max-w-sm space-y-4">
+        <div className="w-full max-w-sm space-y-6">
           <Link to="/login">
             <Button className="w-full gradient-primary music-button shadow-glow" size="lg">
               Log In
