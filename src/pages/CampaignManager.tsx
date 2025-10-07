@@ -58,7 +58,7 @@ export const CampaignManager = () => {
         actions={headerActions}
       />
 
-      <div className="mobile-container space-y-4 -mt-6 pb-6">
+      <div className="mobile-container space-y-4 pt-4 pb-6">
         <CampaignStats stats={stats} />
         
         <div className="flex flex-col md:flex-row gap-4">
