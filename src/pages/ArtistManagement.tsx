@@ -8,6 +8,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { ArtistCard } from '@/components/cards/ArtistCard';
 import { AddArtistForm } from '@/components/forms/AddArtistForm';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 export const ArtistManagement = () => {
   const [artists, setArtists] = useState([
@@ -65,9 +66,7 @@ export const ArtistManagement = () => {
           </div>
           
           {/* Avatar (Right) */}
-          <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center">
-            <Users className="h-5 w-5 text-primary" />
-          </div>
+          <AvatarDropdown />
         </div>
         
         {/* Actions */}
@@ -78,42 +77,42 @@ export const ArtistManagement = () => {
 
       <div className="mobile-container space-y-6 mt-6">
         {/* Artist Stats */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="modern-card">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-xl font-bold text-white">{artists.length}</p>
-                <p className="text-xs text-[#8b8ba3]">Artists</p>
+                <p className="text-xl font-bold text-foreground">{artists.length}</p>
+                <p className="text-xs text-muted-foreground">Artists</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-white">18</p>
-                <p className="text-xs text-[#8b8ba3]">Total Releases</p>
+                <p className="text-xl font-bold text-foreground">18</p>
+                <p className="text-xs text-muted-foreground">Total Releases</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-white">$754</p>
-                <p className="text-xs text-[#8b8ba3]">Combined Revenue</p>
+                <p className="text-xl font-bold text-foreground">$754</p>
+                <p className="text-xs text-muted-foreground">Combined Revenue</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Artist List */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="modern-card">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Your Artists</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">Your Artists</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {artists.map((artist) => (
-              <div key={artist.id} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
-                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                  <Users className="h-5 w-5 text-[#6c5ce7]" />
+              <div key={artist.id} className="flex items-center gap-4 p-4 bg-card/50 rounded-[16px] border border-border">
+                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                  <Users className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-white truncate">{artist.stageName}</p>
-                    <span className="px-2 py-1 bg-[#00b894]/20 text-[#00b894] rounded-full text-xs">{artist.status}</span>
+                    <p className="text-sm font-semibold text-foreground truncate">{artist.stageName}</p>
+                    <span className="px-2 py-1 bg-accent/20 text-accent-foreground rounded-full text-xs">{artist.status}</span>
                   </div>
-                  <p className="text-xs text-[#8b8ba3]">{artist.releases} tracks • {artist.streams} streams</p>
+                  <p className="text-xs text-muted-foreground">{artist.releases} tracks • {artist.streams} streams</p>
                 </div>
               </div>
             ))}
@@ -121,27 +120,27 @@ export const ArtistManagement = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="modern-card">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Quick Actions</CardTitle>
+            <CardTitle className="text-lg font-bold text-foreground">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+              <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
                 Bulk Payout Request
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
                 Label Analytics
               </button>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
                 Export Reports
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
                 Upload for Artist
               </button>
             </div>
