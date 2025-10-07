@@ -58,13 +58,17 @@ export const CampaignManager = () => {
         actions={headerActions}
       />
 
-      <div className="mobile-container space-y-6 -mt-8">
+      <div className="mobile-container space-y-4 -mt-6 pb-6">
         <CampaignStats stats={stats} />
         
-        <CampaignFilter 
-          statusFilter={statusFilter} 
-          onFilterChange={setStatusFilter} 
-        />
+        <div className="flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <CampaignFilter 
+              statusFilter={statusFilter} 
+              onFilterChange={setStatusFilter} 
+            />
+          </div>
+        </div>
 
         <CampaignList
           campaigns={filteredCampaigns}
