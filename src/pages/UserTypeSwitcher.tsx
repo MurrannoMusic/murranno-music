@@ -63,7 +63,7 @@ export const UserTypeSwitcher = () => {
       {/* Modern Header */}
       <div className="bg-gradient-dark backdrop-blur-xl p-6 text-foreground mobile-safe-top">
         <div className="text-center">
-          <h1 className="heading-xl mb-2">Choose Your Experience</h1>
+          <h1 className="heading-lg mb-2">Choose Your Experience</h1>
           <p className="body-lg text-muted-foreground">Select how you want to use the platform</p>
         </div>
       </div>
