@@ -66,18 +66,18 @@ export const PayoutManager = () => {
         {/* Payout Stats */}
         <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
           <CardContent className="p-4">
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-xl font-bold text-white">${totalPending.toFixed(2)}</p>
-                <p className="text-xs text-[#8b8ba3]">Pending Payouts</p>
+                <p className="text-base font-bold text-white truncate">${totalPending.toFixed(2)}</p>
+                <p className="text-xs text-[#8b8ba3]">Pending</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-white">3</p>
+                <p className="text-base font-bold text-white">3</p>
                 <p className="text-xs text-[#8b8ba3]">This Month</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-white">$195.60</p>
-                <p className="text-xs text-[#8b8ba3]">Total Available</p>
+                <p className="text-base font-bold text-white truncate">$195.60</p>
+                <p className="text-xs text-[#8b8ba3]">Available</p>
               </div>
             </div>
           </CardContent>
@@ -155,28 +155,27 @@ export const PayoutManager = () => {
             <CardTitle className="text-lg font-bold text-white">Payout Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
+            <button 
+              className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-sm break-words"
+              onClick={requestBulkPayout}
+            >
+              Request Bulk Payout
+              <span className="block text-xs mt-1">(${totalPending.toFixed(2)})</span>
+            </button>
+            
             <div className="grid grid-cols-2 gap-3">
-              <button 
-                className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]"
-                onClick={requestBulkPayout}
-              >
-                Request Bulk Payout (${totalPending.toFixed(2)})
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+                Export Records
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                Export All Records
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+                Schedule Payouts
               </button>
             </div>
             
-            <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                Schedule Payouts
-              </button>
-              
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                Payout Settings
-              </button>
-            </div>
+            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              Payout Settings
+            </button>
           </CardContent>
         </Card>
       </div>

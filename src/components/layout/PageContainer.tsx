@@ -8,7 +8,7 @@ interface PageContainerProps {
 
 export const PageContainer = ({ children, className = "" }: PageContainerProps) => {
   return (
-    <div className={`min-h-screen bg-gradient-mesh mobile-safe-bottom ${className}`}>
+    <div className={`min-h-screen bg-gradient-mesh mobile-safe-bottom overflow-x-hidden max-w-full ${className}`}>
       <StatusBar />
       {children}
       <BottomNavigation />

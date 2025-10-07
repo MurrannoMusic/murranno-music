@@ -57,21 +57,21 @@ export const CampaignManager = () => {
         {/* Campaign Stats */}
         <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
           <CardContent className="p-4">
-            <div className="grid grid-cols-4 gap-4 text-center">
-              <div>
-                <p className="text-xl font-bold text-white">{stats.totalCampaigns}</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">{stats.totalCampaigns}</p>
                 <p className="text-xs text-[#8b8ba3]">Total</p>
               </div>
-              <div>
-                <p className="text-xl font-bold text-white">{stats.activeCampaigns}</p>
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">{stats.activeCampaigns}</p>
                 <p className="text-xs text-[#8b8ba3]">Active</p>
               </div>
-              <div>
-                <p className="text-xl font-bold text-white">{stats.totalSpent}</p>
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">{stats.totalSpent}</p>
                 <p className="text-xs text-[#8b8ba3]">Spent</p>
               </div>
-              <div>
-                <p className="text-xl font-bold text-white">{stats.totalReach}</p>
+              <div className="text-center">
+                <p className="text-lg font-bold text-white">{stats.totalReach}</p>
                 <p className="text-xs text-[#8b8ba3]">Reach</p>
               </div>
             </div>
@@ -128,27 +128,27 @@ export const CampaignManager = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <Link to="/promotions">
-                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
-                  Create New Campaign
+              <Link to="/promotions" className="w-full">
+                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
+                  Create Campaign
                 </button>
               </Link>
               
               <button 
-                className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]"
+                className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words"
                 onClick={exportToPDF}
               >
-                Bulk Export Results
+                Export Results
               </button>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
                 Schedule Reports
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
-                Campaign Templates
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+                Templates
               </button>
             </div>
           </CardContent>

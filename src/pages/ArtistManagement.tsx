@@ -126,22 +126,22 @@ export const ArtistManagement = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
-                Bulk Payout Request
+              <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
+                Bulk Payout
               </button>
               
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
-                Label Analytics
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
+                Analytics
               </button>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
                 Export Reports
               </button>
               
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-smooth border border-border">
-                Upload for Artist
+              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
+                Upload Track
               </button>
             </div>
           </CardContent>

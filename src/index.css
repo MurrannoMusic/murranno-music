@@ -214,11 +214,18 @@
     @apply border-border;
   }
 
+  html {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: "SF Pro Display", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
 }
 
@@ -247,7 +254,8 @@
 
   /* Modern Mobile Container */
   .mobile-container {
-    @apply max-w-md mx-auto px-4;
+    @apply max-w-full mx-auto px-4 overflow-x-hidden;
+    width: 100%;
   }
 
   /* Modern Card System */

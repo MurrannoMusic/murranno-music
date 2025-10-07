@@ -61,9 +61,9 @@ export const LabelAnalytics = () => {
         {isLabel && <ArtistSelector />}
 
         {/* Crypto-style Stats Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
+        <div className="grid grid-cols-2 gap-3">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
+            <div className="flex items-center justify-between mb-3">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <Users className="h-4 w-4 text-[#6c5ce7]" />
               </div>
@@ -77,8 +77,8 @@ export const LabelAnalytics = () => {
             </div>
           </div>
           
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-5 shadow-lg">
-            <div className="flex items-center justify-between mb-4">
+          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
+            <div className="flex items-center justify-between mb-3">
               <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
                 <Music className="h-4 w-4 text-[#6c5ce7]" />
               </div>
@@ -150,16 +150,16 @@ export const LabelAnalytics = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98]">
+              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
                 Generate Report
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
                 Export Data
               </button>
             </div>
             
-            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66]">
+            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
               View Detailed Metrics
             </button>
           </CardContent>
