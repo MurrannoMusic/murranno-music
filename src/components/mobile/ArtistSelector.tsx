@@ -12,7 +12,7 @@ export const ArtistSelector = () => {
 
   return (
     <div className="mb-4">
-      <Select value={selectedArtist || ''} onValueChange={selectArtist}>
+      <Select value={selectedArtist || 'all'} onValueChange={(value) => selectArtist(value === 'all' ? null : value)}>
         <SelectTrigger className="w-full glass-card border-border/20">
           <div className="flex items-center gap-3">
             <Avatar className="h-8 w-8">
@@ -28,7 +28,7 @@ export const ArtistSelector = () => {
           </div>
         </SelectTrigger>
         <SelectContent className="glass-card border-border/20">
-          <SelectItem value="">
+          <SelectItem value="all">
             <div className="flex items-center gap-3">
               <Avatar className="h-6 w-6">
                 <AvatarFallback className="bg-muted text-xs">All</AvatarFallback>
