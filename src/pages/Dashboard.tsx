@@ -2,7 +2,7 @@ import { Music, Clock, TrendingUp, Users, Zap, BarChart3, Upload, Play, DollarSi
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
 import { ArtistSelector } from '@/components/mobile/ArtistSelector';
@@ -10,13 +10,25 @@ import { StatsGrid } from '@/components/stats/StatsGrid';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
+import { useEffect } from 'react';
 
 export const Dashboard = () => {
   const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
   const { getStatsAsItems } = useStats();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/user-type-selection', { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   if (!currentUser) {
-    return null;
+    return (
+      <PageContainer>
+        <div className="mobile-container py-8 text-center text-muted-foreground text-sm">Redirecting…</div>
+      </PageContainer>
+    );
   }
 
   const getHeaderContent = () => {
