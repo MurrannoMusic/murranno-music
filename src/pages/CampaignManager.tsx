@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { CampaignCard } from '@/components/cards/CampaignCard';
 import { CampaignStats } from '@/components/campaigns/CampaignStats';
 import { CampaignFilter } from '@/components/campaigns/CampaignFilter';
+import { CampaignList } from '@/components/campaigns/CampaignList';
 import { CampaignActions } from '@/components/campaigns/CampaignActions';
 import { useCampaigns } from '@/hooks/useCampaigns';
 
@@ -67,27 +66,15 @@ export const CampaignManager = () => {
           onFilterChange={setStatusFilter} 
         />
 
-        {/* Campaign List */}
-        <Card className="glass-card border border-border/20">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold">
-              {statusFilter === 'all' ? 'All Campaigns' : `${statusFilter} Campaigns`}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {filteredCampaigns.map((campaign) => (
-              <CampaignCard
-                key={campaign.id}
-                campaign={campaign}
-                getStatusBadgeVariant={getStatusBadgeVariant}
-                onEdit={handleEdit}
-                onViewAnalytics={handleViewAnalytics}
-                onPause={handlePause}
-                onDuplicate={handleDuplicate}
-              />
-            ))}
-          </CardContent>
-        </Card>
+        <CampaignList
+          campaigns={filteredCampaigns}
+          statusFilter={statusFilter}
+          getStatusBadgeVariant={getStatusBadgeVariant}
+          onEdit={handleEdit}
+          onViewAnalytics={handleViewAnalytics}
+          onPause={handlePause}
+          onDuplicate={handleDuplicate}
+        />
 
         <CampaignActions onExportToPDF={exportToPDF} />
       </div>
