@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 interface CampaignPackage {
   id: string;
@@ -58,18 +59,31 @@ const campaignPackages: CampaignPackage[] = [
 
 export const Promotions = () => {
   return (
-    <div className="min-h-screen bg-background mobile-safe-bottom">
-      <div className="mobile-container">
-        {/* Header */}
-        <div className="flex items-center mb-4 sm:mb-6">
-          <Link to="/" className="mr-3 sm:mr-4">
-            <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground" />
+    <PageContainer>
+      {/* Consistent Top Bar */}
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          {/* Menu Icon (Left) */}
+          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
           </Link>
-          <h1 className="mobile-heading">Promotions Hub</h1>
+          
+          {/* User Type (Center) */}
+          <div className="flex-1 text-center">
+            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
+              PROMOTIONS
+            </Badge>
+          </div>
+          
+          {/* Avatar Dropdown (Right) */}
+          <AvatarDropdown />
         </div>
+      </div>
+
+      <div className="mobile-container space-y-4 mt-4">
 
         {/* Hero Section */}
-        <Card className="gradient-primary text-white mb-6">
+        <Card className="gradient-primary text-white">
           <CardContent className="p-6 text-center">
             <Megaphone className="h-12 w-12 mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2">Amplify Your Reach</h2>
@@ -143,7 +157,7 @@ export const Promotions = () => {
         </div>
 
         {/* Active Campaigns */}
-        <Card className="mt-6 bg-card border border-border rounded-[20px] shadow-soft">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader>
             <CardTitle className="flex items-center text-card-foreground">
               <Play className="h-5 w-5 mr-2 text-primary" />
@@ -171,8 +185,6 @@ export const Promotions = () => {
           </CardContent>
         </Card>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };

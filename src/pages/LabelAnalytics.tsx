@@ -4,9 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { StatCard } from '@/components/mobile/StatCard';
-import { BottomNavigation } from '@/components/mobile/BottomNavigation';
 import { ArtistSelector } from '@/components/mobile/ArtistSelector';
 import { useUserType } from '@/hooks/useUserType';
+import { PageContainer } from '@/components/layout/PageContainer';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 export const LabelAnalytics = () => {
   const { selectedArtist, currentUser, isLabel } = useUserType();
@@ -33,7 +34,7 @@ export const LabelAnalytics = () => {
   const stats = getLabelStats();
 
   return (
-    <div className="min-h-screen bg-gradient-mesh mobile-safe-bottom">
+    <PageContainer>
       {/* Consistent Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
@@ -50,9 +51,7 @@ export const LabelAnalytics = () => {
           </div>
           
           {/* Avatar (Right) */}
-          <div className="w-10 h-10 bg-secondary/30 rounded-full flex items-center justify-center">
-            <TrendingUp className="h-5 w-5 text-primary" />
-          </div>
+          <AvatarDropdown />
         </div>
       </div>
 
@@ -165,8 +164,6 @@ export const LabelAnalytics = () => {
           </CardContent>
         </Card>
       </div>
-
-      <BottomNavigation />
-    </div>
+    </PageContainer>
   );
 };
