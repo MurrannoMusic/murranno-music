@@ -64,7 +64,7 @@ export const PayoutManager = () => {
 
       <div className="mobile-container space-y-6 mt-6">
         {/* Payout Stats */}
-        <Card className="glass-card border-border/20">
+        <Card className="glass-card border border-border/20">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
@@ -85,7 +85,7 @@ export const PayoutManager = () => {
 
         {/* Artist Filter (for labels) */}
         {isLabel && (
-          <Card className="glass-card border-border/20">
+          <Card className="glass-card border border-border/20">
             <CardContent className="p-4">
               <ArtistFilter 
                 selectedArtist={selectedArtist}
@@ -97,7 +97,7 @@ export const PayoutManager = () => {
         )}
 
         {/* Payout Requests */}
-        <Card className="glass-card border-border/20">
+        <Card className="glass-card border border-border/20">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-bold">Payout Requests</CardTitle>
           </CardHeader>
@@ -154,7 +154,7 @@ export const PayoutManager = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card border-border/20">
+        <Card className="glass-card border border-border/20">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg font-bold">Payout Actions</CardTitle>
           </CardHeader>
@@ -170,16 +170,16 @@ export const PayoutManager = () => {
             </Button>
             
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
                 Export Records
               </Button>
               
-              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
                 Schedule Payouts
               </Button>
             </div>
             
-            <Button variant="outline" className="w-full font-semibold py-6 px-4 text-xs">
+            <Button variant="outline" className="w-full font-semibold py-6 px-4 text-xs border-border/20">
               Payout Settings
             </Button>
           </CardContent>

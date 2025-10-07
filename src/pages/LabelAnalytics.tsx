@@ -61,104 +61,104 @@ export const LabelAnalytics = () => {
 
         {/* Crypto-style Stats Cards */}
         <div className="grid grid-cols-2 gap-3">
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
+          <div className="glass-card border-border/20 p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                <Users className="h-4 w-4 text-[#6c5ce7]" />
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <Users className="h-4 w-4 text-primary" />
               </div>
               <div className="text-right">
-                <div className="text-xs text-[#00b894] font-medium">+5</div>
+                <div className="text-xs text-accent font-medium">+5</div>
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-white">24</div>
-              <div className="text-xs text-[#8b8ba3] font-medium">Total Artists</div>
+              <div className="text-xl font-bold">24</div>
+              <div className="text-xs text-muted-foreground font-medium">Total Artists</div>
             </div>
           </div>
           
-          <div className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] p-4 shadow-lg">
+          <div className="glass-card border-border/20 p-4">
             <div className="flex items-center justify-between mb-3">
-              <div className="w-8 h-8 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                <Music className="h-4 w-4 text-[#6c5ce7]" />
+              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                <Music className="h-4 w-4 text-primary" />
               </div>
               <div className="text-right">
-                <div className="text-xs text-[#00b894] font-medium">+15</div>
+                <div className="text-xs text-accent font-medium">+15</div>
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-white">156</div>
-              <div className="text-xs text-[#8b8ba3] font-medium">Total Tracks</div>
+              <div className="text-xl font-bold">156</div>
+              <div className="text-xs text-muted-foreground font-medium">Total Tracks</div>
             </div>
           </div>
         </div>
 
         {/* Top Artists */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border-border/20">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white flex items-center gap-3">
-              <TrendingUp className="h-5 w-5 text-[#6c5ce7]" />
+            <CardTitle className="text-lg font-bold flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
               Top Performing Artists
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
-              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#6c5ce7]" />
+            <div className="flex items-center gap-4 p-4 bg-muted/20 rounded-xl border border-border/10">
+              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-white truncate">Luna Sol</p>
-                  <span className="text-sm font-bold text-[#00b894]">1.2M streams</span>
+                  <p className="text-sm font-semibold truncate">Luna Sol</p>
+                  <span className="text-sm font-bold text-accent">1.2M streams</span>
                 </div>
-                <p className="text-xs text-[#8b8ba3]">+25% growth this month</p>
+                <p className="text-xs text-muted-foreground">+25% growth this month</p>
               </div>
             </div>
             
-            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
-              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#6c5ce7]" />
+            <div className="flex items-center gap-4 p-4 bg-muted/20 rounded-xl border border-border/10">
+              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-white truncate">The Echoes</p>
-                  <span className="text-sm font-bold text-[#00b894]">890K streams</span>
+                  <p className="text-sm font-semibold truncate">The Echoes</p>
+                  <span className="text-sm font-bold text-accent">890K streams</span>
                 </div>
-                <p className="text-xs text-[#8b8ba3]">+18% growth this month</p>
+                <p className="text-xs text-muted-foreground">+18% growth this month</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
-              <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-[#6c5ce7]" />
+            <div className="flex items-center gap-4 p-4 bg-muted/20 rounded-xl border border-border/10">
+              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                <Users className="h-5 w-5 text-primary" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-white truncate">Midnight Drive</p>
-                  <span className="text-sm font-bold text-[#00b894]">645K streams</span>
+                  <p className="text-sm font-semibold truncate">Midnight Drive</p>
+                  <span className="text-sm font-bold text-accent">645K streams</span>
                 </div>
-                <p className="text-xs text-[#8b8ba3]">+12% growth this month</p>
+                <p className="text-xs text-muted-foreground">+12% growth this month</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Analytics Tools */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border-border/20">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Analytics Tools</CardTitle>
+            <CardTitle className="text-lg font-bold">Analytics Tools</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
+              <button className="w-full gradient-primary font-semibold py-4 px-3 rounded-xl transition-smooth text-xs">
                 Generate Report
               </button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              <button className="w-full bg-muted/20 hover:bg-muted/30 border border-border/20 hover:border-border/30 font-semibold py-4 px-3 rounded-xl transition-smooth text-xs">
                 Export Data
               </button>
             </div>
             
-            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+            <button className="w-full bg-muted/20 hover:bg-muted/30 border border-border/20 hover:border-border/30 font-semibold py-4 px-4 rounded-xl transition-smooth text-xs">
               View Detailed Metrics
             </button>
           </CardContent>
