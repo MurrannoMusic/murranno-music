@@ -55,39 +55,39 @@ export const CampaignManager = () => {
 
       <div className="mobile-container space-y-6 -mt-8">
         {/* Campaign Stats */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border border-border/20">
           <CardContent className="p-4">
             <div className="grid grid-cols-2 gap-3">
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{stats.totalCampaigns}</p>
-                <p className="text-xs text-[#8b8ba3]">Total</p>
+                <p className="text-lg font-bold">{stats.totalCampaigns}</p>
+                <p className="text-xs text-muted-foreground">Total</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{stats.activeCampaigns}</p>
-                <p className="text-xs text-[#8b8ba3]">Active</p>
+                <p className="text-lg font-bold">{stats.activeCampaigns}</p>
+                <p className="text-xs text-muted-foreground">Active</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{stats.totalSpent}</p>
-                <p className="text-xs text-[#8b8ba3]">Spent</p>
+                <p className="text-lg font-bold">{stats.totalSpent}</p>
+                <p className="text-xs text-muted-foreground">Spent</p>
               </div>
               <div className="text-center">
-                <p className="text-lg font-bold text-white">{stats.totalReach}</p>
-                <p className="text-xs text-[#8b8ba3]">Reach</p>
+                <p className="text-lg font-bold">{stats.totalReach}</p>
+                <p className="text-xs text-muted-foreground">Reach</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Status Filter */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border border-border/20">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <Filter className="h-4 w-4 text-[#8b8ba3]" />
+              <Filter className="h-4 w-4 text-muted-foreground" />
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="flex-1 bg-[#0d0d1b] border-[#2d2d44] text-white">
+                <SelectTrigger className="flex-1 glass-card border-border/20">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
-                <SelectContent className="bg-[#1a1a2e] border-[#2d2d44]">
+                <SelectContent className="glass-card border-border/20">
                   <SelectItem value="all">All Campaigns</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>
@@ -100,9 +100,9 @@ export const CampaignManager = () => {
         </Card>
 
         {/* Campaign List */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border border-border/20">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-white">
+            <CardTitle className="text-lg font-bold">
               {statusFilter === 'all' ? 'All Campaigns' : `${statusFilter} Campaigns`}
             </CardTitle>
           </CardHeader>
@@ -122,34 +122,35 @@ export const CampaignManager = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border border-border/20">
           <CardHeader>
-            <CardTitle className="text-lg font-bold text-white">Campaign Actions</CardTitle>
+            <CardTitle className="text-lg font-bold">Campaign Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
               <Link to="/promotions" className="w-full">
-                <button className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
+                <Button className="w-full gradient-primary font-semibold py-6 px-3 text-xs">
                   Create Campaign
-                </button>
+                </Button>
               </Link>
               
-              <button 
-                className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words"
+              <Button 
+                variant="outline"
+                className="w-full font-semibold py-6 px-3 text-xs border-border/20"
                 onClick={exportToPDF}
               >
                 Export Results
-              </button>
+              </Button>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
                 Schedule Reports
-              </button>
+              </Button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
                 Templates
-              </button>
+              </Button>
             </div>
           </CardContent>
         </Card>

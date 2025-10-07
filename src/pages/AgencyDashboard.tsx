@@ -168,9 +168,11 @@ export const AgencyDashboard = () => {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
-                Export Reports
-              </button>
+              <Link to="/results">
+                <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
+                  View Results
+                </button>
+              </Link>
               
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                 Client Analytics
