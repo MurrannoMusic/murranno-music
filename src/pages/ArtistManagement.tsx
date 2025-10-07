@@ -36,7 +36,7 @@ export const ArtistManagement = () => {
   const headerActions = (
     <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
       <DialogTrigger asChild>
-        <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
+        <Button variant="secondary" size="sm" className="bg-secondary/30 hover:bg-secondary/40 border-0">
           <Plus className="h-4 w-4 mr-1" />
           Add Artist
         </Button>
