@@ -15,6 +15,10 @@ export const Dashboard = () => {
   const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
   const { getStatsAsItems } = useStats();
 
+  if (!currentUser) {
+    return null;
+  }
+
   const getHeaderContent = () => {
     if (isArtist) return {
       title: `Welcome back, ${currentUser.name}`,
