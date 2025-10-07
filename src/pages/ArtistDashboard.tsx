@@ -2,9 +2,10 @@ import { Music, Clock, Upload, Play, ArrowLeft, DollarSign, BarChart3 } from 'lu
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FloatingActionButton } from '@/components/mobile/FloatingActionButton';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { useEffect } from 'react';
 
 import { StatsGrid } from '@/components/stats/StatsGrid';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -16,6 +17,21 @@ import { mockTopTracks } from '@/utils/mockData';
 export const ArtistDashboard = () => {
   const { currentUser } = useUserType();
   const { getStatsAsItems } = useStats();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!currentUser) {
+      navigate('/user-type-selection', { replace: true });
+    }
+  }, [currentUser, navigate]);
+
+  if (!currentUser) {
+    return (
+      <PageContainer>
+        <div className="mobile-container py-8 text-center text-muted-foreground text-sm">Redirecting…</div>
+      </PageContainer>
+    );
+  }
 
   const recentActivity = [
     {
