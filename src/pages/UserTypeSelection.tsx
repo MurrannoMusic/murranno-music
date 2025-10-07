@@ -41,7 +41,19 @@ export const UserTypeSelection = () => {
 
   const handleUserTypeSelect = (type: UserType) => {
     switchUserType(type);
-    navigate('/');
+    
+    // Navigate to user-specific dashboard
+    switch(type) {
+      case 'artist':
+        navigate('/artist-dashboard');
+        break;
+      case 'label':
+        navigate('/label-dashboard');
+        break;
+      case 'agency':
+        navigate('/agency-dashboard');
+        break;
+    }
   };
 
   return (

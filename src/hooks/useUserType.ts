@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { UserType, User } from '@/types/user';
 
+const USER_TYPE_KEY = 'murranno-user-type';
+
 // Mock user data for UI demonstration
 const mockUsers = {
   artist: {
@@ -32,12 +34,27 @@ const mockUsers = {
   }
 };
 
+// Get initial user type from localStorage or default to null
+const getInitialUserType = (): UserType | null => {
+  const stored = localStorage.getItem(USER_TYPE_KEY);
+  if (stored && (stored === 'artist' || stored === 'label' || stored === 'agency')) {
+    return stored as UserType;
+  }
+  return null;
+};
+
 export const useUserType = () => {
-  // For demo purposes, we'll cycle through user types
-  const [currentUserType, setCurrentUserType] = useState<UserType>('artist');
+  const [currentUserType, setCurrentUserType] = useState<UserType | null>(getInitialUserType);
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
-  const currentUser = mockUsers[currentUserType];
+  // Persist user type to localStorage whenever it changes
+  useEffect(() => {
+    if (currentUserType) {
+      localStorage.setItem(USER_TYPE_KEY, currentUserType);
+    }
+  }, [currentUserType]);
+
+  const currentUser = currentUserType ? mockUsers[currentUserType] : null;
 
   const switchUserType = (type: UserType) => {
     setCurrentUserType(type);
