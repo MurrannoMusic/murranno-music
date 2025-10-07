@@ -7,9 +7,22 @@ export const BottomNavigation = () => {
   const location = useLocation();
   const { isArtist, isLabel, isAgency } = useUserType();
 
-  // Dynamic navigation based on user type
+  // Dynamic navigation based on user type (with route fallback)
   const getNavItems = () => {
-    if (isArtist) {
+    const path = location.pathname;
+
+    // Infer user type from route only if hook flags are not set
+    const inferredArtist = !isArtist && !isLabel && !isAgency && (
+      path.startsWith('/artist') || ['\u002Fupload', '\u002Fearnings', '\u002Fanalytics', '\u002Fpromotions'].includes(path)
+    );
+    const inferredLabel = !isArtist && !isLabel && !isAgency && (
+      path.startsWith('/label') || ['\u002Fartist-management', '\u002Fpayout-manager', '\u002Flabel-analytics'].includes(path)
+    );
+    const inferredAgency = !isArtist && !isLabel && !isAgency && (
+      path.startsWith('/agency') || ['\u002Fcampaign-manager'].includes(path)
+    );
+
+    if (isArtist || inferredArtist) {
       return [
         { icon: Home, label: 'Home', path: '/artist-dashboard' },
         { icon: Upload, label: 'Upload', path: '/upload' },
@@ -19,7 +32,7 @@ export const BottomNavigation = () => {
       ];
     }
 
-    if (isLabel) {
+    if (isLabel || inferredLabel) {
       return [
         { icon: Home, label: 'Home', path: '/label-dashboard' },
         { icon: Users, label: 'Artists', path: '/artist-management' },
@@ -29,7 +42,7 @@ export const BottomNavigation = () => {
       ];
     }
 
-    if (isAgency) {
+    if (isAgency || inferredAgency) {
       return [
         { icon: Home, label: 'Home', path: '/agency-dashboard' },
         { icon: Megaphone, label: 'Campaigns', path: '/campaign-manager' },
