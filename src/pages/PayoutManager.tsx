@@ -64,20 +64,20 @@ export const PayoutManager = () => {
 
       <div className="mobile-container space-y-6 mt-6">
         {/* Payout Stats */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border-border/20">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-base font-bold text-white truncate">${totalPending.toFixed(2)}</p>
-                <p className="text-xs text-[#8b8ba3]">Pending</p>
+                <p className="text-base font-bold text-foreground truncate">${totalPending.toFixed(2)}</p>
+                <p className="text-xs text-muted-foreground">Pending</p>
               </div>
               <div>
-                <p className="text-base font-bold text-white">3</p>
-                <p className="text-xs text-[#8b8ba3]">This Month</p>
+                <p className="text-base font-bold text-foreground">3</p>
+                <p className="text-xs text-muted-foreground">This Month</p>
               </div>
               <div>
-                <p className="text-base font-bold text-white truncate">$195.60</p>
-                <p className="text-xs text-[#8b8ba3]">Available</p>
+                <p className="text-base font-bold text-foreground truncate">$195.60</p>
+                <p className="text-xs text-muted-foreground">Available</p>
               </div>
             </div>
           </CardContent>
@@ -85,7 +85,7 @@ export const PayoutManager = () => {
 
         {/* Artist Filter (for labels) */}
         {isLabel && (
-          <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+          <Card className="glass-card border-border/20">
             <CardContent className="p-4">
               <ArtistFilter 
                 selectedArtist={selectedArtist}
@@ -97,49 +97,53 @@ export const PayoutManager = () => {
         )}
 
         {/* Payout Requests */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border-border/20">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Payout Requests</CardTitle>
+            <CardTitle className="text-lg font-bold">Payout Requests</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {filteredPayouts.map((payout) => (
-              <div key={payout.id} className="flex items-center gap-4 p-4 bg-[#0d0d1b] rounded-[16px] border border-[#2d2d44]">
-                <div className="w-10 h-10 bg-[#6c5ce7]/20 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-[#6c5ce7]" />
+              <div key={payout.id} className="flex items-center gap-4 p-4 bg-muted/20 rounded-xl border border-border/10">
+                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                  <DollarSign className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-white">{payout.artist}</h3>
-                      <span 
-                        className={`px-2 py-1 rounded-full text-xs ${
-                          payout.status === 'Pending' ? 'bg-[#f39c12]/20 text-[#f39c12]' :
-                          payout.status === 'Completed' ? 'bg-[#00b894]/20 text-[#00b894]' :
-                          'bg-[#e74c3c]/20 text-[#e74c3c]'
-                        }`}
+                      <h3 className="text-sm font-semibold">{payout.artist}</h3>
+                      <Badge 
+                        variant={
+                          payout.status === 'Pending' ? 'secondary' :
+                          payout.status === 'Completed' ? 'default' :
+                          'destructive'
+                        }
+                        className="text-xs"
                       >
                         {payout.status}
-                      </span>
+                      </Badge>
                     </div>
-                    <span className="text-sm font-bold text-white">{payout.amount}</span>
+                    <span className="text-sm font-bold text-foreground">{payout.amount}</span>
                   </div>
-                  <p className="text-xs text-[#8b8ba3]">{payout.streams} streams • {payout.requestDate}</p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-[#2d2d44]">
-                    <span className="text-xs text-[#8b8ba3]">Type: {payout.type}</span>
+                  <p className="text-xs text-muted-foreground">{payout.streams} streams • {payout.requestDate}</p>
+                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/10">
+                    <span className="text-xs text-muted-foreground">Type: {payout.type}</span>
                     {payout.status === 'Pending' && isLabel && (
                       <div className="flex gap-2">
-                        <button 
-                          className="text-xs bg-[#00b894] text-white px-3 py-1 rounded-[8px] hover:bg-[#00a085]"
+                        <Button 
+                          size="sm"
+                          className="text-xs h-8"
                           onClick={() => handleApprove(payout.id)}
                         >
                           Approve
-                        </button>
-                        <button 
-                          className="text-xs bg-[#2d2d44] text-white px-3 py-1 rounded-[8px] hover:bg-[#3a3a55]"
+                        </Button>
+                        <Button 
+                          variant="outline"
+                          size="sm"
+                          className="text-xs h-8"
                           onClick={() => handleViewDetails(payout.id)}
                         >
                           View Details
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -150,32 +154,34 @@ export const PayoutManager = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="bg-[#1a1a2e] border border-[#2d2d44] rounded-[20px] shadow-lg">
+        <Card className="glass-card border-border/20">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-white">Payout Actions</CardTitle>
+            <CardTitle className="text-lg font-bold">Payout Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <button 
-              className="w-full bg-[#6c5ce7] hover:bg-[#5a4fcf] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-sm break-words"
+            <Button 
+              className="w-full gradient-primary font-semibold py-6 px-4 text-sm"
               onClick={requestBulkPayout}
             >
-              Request Bulk Payout
-              <span className="block text-xs mt-1">(${totalPending.toFixed(2)})</span>
-            </button>
+              <span className="flex flex-col items-center">
+                Request Bulk Payout
+                <span className="text-xs mt-1 opacity-90">(${totalPending.toFixed(2)})</span>
+              </span>
+            </Button>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs">
                 Export Records
-              </button>
+              </Button>
               
-              <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs">
                 Schedule Payouts
-              </button>
+              </Button>
             </div>
             
-            <button className="w-full bg-[#2d2d44] hover:bg-[#3a3a55] text-white font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 border border-[#3a3a55] hover:border-[#4a4a66] text-xs break-words">
+            <Button variant="outline" className="w-full font-semibold py-6 px-4 text-xs">
               Payout Settings
-            </button>
+            </Button>
           </CardContent>
         </Card>
       </div>
