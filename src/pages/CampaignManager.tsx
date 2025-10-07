@@ -38,11 +38,11 @@ export const CampaignManager = () => {
   };
 
   const headerActions = (
-    <div className="flex items-center gap-3">
-      <Link to="/promotions">
-        <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0">
-          <Plus className="h-4 w-4 mr-1" />
-          New Campaign
+    <div className="flex items-center gap-2">
+      <Link to="/promotions" className="hidden sm:block">
+        <Button variant="secondary" size="sm" className="bg-white/20 hover:bg-white/30 text-white border-0 text-xs">
+          <Plus className="h-3 w-3 sm:mr-1" />
+          <span className="hidden sm:inline">New</span>
         </Button>
       </Link>
       <AvatarDropdown />
