@@ -17,6 +17,10 @@ export const AvatarDropdown = () => {
   const { theme, setTheme } = useTheme();
   const { currentUser } = useUserType();
 
+  if (!currentUser) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
