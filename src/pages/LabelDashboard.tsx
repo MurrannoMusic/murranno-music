@@ -12,6 +12,7 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
+import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const LabelDashboard = () => {
   const { currentUser, selectedArtist } = useUserType();
@@ -120,6 +121,12 @@ export const LabelDashboard = () => {
               <div className="text-xs text-muted-foreground font-medium">Total Streams</div>
             </div>
           </div>
+        </div>
+
+        {/* Performance Analytics Carousel */}
+        <div className="w-full">
+          <h3 className="text-lg font-bold text-card-foreground mb-3">Performance Insights</h3>
+          <AnalyticsCarousel />
         </div>
 
         {/* Recent Activity */}

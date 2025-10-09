@@ -8,6 +8,7 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useEffect } from 'react';
+import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const AgencyDashboard = () => {
   const { currentUser } = useUserType();
@@ -110,6 +111,12 @@ export const AgencyDashboard = () => {
               <div className="text-xs text-muted-foreground font-medium">Total Reach</div>
             </div>
           </div>
+        </div>
+
+        {/* Performance Analytics Carousel */}
+        <div className="w-full">
+          <h3 className="text-lg font-bold text-card-foreground mb-3">Performance Insights</h3>
+          <AnalyticsCarousel />
         </div>
 
         {/* Active Campaigns */}
