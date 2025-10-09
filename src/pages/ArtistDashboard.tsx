@@ -13,6 +13,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
 import { TopTracksCard } from '@/components/modern/TopTracksCard';
 import { mockTopTracks } from '@/utils/mockData';
+import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const ArtistDashboard = () => {
   const { currentUser } = useUserType();
@@ -76,6 +77,12 @@ export const ArtistDashboard = () => {
 
       <div className="mobile-container space-y-4 mt-4">
         
+        {/* Analytics Carousel */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold mb-3 px-1">Performance Insights</h2>
+          <AnalyticsCarousel />
+        </div>
+
         {/* Crypto-style Stats Card */}
         <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
           <div className="flex items-center justify-between mb-4">
