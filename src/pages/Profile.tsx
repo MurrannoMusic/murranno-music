@@ -59,6 +59,32 @@ export const Profile = () => {
     setErrors({ spotify: '', appleMusic: '' });
   };
 
+  if (!currentUser) {
+    return (
+      <PageContainer>
+        <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+          <div className="flex items-center justify-between">
+            <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div className="flex-1 text-center">
+              <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">PROFILE</Badge>
+            </div>
+            <div className="w-9" />
+          </div>
+        </div>
+        <div className="mobile-container space-y-4 mt-4">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+            <CardContent className="p-6 text-center space-y-2">
+              <p className="text-muted-foreground">No profile loaded.</p>
+              <Link to="/user-type-selection" className="text-primary hover:underline">Select user type</Link>
+            </CardContent>
+          </Card>
+        </div>
+      </PageContainer>
+    );
+  }
+
   return (
     <PageContainer>
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
