@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Upload as UploadIcon, Music, Image, Calendar, Info } from 'lucide-react';
+import { ArrowLeft, Upload as UploadIcon, Music, Image, Calendar, Info, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { Switch } from '@/components/ui/switch';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { GenreSelector } from '@/components/forms/GenreSelector';
+import { DynamicTextField } from '@/components/forms/DynamicTextField';
 
 export const Upload = () => {
   const [trackTitle, setTrackTitle] = useState('');
@@ -22,6 +23,12 @@ export const Upload = () => {
   const [customSecondaryGenre, setCustomSecondaryGenre] = useState('');
   const [releaseDate, setReleaseDate] = useState('');
   const [description, setDescription] = useState('');
+  const [featuredArtists, setFeaturedArtists] = useState<string[]>([]);
+  const [labelName, setLabelName] = useState('');
+  const [trackType, setTrackType] = useState<'clean' | 'explicit'>('clean');
+  const [producers, setProducers] = useState<string[]>([]);
+  const [songwriters, setSongwriters] = useState<string[]>([]);
+  const [songDescription, setSongDescription] = useState('');
   
   // DSP toggles
   const [dsps, setDsps] = useState({
@@ -48,7 +55,13 @@ export const Upload = () => {
       primaryGenre: finalPrimaryGenre, 
       secondaryGenre: finalSecondaryGenre, 
       releaseDate, 
-      description, 
+      description,
+      featuredArtists: featuredArtists.filter(a => a.trim()),
+      labelName,
+      trackType,
+      producers: producers.filter(p => p.trim()),
+      songwriters: songwriters.filter(s => s.trim()),
+      songDescription,
       dsps 
     });
   };
@@ -164,6 +177,69 @@ export const Upload = () => {
                 onCustomSecondaryGenreChange={setCustomSecondaryGenre}
               />
 
+              <DynamicTextField
+                label="Featured Artist Name (Optional)"
+                values={featuredArtists}
+                onChange={setFeaturedArtists}
+                maxFields={3}
+                placeholder="Enter featured artist name"
+              />
+
+              <div>
+                <Label htmlFor="labelName" className="text-sm font-medium text-muted-foreground mb-2 block">Label Name (if available)</Label>
+                <input
+                  id="labelName"
+                  value={labelName}
+                  onChange={(e) => setLabelName(e.target.value)}
+                  placeholder="Enter label name"
+                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
+                />
+              </div>
+
+              <div>
+                <Label className="text-sm font-medium text-muted-foreground mb-3 block">Track Type</Label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="trackType"
+                      value="clean"
+                      checked={trackType === 'clean'}
+                      onChange={(e) => setTrackType(e.target.value as 'clean' | 'explicit')}
+                      className="w-4 h-4 text-primary border-border focus:ring-primary"
+                    />
+                    <span className="text-sm text-foreground">Clean - No presence of curse words</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="trackType"
+                      value="explicit"
+                      checked={trackType === 'explicit'}
+                      onChange={(e) => setTrackType(e.target.value as 'clean' | 'explicit')}
+                      className="w-4 h-4 text-primary border-border focus:ring-primary"
+                    />
+                    <span className="text-sm text-foreground">Explicit - Contains strong language</span>
+                  </label>
+                </div>
+              </div>
+
+              <DynamicTextField
+                label="Producer Name"
+                values={producers}
+                onChange={setProducers}
+                maxFields={5}
+                placeholder="Enter producer name"
+              />
+
+              <DynamicTextField
+                label="Songwriter Name"
+                values={songwriters}
+                onChange={setSongwriters}
+                maxFields={5}
+                placeholder="Enter songwriter name"
+              />
+
               <div>
                 <Label htmlFor="releaseDate" className="text-sm font-medium text-muted-foreground mb-2 block">Release Date</Label>
                 <input
@@ -177,14 +253,14 @@ export const Upload = () => {
               </div>
 
               <div>
-                <Label htmlFor="description" className="text-sm font-medium text-muted-foreground mb-2 block">Description (Optional)</Label>
+                <Label htmlFor="songDescription" className="text-sm font-medium text-muted-foreground mb-2 block">Song Description (Optional)</Label>
                 <textarea
-                  id="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  id="songDescription"
+                  value={songDescription}
+                  onChange={(e) => setSongDescription(e.target.value)}
                   placeholder="Tell your fans about this track..."
                   className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
-                  rows={3}
+                  rows={4}
                 />
               </div>
             </CardContent>
