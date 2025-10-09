@@ -1,10 +1,10 @@
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
+  type CarouselApi,
 } from '@/components/ui/carousel';
 import { Music, TrendingUp, Store, Trophy } from 'lucide-react';
 
@@ -48,9 +48,23 @@ const analyticsData: AnalyticsCard[] = [
 ];
 
 export const AnalyticsCarousel = () => {
+  const [api, setApi] = useState<CarouselApi>();
+  const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    if (!api) return;
+
+    setCurrent(api.selectedScrollSnap());
+
+    api.on('select', () => {
+      setCurrent(api.selectedScrollSnap());
+    });
+  }, [api]);
+
   return (
     <div className="w-full">
       <Carousel
+        setApi={setApi}
         opts={{
           align: 'start',
           loop: true,
@@ -60,7 +74,7 @@ export const AnalyticsCarousel = () => {
         <CarouselContent className="-ml-2 md:-ml-4">
           {analyticsData.map((card, index) => (
             <CarouselItem key={index} className="pl-2 md:pl-4 basis-[85%] md:basis-1/2 lg:basis-1/3">
-              <Card className="h-full border-border/20 overflow-hidden">
+              <Card className="h-full border-border/20 overflow-hidden shadow-md">
                 <CardContent className={`p-5 h-full bg-gradient-to-br ${card.gradient}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="p-2.5 bg-background/80 backdrop-blur-sm rounded-xl">
@@ -83,9 +97,21 @@ export const AnalyticsCarousel = () => {
             </CarouselItem>
           ))}
         </CarouselContent>
+        
+        {/* Pagination Dots */}
         <div className="flex justify-center gap-2 mt-4">
-          <CarouselPrevious className="static translate-y-0" />
-          <CarouselNext className="static translate-y-0" />
+          {analyticsData.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => api?.scrollTo(index)}
+              className={`h-2 rounded-full transition-all ${
+                index === current
+                  ? 'w-6 bg-primary'
+                  : 'w-2 bg-muted-foreground/30'
+              }`}
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
         </div>
       </Carousel>
     </div>
