@@ -90,13 +90,13 @@ export const Profile = () => {
             <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
               <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
                 <span className="text-primary font-bold text-xl">
-                  {currentUser.name.slice(0, 2).toUpperCase()}
+                  {(currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'NA')}
                 </span>
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-bold text-card-foreground">{currentUser.name}</h2>
-                <p className="text-sm text-muted-foreground">{currentUser.accountType.toUpperCase()}</p>
-                <p className="text-sm text-muted-foreground">{currentUser.email}</p>
+                <h2 className="text-lg font-bold text-card-foreground">{currentUser?.name ?? 'Unknown User'}</h2>
+                <p className="text-sm text-muted-foreground">{currentUser?.accountType ? currentUser.accountType.toUpperCase() : ''}</p>
+                <p className="text-sm text-muted-foreground">{currentUser?.email ?? ''}</p>
               </div>
             </div>
           </CardContent>
