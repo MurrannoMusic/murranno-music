@@ -11,11 +11,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { GenreSelector } from '@/components/forms/GenreSelector';
 
 export const Upload = () => {
   const [trackTitle, setTrackTitle] = useState('');
   const [artist, setArtist] = useState('');
-  const [genre, setGenre] = useState('');
+  const [primaryGenre, setPrimaryGenre] = useState('');
+  const [secondaryGenre, setSecondaryGenre] = useState('');
+  const [customPrimaryGenre, setCustomPrimaryGenre] = useState('');
+  const [customSecondaryGenre, setCustomSecondaryGenre] = useState('');
   const [releaseDate, setReleaseDate] = useState('');
   const [description, setDescription] = useState('');
   
@@ -35,8 +39,18 @@ export const Upload = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const finalPrimaryGenre = primaryGenre === 'Other' ? customPrimaryGenre : primaryGenre;
+    const finalSecondaryGenre = secondaryGenre === 'Other' ? customSecondaryGenre : secondaryGenre;
     // TODO: Implement upload logic
-    console.log('Upload data:', { trackTitle, artist, genre, releaseDate, description, dsps });
+    console.log('Upload data:', { 
+      trackTitle, 
+      artist, 
+      primaryGenre: finalPrimaryGenre, 
+      secondaryGenre: finalSecondaryGenre, 
+      releaseDate, 
+      description, 
+      dsps 
+    });
   };
 
   return (
@@ -139,23 +153,16 @@ export const Upload = () => {
                 />
               </div>
 
-              <div>
-                <Label htmlFor="genre" className="text-sm font-medium text-muted-foreground mb-2 block">Genre</Label>
-                <select 
-                  value={genre} 
-                  onChange={(e) => setGenre(e.target.value)}
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground"
-                >
-                  <option value="">Select genre</option>
-                  <option value="afrobeats">Afrobeats</option>
-                  <option value="hiphop">Hip Hop</option>
-                  <option value="rnb">R&B</option>
-                  <option value="pop">Pop</option>
-                  <option value="gospel">Gospel</option>
-                  <option value="highlife">Highlife</option>
-                  <option value="amapiano">Amapiano</option>
-                </select>
-              </div>
+              <GenreSelector
+                primaryGenre={primaryGenre}
+                secondaryGenre={secondaryGenre}
+                customPrimaryGenre={customPrimaryGenre}
+                customSecondaryGenre={customSecondaryGenre}
+                onPrimaryGenreChange={setPrimaryGenre}
+                onSecondaryGenreChange={setSecondaryGenre}
+                onCustomPrimaryGenreChange={setCustomPrimaryGenre}
+                onCustomSecondaryGenreChange={setCustomSecondaryGenre}
+              />
 
               <div>
                 <Label htmlFor="releaseDate" className="text-sm font-medium text-muted-foreground mb-2 block">Release Date</Label>
