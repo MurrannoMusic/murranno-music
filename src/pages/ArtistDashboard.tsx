@@ -76,40 +76,21 @@ export const ArtistDashboard = () => {
 
       <div className="mobile-container space-y-4 mt-4">
         
-        {/* Crypto-style Stats Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                <DollarSign className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-medium">+12%</div>
-              </div>
+        {/* Crypto-style Stats Card */}
+        <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+              <DollarSign className="h-4 w-4 text-primary" />
             </div>
-            <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">
-                {stats[1]?.value}
-              </div>
-              <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
+            <div className="text-right">
+              <div className="text-xs text-success font-medium">+12%</div>
             </div>
           </div>
-          
-          <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-medium">+23%</div>
-              </div>
+          <div className="space-y-1">
+            <div className="text-xl font-bold text-card-foreground">
+              {stats[1]?.value}
             </div>
-            <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">
-                {stats[0]?.value}
-              </div>
-              <div className="text-xs text-muted-foreground font-medium">Total Streams</div>
-            </div>
+            <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
           </div>
         </div>
 
