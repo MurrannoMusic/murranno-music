@@ -8,33 +8,32 @@ interface CampaignActionsProps {
 
 export const CampaignActions = ({ onExportToPDF }: CampaignActionsProps) => {
   return (
-    <Card className="glass-card border border-border/20">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-sm font-bold">Quick Actions</CardTitle>
+    <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-bold text-card-foreground">Quick Actions</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
-        <div className="grid grid-cols-2 gap-2">
+      <CardContent className="space-y-3">
+        <div className="grid grid-cols-2 gap-3">
           <Link to="/promotions" className="w-full">
-            <Button className="w-full gradient-primary font-semibold py-4 text-xs h-auto">
+            <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs">
               Create Campaign
-            </Button>
+            </button>
           </Link>
           
-          <Button 
-            variant="outline"
-            className="w-full font-semibold py-4 text-xs border-border/20 h-auto"
+          <button 
+            className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs"
             onClick={onExportToPDF}
           >
             Export Results
-          </Button>
+          </button>
           
-          <Button variant="outline" className="w-full font-semibold py-4 text-xs border-border/20 h-auto">
+          <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
             Schedule Reports
-          </Button>
+          </button>
           
-          <Button variant="outline" className="w-full font-semibold py-4 text-xs border-border/20 h-auto">
+          <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
             Templates
-          </Button>
+          </button>
         </div>
       </CardContent>
     </Card>

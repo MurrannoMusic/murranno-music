@@ -62,21 +62,21 @@ export const PayoutManager = () => {
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 mt-6">
+      <div className="mobile-container space-y-4 -mt-2">
         {/* Payout Stats */}
-        <Card className="glass-card border border-border/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-base font-bold text-foreground truncate">${totalPending.toFixed(2)}</p>
+                <p className="text-base font-bold text-card-foreground truncate">${totalPending.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">Pending</p>
               </div>
               <div>
-                <p className="text-base font-bold text-foreground">3</p>
+                <p className="text-base font-bold text-card-foreground">3</p>
                 <p className="text-xs text-muted-foreground">This Month</p>
               </div>
               <div>
-                <p className="text-base font-bold text-foreground truncate">$195.60</p>
+                <p className="text-base font-bold text-card-foreground truncate">$195.60</p>
                 <p className="text-xs text-muted-foreground">Available</p>
               </div>
             </div>
@@ -85,7 +85,7 @@ export const PayoutManager = () => {
 
         {/* Artist Filter (for labels) */}
         {isLabel && (
-          <Card className="glass-card border border-border/20">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-4">
               <ArtistFilter 
                 selectedArtist={selectedArtist}
@@ -97,20 +97,20 @@ export const PayoutManager = () => {
         )}
 
         {/* Payout Requests */}
-        <Card className="glass-card border border-border/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold">Payout Requests</CardTitle>
+            <CardTitle className="text-lg font-bold text-card-foreground">Payout Requests</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {filteredPayouts.map((payout) => (
-              <div key={payout.id} className="flex items-center gap-4 p-4 bg-muted/20 rounded-xl border border-border/10">
+              <div key={payout.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200">
                 <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
                   <DollarSign className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold">{payout.artist}</h3>
+                      <h3 className="text-sm font-semibold text-card-foreground">{payout.artist}</h3>
                       <Badge 
                         variant={
                           payout.status === 'Pending' ? 'secondary' :
@@ -122,7 +122,7 @@ export const PayoutManager = () => {
                         {payout.status}
                       </Badge>
                     </div>
-                    <span className="text-sm font-bold text-foreground">{payout.amount}</span>
+                    <span className="text-sm font-bold text-card-foreground">{payout.amount}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{payout.streams} streams • {payout.requestDate}</p>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/10">
@@ -154,34 +154,34 @@ export const PayoutManager = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="glass-card border border-border/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold">Payout Actions</CardTitle>
+            <CardTitle className="text-lg font-bold text-card-foreground">Payout Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button 
-              className="w-full gradient-primary font-semibold py-6 px-4 text-sm"
+            <button 
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 px-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-sm"
               onClick={requestBulkPayout}
             >
               <span className="flex flex-col items-center">
                 Request Bulk Payout
                 <span className="text-xs mt-1 opacity-90">(${totalPending.toFixed(2)})</span>
               </span>
-            </Button>
+            </button>
             
             <div className="grid grid-cols-2 gap-3">
-              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-3 rounded-[16px] transition-all duration-200 text-xs">
                 Export Records
-              </Button>
+              </button>
               
-              <Button variant="outline" className="w-full font-semibold py-6 px-3 text-xs border-border/20">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-3 rounded-[16px] transition-all duration-200 text-xs">
                 Schedule Payouts
-              </Button>
+              </button>
             </div>
             
-            <Button variant="outline" className="w-full font-semibold py-6 px-4 text-xs border-border/20">
+            <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-4 rounded-[16px] transition-all duration-200 text-xs">
               Payout Settings
-            </Button>
+            </button>
           </CardContent>
         </Card>
       </div>

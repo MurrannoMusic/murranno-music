@@ -9,13 +9,13 @@ interface CampaignFilterProps {
 
 export const CampaignFilter = ({ statusFilter, onFilterChange }: CampaignFilterProps) => {
   return (
-    <div className="flex items-center gap-2 p-3 glass-card border border-border/20 rounded-2xl">
+    <div className="flex items-center gap-2 p-3 bg-card border border-border rounded-[20px] shadow-soft">
       <Filter className="h-4 w-4 text-primary flex-shrink-0" />
       <Select value={statusFilter} onValueChange={onFilterChange}>
         <SelectTrigger className="flex-1 bg-transparent border-0 focus:ring-0 font-medium text-sm h-8">
           <SelectValue placeholder="Filter by status" />
         </SelectTrigger>
-        <SelectContent className="glass-card border-border/20">
+        <SelectContent className="bg-card border border-border">
           <SelectItem value="all">All Campaigns</SelectItem>
           <SelectItem value="Active">Active</SelectItem>
           <SelectItem value="Completed">Completed</SelectItem>

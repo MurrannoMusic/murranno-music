@@ -1,9 +1,9 @@
-import { TrendingUp, Users, Target, Download } from 'lucide-react';
+import { TrendingUp, Users, Target, Download, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 export const Results = () => {
@@ -51,70 +51,75 @@ export const Results = () => {
     avgROI: '+300%'
   };
 
-  const headerActions = <AvatarDropdown />;
-
   return (
     <PageContainer>
-      <PageHeader 
-        title="Campaign Results"
-        subtitle="View performance metrics"
-        backTo="/agency-dashboard"
-        actions={headerActions}
-      />
+      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
+        <div className="flex items-center justify-between">
+          <Link to="/agency-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div className="flex-1 text-center">
+            <Badge className="bg-secondary/15 text-secondary-foreground border-secondary/30 px-4 py-1">
+              CAMPAIGN RESULTS
+            </Badge>
+          </div>
+          <AvatarDropdown />
+        </div>
+      </div>
 
-      <div className="mobile-container space-y-4 pt-4 pb-6">
+      <div className="mobile-container space-y-4 -mt-2">
         {/* Overall Performance Stats */}
         <div className="grid grid-cols-2 gap-2">
-          <Card className="glass-card border border-border/20">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
-              <p className="text-xl font-bold text-primary">{totalMetrics.totalReach}</p>
+              <p className="text-xl font-bold text-card-foreground">{totalMetrics.totalReach}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Total Reach</p>
             </CardContent>
           </Card>
           
-          <Card className="glass-card border border-border/20">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
-              <p className="text-xl font-bold text-accent">{totalMetrics.avgEngagement}</p>
+              <p className="text-xl font-bold text-success">{totalMetrics.avgEngagement}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Avg Engagement</p>
             </CardContent>
           </Card>
           
-          <Card className="glass-card border border-border/20">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
-              <p className="text-xl font-bold">{totalMetrics.totalConversions}</p>
+              <p className="text-xl font-bold text-card-foreground">{totalMetrics.totalConversions}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Conversions</p>
             </CardContent>
           </Card>
           
-          <Card className="glass-card border border-border/20">
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
-              <p className="text-xl font-bold text-accent">{totalMetrics.avgROI}</p>
+              <p className="text-xl font-bold text-success">{totalMetrics.avgROI}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Avg ROI</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Total Spent Summary */}
-        <Card className="glass-card border border-border/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardContent className="p-3 flex items-center justify-between">
             <p className="text-sm text-muted-foreground">Total Spent</p>
-            <p className="text-lg font-bold">{totalMetrics.totalSpent}</p>
+            <p className="text-lg font-bold text-card-foreground">{totalMetrics.totalSpent}</p>
           </CardContent>
         </Card>
 
         {/* Campaign Results List */}
-        <Card className="glass-card border border-border/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-base font-bold">Campaign Details</CardTitle>
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-card-foreground">Campaign Details</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {campaignResults.map((campaign) => (
-              <div key={campaign.id} className="p-3 bg-muted/20 rounded-2xl border border-border/10 space-y-2">
+              <div key={campaign.id} className="p-4 bg-secondary/20 rounded-[16px] border border-border space-y-2">
                 {/* Campaign Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-sm font-semibold truncate">{campaign.name}</h3>
+                      <h3 className="text-sm font-semibold text-card-foreground truncate">{campaign.name}</h3>
                       <Badge 
                         variant={campaign.status === 'Active' ? 'default' : 'secondary'}
                         className="text-[10px] flex-shrink-0"
@@ -125,40 +130,40 @@ export const Results = () => {
                     <p className="text-xs text-muted-foreground">{campaign.artist}</p>
                   </div>
                   <div className="text-right flex-shrink-0 ml-2">
-                    <p className="text-sm font-bold text-accent">{campaign.roi}</p>
+                    <p className="text-sm font-bold text-success">{campaign.roi}</p>
                     <p className="text-[10px] text-muted-foreground">ROI</p>
                   </div>
                 </div>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border/10">
+                <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border">
                   <div className="text-center">
                     <div className="w-7 h-7 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-1">
                       <Users className="h-3 w-3 text-primary" />
                     </div>
-                    <p className="text-xs font-bold">{campaign.reach}</p>
+                    <p className="text-xs font-bold text-card-foreground">{campaign.reach}</p>
                     <p className="text-[10px] text-muted-foreground">Reach</p>
                   </div>
                   <div className="text-center">
-                    <div className="w-7 h-7 bg-accent/20 rounded-full flex items-center justify-center mx-auto mb-1">
-                      <TrendingUp className="h-3 w-3 text-accent" />
+                    <div className="w-7 h-7 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-1">
+                      <TrendingUp className="h-3 w-3 text-primary" />
                     </div>
-                    <p className="text-xs font-bold">{campaign.engagement}</p>
+                    <p className="text-xs font-bold text-card-foreground">{campaign.engagement}</p>
                     <p className="text-[10px] text-muted-foreground">Engagement</p>
                   </div>
                   <div className="text-center">
                     <div className="w-7 h-7 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-1">
                       <Target className="h-3 w-3 text-primary" />
                     </div>
-                    <p className="text-xs font-bold">{campaign.conversions}</p>
+                    <p className="text-xs font-bold text-card-foreground">{campaign.conversions}</p>
                     <p className="text-[10px] text-muted-foreground">Conversions</p>
                   </div>
                 </div>
 
                 {/* Budget */}
-                <div className="flex items-center justify-between pt-2 border-t border-border/10">
+                <div className="flex items-center justify-between pt-2 border-t border-border">
                   <span className="text-xs text-muted-foreground">Budget Spent</span>
-                  <span className="text-sm font-bold">{campaign.spent}</span>
+                  <span className="text-sm font-bold text-card-foreground">{campaign.spent}</span>
                 </div>
               </div>
             ))}
@@ -166,24 +171,24 @@ export const Results = () => {
         </Card>
 
         {/* Export Actions */}
-        <Card className="glass-card border border-border/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-bold">Export & Reports</CardTitle>
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+          <CardHeader className="pb-4">
+            <CardTitle className="text-lg font-bold text-card-foreground">Export & Reports</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-2">
-            <Button className="w-full gradient-primary font-semibold py-4 text-xs h-auto">
-              <Download className="h-3 w-3 mr-2" />
+          <CardContent className="space-y-3">
+            <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs flex items-center justify-center gap-2">
+              <Download className="h-3 w-3" />
               Download Full Report
-            </Button>
+            </button>
             
-            <div className="grid grid-cols-2 gap-2">
-              <Button variant="outline" className="w-full font-semibold py-4 text-xs border-border/20 h-auto">
+            <div className="grid grid-cols-2 gap-3">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
                 Export CSV
-              </Button>
+              </button>
               
-              <Button variant="outline" className="w-full font-semibold py-4 text-xs border-border/20 h-auto">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
                 Share Report
-              </Button>
+              </button>
             </div>
           </CardContent>
         </Card>

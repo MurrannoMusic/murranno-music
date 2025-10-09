@@ -22,9 +22,9 @@ export const CampaignList = ({
   onDuplicate,
 }: CampaignListProps) => {
   return (
-    <Card className="glass-card border border-border/20">
-      <CardHeader>
-        <CardTitle className="text-lg font-bold">
+    <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-bold text-card-foreground">
           {statusFilter === 'all' ? 'All Campaigns' : `${statusFilter} Campaigns`}
         </CardTitle>
       </CardHeader>

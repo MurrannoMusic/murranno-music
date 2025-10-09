@@ -75,21 +75,21 @@ export const ArtistManagement = () => {
         </div>
       </div>
 
-      <div className="mobile-container space-y-6 mt-6">
+      <div className="mobile-container space-y-4 -mt-2">
         {/* Artist Stats */}
-        <Card className="modern-card">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-xl font-bold text-foreground">{artists.length}</p>
+                <p className="text-xl font-bold text-card-foreground">{artists.length}</p>
                 <p className="text-xs text-muted-foreground">Artists</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-foreground">18</p>
+                <p className="text-xl font-bold text-card-foreground">18</p>
                 <p className="text-xs text-muted-foreground">Total Releases</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-foreground">$754</p>
+                <p className="text-xl font-bold text-card-foreground">$754</p>
                 <p className="text-xs text-muted-foreground">Combined Revenue</p>
               </div>
             </div>
@@ -97,20 +97,20 @@ export const ArtistManagement = () => {
         </Card>
 
         {/* Artist List */}
-        <Card className="modern-card">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-foreground">Your Artists</CardTitle>
+            <CardTitle className="text-lg font-bold text-card-foreground">Your Artists</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             {artists.map((artist) => (
-              <div key={artist.id} className="flex items-center gap-4 p-4 bg-card/50 rounded-[16px] border border-border">
+              <div key={artist.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
                 <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
                   <Users className="h-5 w-5 text-primary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-foreground truncate">{artist.stageName}</p>
-                    <span className="px-2 py-1 bg-accent/20 text-accent-foreground rounded-full text-xs">{artist.status}</span>
+                    <p className="text-sm font-semibold text-card-foreground truncate">{artist.stageName}</p>
+                    <span className="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-semibold">{artist.status}</span>
                   </div>
                   <p className="text-xs text-muted-foreground">{artist.releases} tracks • {artist.streams} streams</p>
                 </div>
@@ -120,27 +120,27 @@ export const ArtistManagement = () => {
         </Card>
 
         {/* Quick Actions */}
-        <Card className="modern-card">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-foreground">Quick Actions</CardTitle>
+            <CardTitle className="text-lg font-bold text-card-foreground">Quick Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
+              <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
                 Bulk Payout
               </button>
               
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Analytics
               </button>
             </div>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Export Reports
               </button>
               
-              <button className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-smooth border border-border text-xs break-words">
+              <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Upload Track
               </button>
             </div>
