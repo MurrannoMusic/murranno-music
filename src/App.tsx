@@ -12,6 +12,8 @@ import { Dashboard } from "./pages/Dashboard";
 import { ArtistDashboard } from "./pages/ArtistDashboard";
 import { LabelDashboard } from "./pages/LabelDashboard";
 import { UserTypeSwitcher } from "./pages/UserTypeSwitcher";
+import Releases from "./pages/Releases";
+import ReleaseDetail from "./pages/ReleaseDetail";
 import { Upload } from "./pages/Upload";
 import { Promotions } from "./pages/Promotions";
 import { Earnings } from "./pages/Earnings";
@@ -57,6 +59,8 @@ const App = () => (
             <Route path="/results" element={<Results />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/releases" element={<Releases />} />
+            <Route path="/releases/:id" element={<ReleaseDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

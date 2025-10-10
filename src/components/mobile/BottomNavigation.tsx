@@ -1,4 +1,4 @@
-import { Home, Upload, Megaphone, DollarSign, BarChart3, Users, TrendingUp } from 'lucide-react';
+import { Home, Upload, Megaphone, DollarSign, BarChart3, Users, TrendingUp, Music } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { useUserType } from '@/hooks/useUserType';
@@ -25,10 +25,10 @@ export const BottomNavigation = () => {
     if (isArtist || inferredArtist) {
       return [
         { icon: Home, label: 'Home', path: '/artist-dashboard' },
-        { icon: Upload, label: 'Upload', path: '/upload' },
-        { icon: Megaphone, label: 'Promo', path: '/promotions' },
-        { icon: DollarSign, label: 'Earnings', path: '/earnings' },
         { icon: BarChart3, label: 'Analytics', path: '/analytics' },
+        { icon: Music, label: 'Music', path: '/releases' },
+        { icon: DollarSign, label: 'Earnings', path: '/earnings' },
+        { icon: Upload, label: 'Upload', path: '/upload' },
       ];
     }
 
