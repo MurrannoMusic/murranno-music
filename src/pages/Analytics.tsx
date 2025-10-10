@@ -1,130 +1,118 @@
-import { ArrowLeft, BarChart3, Globe, Users, Calendar, Download, Music } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ModernStatCard } from '@/components/modern/ModernStatCard';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
+import { AnalyticsTabs } from '@/components/analytics/AnalyticsTabs';
+import { TimePeriodFilter } from '@/components/analytics/TimePeriodFilter';
+import { StatsComparison } from '@/components/analytics/StatsComparison';
+import { StreamsChart } from '@/components/analytics/StreamsChart';
+import { AnalyticsFilters } from '@/components/analytics/AnalyticsFilters';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { AnalyticsTab, TimePeriod } from '@/types/analytics';
+
+const analyticsTabs: AnalyticsTab[] = [
+  { id: 'streams', label: 'Streams' },
+  { id: 'tracks', label: 'Tracks' },
+  { id: 'playlists', label: 'Playlists' },
+  { id: 'stores', label: 'Stores' },
+  { id: 'audience', label: 'Audience' },
+];
+
+const timePeriods: TimePeriod[] = [
+  { id: 'week', label: 'Week', days: 7 },
+  { id: 'month', label: 'Month', days: 30 },
+  { id: '90days', label: '90 Days', days: 90 },
+  { id: 'year', label: 'Year', days: 365 },
+];
 
 export const Analytics = () => {
+  const [showFilters, setShowFilters] = useState(false);
+  const {
+    activeTab,
+    setActiveTab,
+    activePeriod,
+    setActivePeriod,
+    filters,
+    resetFilters,
+    chartData,
+    stats,
+  } = useAnalytics();
+
+  const handleUpdateFilters = () => {
+    setShowFilters(false);
+  };
+
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
+      {/* Header */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
+        <div className="flex items-center justify-between mb-4">
           <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           
-          {/* User Type (Center) */}
           <div className="flex-1 text-center">
             <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
               ANALYTICS
             </Badge>
           </div>
           
-          {/* Avatar Dropdown (Right) */}
           <AvatarDropdown />
         </div>
-        
-        {/* Actions */}
-        <div className="flex justify-end mt-4">
-          <Button variant="glass" size="sm">
-            <Download className="h-4 w-4 mr-2" />
-            Export
+      </div>
+
+      <div className="mobile-container space-y-4 mt-4 pb-20">
+        {/* Analytics Tabs */}
+        <AnalyticsTabs 
+          tabs={analyticsTabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+        />
+
+        {/* Page Title & Filter Button */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-foreground">
+            {analyticsTabs.find(tab => tab.id === activeTab)?.label}
+          </h1>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowFilters(true)}
+            className="border border-border rounded-[16px] px-4 py-2"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filter
           </Button>
         </div>
+
+        {/* Time Period Filter */}
+        <TimePeriodFilter
+          periods={timePeriods}
+          activePeriod={activePeriod}
+          onPeriodChange={setActivePeriod}
+        />
+
+        {/* Stats Comparison Card */}
+        <StatsComparison 
+          stats={stats}
+          label={analyticsTabs.find(tab => tab.id === activeTab)?.label || 'Streams'}
+        />
+
+        {/* Chart */}
+        <StreamsChart data={chartData} />
       </div>
 
-      <div className="mobile-container space-y-4 mt-4">
-        {/* Crypto-style Stats Cards */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                <BarChart3 className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-medium">+15%</div>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">2.4M</div>
-              <div className="text-xs text-muted-foreground font-medium">Total Streams</div>
-            </div>
-          </div>
-          
-          <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
-            <div className="flex items-center justify-between mb-4">
-              <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
-                <Users className="h-4 w-4 text-primary" />
-              </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-medium">+8%</div>
-              </div>
-            </div>
-            <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">3.2K</div>
-              <div className="text-xs text-muted-foreground font-medium">Unique Listeners</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Chart Card */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-              <BarChart3 className="h-5 w-5 text-primary" />
-              Stream Analytics
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-64 bg-secondary/20 rounded-[12px] border border-border flex items-center justify-center">
-              <p className="text-muted-foreground">Chart visualization would go here</p>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Top Tracks */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-              <Music className="h-5 w-5 text-primary" />
-              Top Performing Tracks
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <Music className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-card-foreground truncate">Summer Vibes</p>
-                  <span className="text-sm font-bold text-success">245K streams</span>
-                </div>
-                <p className="text-xs text-muted-foreground">+15% from last week</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <Music className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-card-foreground truncate">Midnight Dreams</p>
-                  <span className="text-sm font-bold text-success">189K streams</span>
-                </div>
-                <p className="text-xs text-muted-foreground">+8% from last week</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Filters Sheet */}
+      <AnalyticsFilters
+        open={showFilters}
+        onOpenChange={setShowFilters}
+        filters={filters}
+        onReset={resetFilters}
+        onUpdate={handleUpdateFilters}
+      />
     </PageContainer>
   );
 };
