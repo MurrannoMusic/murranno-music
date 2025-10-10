@@ -34,7 +34,7 @@ export const AgencyDashboard = () => {
       campaign: 'TikTok Viral Push',
       status: 'Active',
       reach: '25.3K',
-      budget: '$299',
+      budget: '₦299',
       remaining: '5 days'
     },
     {
@@ -43,7 +43,7 @@ export const AgencyDashboard = () => {
       campaign: 'Instagram Stories',
       status: 'Active', 
       reach: '12.1K',
-      budget: '$149',
+      budget: '₦149',
       remaining: '12 days'
     },
     {
@@ -52,7 +52,7 @@ export const AgencyDashboard = () => {
       campaign: 'YouTube Pre-roll',
       status: 'Completed',
       reach: '45.7K',
-      budget: '$599',
+      budget: '₦599',
       remaining: 'Complete'
     }
   ];

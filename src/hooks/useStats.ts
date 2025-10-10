@@ -8,9 +8,9 @@ export const useStats = () => {
   const getArtistStats = (artistId?: string): ArtistStats => {
     // Mock individual artist stats
     const artistSpecificStats = {
-      'a1': { streams: '12.5K', earnings: '$342', followers: '2.1K', releases: '8' },
-      'a2': { streams: '8.9K', earnings: '$234', followers: '1.8K', releases: '6' }, 
-      'a3': { streams: '6.2K', earnings: '$178', followers: '1.2K', releases: '4' }
+      'a1': { streams: '12.5K', earnings: '₦342', followers: '2.1K', releases: '8' },
+      'a2': { streams: '8.9K', earnings: '₦234', followers: '1.8K', releases: '6' }, 
+      'a3': { streams: '6.2K', earnings: '₦178', followers: '1.2K', releases: '4' }
     };
 
     if (artistId && artistSpecificStats[artistId as keyof typeof artistSpecificStats]) {

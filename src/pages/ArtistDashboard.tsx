@@ -117,7 +117,7 @@ export const ArtistDashboard = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-card-foreground truncate">Streaming payout received</p>
-                  <span className="text-sm font-bold text-success">+$67.30</span>
+                  <span className="text-sm font-bold text-success">+₦67.30</span>
                 </div>
                 <p className="text-xs text-muted-foreground">2 hours ago</p>
               </div>

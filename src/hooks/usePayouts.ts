@@ -14,7 +14,7 @@ export const usePayouts = () => {
   const getTotalPending = (): number => {
     return payouts
       .filter(p => p.status === 'Pending')
-      .reduce((sum, p) => sum + parseFloat(p.amount.replace('$', '')), 0);
+      .reduce((sum, p) => sum + parseFloat(p.amount.replace('₦', '')), 0);
   };
 
   const getStatusBadgeVariant = (status: string) => {

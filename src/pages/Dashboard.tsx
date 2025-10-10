@@ -81,7 +81,7 @@ export const Dashboard = () => {
       {
         title: "Artist payout processed",
         description: "Monthly payouts sent to 3 artists",
-        value: "$2,450",
+        value: "₦2,450",
         time: "1h ago",
         type: "success"
       },

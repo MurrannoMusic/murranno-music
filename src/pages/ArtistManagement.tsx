@@ -12,9 +12,9 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 export const ArtistManagement = () => {
   const [artists, setArtists] = useState([
-    { id: 'a1', name: 'Luna Sol', stageName: 'Luna Sol', status: 'Active', releases: 8, streams: '12.5K', revenue: '$342' },
-    { id: 'a2', name: 'The Echoes', stageName: 'The Echoes', status: 'Active', releases: 6, streams: '8.9K', revenue: '$234' },
-    { id: 'a3', name: 'Midnight Drive', stageName: 'Midnight Drive', status: 'Active', releases: 4, streams: '6.2K', revenue: '$178' }
+    { id: 'a1', name: 'Luna Sol', stageName: 'Luna Sol', status: 'Active', releases: 8, streams: '12.5K', revenue: '₦342' },
+    { id: 'a2', name: 'The Echoes', stageName: 'The Echoes', status: 'Active', releases: 6, streams: '8.9K', revenue: '₦234' },
+    { id: 'a3', name: 'Midnight Drive', stageName: 'Midnight Drive', status: 'Active', releases: 4, streams: '6.2K', revenue: '₦178' }
   ]);
 
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -27,7 +27,7 @@ export const ArtistManagement = () => {
       status: 'Active',
       releases: 0,
       streams: '0',
-      revenue: '$0'
+      revenue: '₦0'
     };
     setArtists([...artists, artist]);
     setShowAddDialog(false);
@@ -89,7 +89,7 @@ export const ArtistManagement = () => {
                 <p className="text-xs text-muted-foreground">Total Releases</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-card-foreground">$754</p>
+                <p className="text-xl font-bold text-card-foreground">₦754</p>
                 <p className="text-xs text-muted-foreground">Combined Revenue</p>
               </div>
             </div>

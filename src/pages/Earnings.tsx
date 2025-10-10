@@ -44,7 +44,7 @@ export const Earnings = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">$2,847</div>
+              <div className="text-xl font-bold text-card-foreground">₦2,847</div>
               <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
             </div>
           </div>
@@ -59,7 +59,7 @@ export const Earnings = () => {
               </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">$245</div>
+              <div className="text-xl font-bold text-card-foreground">₦245</div>
               <div className="text-xs text-muted-foreground font-medium">This Month</div>
             </div>
           </div>
@@ -81,7 +81,7 @@ export const Earnings = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-card-foreground truncate">Streaming Revenue</p>
-                  <span className="text-sm font-bold text-success">+$164.80</span>
+                  <span className="text-sm font-bold text-success">+₦164.80</span>
                 </div>
                 <p className="text-xs text-muted-foreground">Spotify • 8.2K streams</p>
               </div>
@@ -94,7 +94,7 @@ export const Earnings = () => {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-semibold text-card-foreground truncate">Apple Music</p>
-                  <span className="text-sm font-bold text-success">+$89.30</span>
+                  <span className="text-sm font-bold text-success">+₦89.30</span>
                 </div>
                 <p className="text-xs text-muted-foreground">3.1K streams</p>
               </div>
@@ -109,7 +109,7 @@ export const Earnings = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-sm">
-              Withdraw $298.50
+              Withdraw ₦298.50
             </button>
             
             <div className="grid grid-cols-2 gap-3">

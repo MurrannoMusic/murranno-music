@@ -9,8 +9,8 @@ export const mockCampaigns: Campaign[] = [
     artist: 'Luna Sol',
     platform: 'TikTok',
     status: 'Active',
-    budget: '$500',
-    spent: '$320',
+    budget: '₦500',
+    spent: '₦320',
     reach: '45.2K',
     engagement: '8.9%',
     startDate: '2024-08-15',
@@ -22,8 +22,8 @@ export const mockCampaigns: Campaign[] = [
     artist: 'The Echoes',
     platform: 'Instagram',
     status: 'Completed',
-    budget: '$800',
-    spent: '$750',
+    budget: '₦800',
+    spent: '₦750',
     reach: '72.1K',
     engagement: '12.3%',
     startDate: '2024-07-20',
@@ -36,8 +36,8 @@ export const mockCampaigns: Campaign[] = [
     artist: 'Midnight Drive', 
     platform: 'Multi-Platform',
     status: 'Active',
-    budget: '$1200',
-    spent: '$890',
+    budget: '₦1200',
+    spent: '₦890',
     reach: '98.7K',
     engagement: '15.2%',
     startDate: '2024-08-01',
@@ -49,7 +49,7 @@ export const mockPayouts: Payout[] = [
   {
     id: 1,
     artist: 'Luna Sol',
-    amount: '$87.50',
+    amount: '₦87.50',
     period: 'August 2024',
     status: 'Pending',
     requestDate: '2024-09-01',
@@ -59,7 +59,7 @@ export const mockPayouts: Payout[] = [
   {
     id: 2,
     artist: 'The Echoes',
-    amount: '$62.30', 
+    amount: '₦62.30', 
     period: 'August 2024',
     status: 'Approved',
     requestDate: '2024-09-01',
@@ -69,7 +69,7 @@ export const mockPayouts: Payout[] = [
   {
     id: 3,
     artist: 'Midnight Drive',
-    amount: '$45.80',
+    amount: '₦45.80',
     period: 'August 2024',
     status: 'Completed',
     requestDate: '2024-08-31',
@@ -80,25 +80,25 @@ export const mockPayouts: Payout[] = [
 
 export const mockLabelStats: LabelStats = {
   streams: '27.6K',
-  earnings: '$754',
+  earnings: '₦754',
   followers: '5.8K',
   releases: '18',
   totalArtists: 3,
   totalReleases: 18,
-  combinedRevenue: '$754'
+  combinedRevenue: '₦754'
 };
 
 export const mockCampaignStats: CampaignStats = {
   totalCampaigns: 8,
   activeCampaigns: 3,
-  totalSpent: '$4,250',
+  totalSpent: '₦4,250',
   totalReach: '284K'
 };
 
 export const mockPayoutSummary: PayoutSummary = {
   totalPending: 195.60,
   thisMonth: 3,
-  totalAvailable: '$195.60'
+  totalAvailable: '₦195.60'
 };
 
 export const mockTopTracks = [

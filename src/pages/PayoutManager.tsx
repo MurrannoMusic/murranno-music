@@ -68,7 +68,7 @@ export const PayoutManager = () => {
           <CardContent className="p-4">
             <div className="grid grid-cols-3 gap-2 text-center">
               <div>
-                <p className="text-base font-bold text-card-foreground truncate">${totalPending.toFixed(2)}</p>
+                <p className="text-base font-bold text-card-foreground truncate">₦{totalPending.toFixed(2)}</p>
                 <p className="text-xs text-muted-foreground">Pending</p>
               </div>
               <div>
@@ -76,7 +76,7 @@ export const PayoutManager = () => {
                 <p className="text-xs text-muted-foreground">This Month</p>
               </div>
               <div>
-                <p className="text-base font-bold text-card-foreground truncate">$195.60</p>
+                <p className="text-base font-bold text-card-foreground truncate">₦195.60</p>
                 <p className="text-xs text-muted-foreground">Available</p>
               </div>
             </div>
@@ -165,7 +165,7 @@ export const PayoutManager = () => {
             >
               <span className="flex flex-col items-center">
                 Request Bulk Payout
-                <span className="text-xs mt-1 opacity-90">(${totalPending.toFixed(2)})</span>
+                <span className="text-xs mt-1 opacity-90">(₦{totalPending.toFixed(2)})</span>
               </span>
             </button>
             
