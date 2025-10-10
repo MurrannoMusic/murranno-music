@@ -17,7 +17,7 @@ export const LabelAnalytics = () => {
       // Individual artist stats
       return {
         streams: '3.2K',
-        earnings: '$89',
+        earnings: '₦89',
         followers: '547',
         releases: '3'
       };
@@ -25,7 +25,7 @@ export const LabelAnalytics = () => {
     // Combined label stats
     return {
       streams: '45.7K',
-      earnings: '$1,234',
+      earnings: '₦1,234',
       followers: '8.9K',
       releases: '24'
     };

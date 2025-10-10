@@ -16,7 +16,7 @@ export const Results = () => {
       reach: '125.3K',
       engagement: '18.5%',
       conversions: '4,230',
-      spent: '$299',
+      spent: '₦299',
       roi: '+285%'
     },
     {
@@ -27,7 +27,7 @@ export const Results = () => {
       reach: '89.2K',
       engagement: '12.8%',
       conversions: '2,150',
-      spent: '$149',
+      spent: '₦149',
       roi: '+195%'
     },
     {
@@ -38,7 +38,7 @@ export const Results = () => {
       reach: '245.7K',
       engagement: '22.1%',
       conversions: '8,940',
-      spent: '$599',
+      spent: '₦599',
       roi: '+420%'
     }
   ];
@@ -47,7 +47,7 @@ export const Results = () => {
     totalReach: '460.2K',
     avgEngagement: '17.8%',
     totalConversions: '15,320',
-    totalSpent: '$1,047',
+    totalSpent: '₦1,047',
     avgROI: '+300%'
   };
 
