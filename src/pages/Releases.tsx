@@ -1,5 +1,6 @@
 import { PageContainer } from '@/components/layout/PageContainer';
 import { PageHeader } from '@/components/layout/PageHeader';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { useReleases } from '@/hooks/useReleases';
 import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -20,6 +21,8 @@ const Releases = () => {
       <PageHeader 
         title="Music" 
         subtitle="Your Releases"
+        backTo="/artist-dashboard"
+        actions={<AvatarDropdown />}
       />
 
       <div className="mobile-container space-y-4 pb-20">
