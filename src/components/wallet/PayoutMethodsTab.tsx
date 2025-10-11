@@ -125,7 +125,7 @@ export const PayoutMethodsTab = () => {
                 <h3 className="font-semibold text-card-foreground mb-1">Manage your payout methods</h3>
                 <p className="text-sm text-muted-foreground">Update details, verify accounts, or add new methods</p>
               </div>
-              <Button variant="outline" size="icon" className="rounded-full">
+              <Button variant="outline" size="icon" className="rounded-full" onClick={() => setShowAddSheet(true)}>
                 <Settings className="h-4 w-4" />
               </Button>
             </div>
