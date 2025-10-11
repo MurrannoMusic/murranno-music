@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { mockWalletBalance } from '@/utils/mockWallet';
 
 export interface WalletBalance {
   id: string;
@@ -24,8 +25,18 @@ export const useWalletBalance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        console.log('No authenticated user found');
-        setBalance(null);
+        console.log('No authenticated user found - showing mock data for preview');
+        setBalance({
+          id: 'mock-balance',
+          user_id: 'mock-user',
+          available_balance: mockWalletBalance.availableBalance,
+          pending_balance: mockWalletBalance.pendingBalance,
+          total_earnings: mockWalletBalance.totalEarnings,
+          currency: 'NGN',
+          updated_at: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+        });
+        setLoading(false);
         return;
       }
 
