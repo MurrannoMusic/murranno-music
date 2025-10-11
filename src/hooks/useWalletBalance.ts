@@ -24,9 +24,12 @@ export const useWalletBalance = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
+        console.log('No authenticated user found');
         setBalance(null);
         return;
       }
+
+      console.log('Fetching wallet balance for user:', user.id);
 
       const { data, error } = await supabase
         .from('wallet_balance')
@@ -34,9 +37,13 @@ export const useWalletBalance = () => {
         .eq('user_id', user.id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching wallet balance:', error);
+        throw error;
+      }
 
       if (!data) {
+        console.log('No wallet balance found, creating new one...');
         const { data: newBalance, error: createError } = await supabase
           .from('wallet_balance')
           .insert({
@@ -49,18 +56,30 @@ export const useWalletBalance = () => {
           .select()
           .single();
 
-        if (createError) throw createError;
+        if (createError) {
+          console.error('Error creating wallet balance:', createError);
+          throw createError;
+        }
+        
+        console.log('Wallet balance created successfully:', newBalance);
         setBalance(newBalance);
+        toast({
+          title: 'Wallet Initialized',
+          description: 'Your wallet has been set up successfully!',
+        });
       } else {
+        console.log('Wallet balance found:', data);
         setBalance(data);
       }
     } catch (error: any) {
-      console.error('Error fetching wallet balance:', error);
+      console.error('Error in fetchBalance:', error);
       toast({
         title: 'Error',
-        description: 'Failed to fetch wallet balance',
+        description: error.message || 'Failed to fetch wallet balance',
         variant: 'destructive',
       });
+      // Set balance to null on error so empty state shows
+      setBalance(null);
     } finally {
       setLoading(false);
     }

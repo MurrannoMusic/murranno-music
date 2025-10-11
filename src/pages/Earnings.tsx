@@ -6,6 +6,8 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { WalletTabs } from '@/components/wallet/WalletTabs';
 import { BalanceTab } from '@/components/wallet/BalanceTab';
+import { BalanceLoading } from '@/components/wallet/BalanceLoading';
+import { BalanceEmptyState } from '@/components/wallet/BalanceEmptyState';
 import { PayoutMethodsTab } from '@/components/wallet/PayoutMethodsTab';
 import { HistoryTab } from '@/components/wallet/HistoryTab';
 import { WithdrawSheet } from '@/components/wallet/WithdrawSheet';
@@ -25,7 +27,7 @@ export const Earnings = () => {
     setTypeFilter,
   } = useWallet();
 
-  const { balance, refetch: refetchBalance } = useWalletBalance();
+  const { balance, loading: balanceLoading, refetch: refetchBalance } = useWalletBalance();
 
   const handleWithdraw = () => {
     setShowWithdrawSheet(true);
@@ -56,12 +58,24 @@ export const Earnings = () => {
         <WalletTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Tab Content */}
-        {activeTab === 'balance' && balance && (
-          <BalanceTab 
-            balance={balance}
-            earningsSources={mockEarningsSources}
-            onWithdraw={handleWithdraw}
-          />
+        {activeTab === 'balance' && (
+          <>
+            {balanceLoading ? (
+              <BalanceLoading />
+            ) : balance ? (
+              balance.available_balance === 0 && balance.total_earnings === 0 ? (
+                <BalanceEmptyState />
+              ) : (
+                <BalanceTab 
+                  balance={balance}
+                  earningsSources={mockEarningsSources}
+                  onWithdraw={handleWithdraw}
+                />
+              )
+            ) : (
+              <BalanceEmptyState />
+            )}
+          </>
         )}
 
         {activeTab === 'methods' && (
