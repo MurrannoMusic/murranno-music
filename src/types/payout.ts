@@ -3,10 +3,12 @@ export interface Payout {
   artist: string;
   amount: string;
   period: string;
-  status: 'Pending' | 'Approved' | 'Completed';
+  status: 'Pending' | 'Approved' | 'Completed' | 'Paid' | 'Processing' | 'Failed';
   requestDate: string;
   streams: string;
   type: 'Monthly' | 'Quarterly' | 'Annual';
+  completedDate?: string;
+  transactionId?: string;
 }
 
 export interface PayoutSummary {
