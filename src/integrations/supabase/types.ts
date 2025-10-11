@@ -14,7 +14,158 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      payout_methods: {
+        Row: {
+          account_name: string
+          account_number: string
+          bank_code: string
+          bank_name: string
+          created_at: string | null
+          currency: string
+          id: string
+          is_primary: boolean | null
+          is_verified: boolean | null
+          metadata: Json | null
+          recipient_code: string
+          type: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          account_name: string
+          account_number: string
+          bank_code: string
+          bank_name: string
+          created_at?: string | null
+          currency?: string
+          id?: string
+          is_primary?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          recipient_code: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          account_name?: string
+          account_number?: string
+          bank_code?: string
+          bank_name?: string
+          created_at?: string | null
+          currency?: string
+          id?: string
+          is_primary?: boolean | null
+          is_verified?: boolean | null
+          metadata?: Json | null
+          recipient_code?: string
+          type?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      wallet_balance: {
+        Row: {
+          available_balance: number | null
+          created_at: string | null
+          currency: string
+          id: string
+          pending_balance: number | null
+          total_earnings: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          available_balance?: number | null
+          created_at?: string | null
+          currency?: string
+          id?: string
+          pending_balance?: number | null
+          total_earnings?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          available_balance?: number | null
+          created_at?: string | null
+          currency?: string
+          id?: string
+          pending_balance?: number | null
+          total_earnings?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      withdrawal_transactions: {
+        Row: {
+          amount: number
+          completed_at: string | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          failure_reason: string | null
+          fee: number | null
+          id: string
+          net_amount: number
+          payout_method_id: string | null
+          paystack_response: Json | null
+          reference: string
+          requested_at: string | null
+          status: string
+          transfer_code: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          failure_reason?: string | null
+          fee?: number | null
+          id?: string
+          net_amount: number
+          payout_method_id?: string | null
+          paystack_response?: Json | null
+          reference: string
+          requested_at?: string | null
+          status?: string
+          transfer_code?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number
+          completed_at?: string | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          failure_reason?: string | null
+          fee?: number | null
+          id?: string
+          net_amount?: number
+          payout_method_id?: string | null
+          paystack_response?: Json | null
+          reference?: string
+          requested_at?: string | null
+          status?: string
+          transfer_code?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "withdrawal_transactions_payout_method_id_fkey"
+            columns: ["payout_method_id"]
+            isOneToOne: false
+            referencedRelation: "payout_methods"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
