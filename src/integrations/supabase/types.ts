@@ -65,6 +65,129 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          created_at: string | null
+          email: string
+          full_name: string | null
+          id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          full_name?: string | null
+          id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      subscription_plans: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          features: Json | null
+          id: string
+          max_artists: number | null
+          name: string
+          price_monthly: number
+          tier: Database["public"]["Enums"]["user_tier"]
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string
+          max_artists?: number | null
+          name: string
+          price_monthly: number
+          tier: Database["public"]["Enums"]["user_tier"]
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          features?: Json | null
+          id?: string
+          max_artists?: number | null
+          name?: string
+          price_monthly?: number
+          tier?: Database["public"]["Enums"]["user_tier"]
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          paystack_customer_code: string | null
+          paystack_subscription_code: string | null
+          status: string
+          tier: Database["public"]["Enums"]["user_tier"]
+          trial_ends_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          paystack_customer_code?: string | null
+          paystack_subscription_code?: string | null
+          status?: string
+          tier: Database["public"]["Enums"]["user_tier"]
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          paystack_customer_code?: string | null
+          paystack_subscription_code?: string | null
+          status?: string
+          tier?: Database["public"]["Enums"]["user_tier"]
+          trial_ends_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          tier: Database["public"]["Enums"]["user_tier"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          tier?: Database["public"]["Enums"]["user_tier"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          tier?: Database["public"]["Enums"]["user_tier"]
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallet_balance: {
         Row: {
           available_balance: number | null
@@ -171,10 +294,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_tier: {
+        Args: { user_id: string }
+        Returns: Database["public"]["Enums"]["user_tier"]
+      }
     }
     Enums: {
-      [_ in never]: never
+      user_tier: "artist" | "label" | "agency"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -301,6 +427,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      user_tier: ["artist", "label", "agency"],
+    },
   },
 } as const
