@@ -10,29 +10,25 @@ import { PayoutMethodsTab } from '@/components/wallet/PayoutMethodsTab';
 import { HistoryTab } from '@/components/wallet/HistoryTab';
 import { WithdrawSheet } from '@/components/wallet/WithdrawSheet';
 import { useWallet } from '@/hooks/useWallet';
-import { toast } from 'sonner';
+import { useWalletBalance } from '@/hooks/useWalletBalance';
+import { mockEarningsSources } from '@/utils/mockWallet';
 
 export const Earnings = () => {
   const [activeTab, setActiveTab] = useState('balance');
   const [showWithdrawSheet, setShowWithdrawSheet] = useState(false);
   
   const {
-    balance,
     transactions,
-    payoutMethods,
-    earningsSources,
     statusFilter,
     setStatusFilter,
     typeFilter,
     setTypeFilter,
   } = useWallet();
 
+  const { balance, refetch: refetchBalance } = useWalletBalance();
+
   const handleWithdraw = () => {
     setShowWithdrawSheet(true);
-  };
-
-  const handleAddPayoutMethod = () => {
-    toast.info('Add payout method feature coming soon!');
   };
 
   return (
@@ -60,19 +56,16 @@ export const Earnings = () => {
         <WalletTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
         {/* Tab Content */}
-        {activeTab === 'balance' && (
+        {activeTab === 'balance' && balance && (
           <BalanceTab 
             balance={balance}
-            earningsSources={earningsSources}
+            earningsSources={mockEarningsSources}
             onWithdraw={handleWithdraw}
           />
         )}
 
         {activeTab === 'methods' && (
-          <PayoutMethodsTab 
-            payoutMethods={payoutMethods}
-            onAddMethod={handleAddPayoutMethod}
-          />
+          <PayoutMethodsTab />
         )}
 
         {activeTab === 'history' && (
@@ -87,12 +80,14 @@ export const Earnings = () => {
       </div>
 
       {/* Withdraw Sheet */}
-      <WithdrawSheet 
-        open={showWithdrawSheet}
-        onClose={() => setShowWithdrawSheet(false)}
-        availableBalance={balance.availableBalance}
-        payoutMethods={payoutMethods}
-      />
+      {balance && (
+        <WithdrawSheet 
+          open={showWithdrawSheet}
+          onClose={() => setShowWithdrawSheet(false)}
+          availableBalance={balance.available_balance}
+          onSuccess={refetchBalance}
+        />
+      )}
     </PageContainer>
   );
 };

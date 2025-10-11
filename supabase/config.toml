@@ -1,1 +1,13 @@
 project_id = "nqfltvbzqxdxsobhedci"
+
+[functions.paystack-resolve-account]
+verify_jwt = true
+
+[functions.paystack-create-recipient]
+verify_jwt = true
+
+[functions.paystack-initiate-withdrawal]
+verify_jwt = true
+
+[functions.paystack-get-banks]
+verify_jwt = true

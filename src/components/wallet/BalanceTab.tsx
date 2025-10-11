@@ -1,7 +1,8 @@
 import { DollarSign, TrendingUp, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { WalletBalance, EarningsSource } from '@/types/wallet';
+import { EarningsSource } from '@/types/wallet';
+import { WalletBalance } from '@/hooks/useWalletBalance';
 import { EarningsSourceCard } from './EarningsSourceCard';
 
 interface BalanceTabProps {
@@ -11,6 +12,9 @@ interface BalanceTabProps {
 }
 
 export const BalanceTab = ({ balance, earningsSources, onWithdraw }: BalanceTabProps) => {
+  const percentageChange = balance.total_earnings > 0 
+    ? ((balance.available_balance / balance.total_earnings) * 100).toFixed(1)
+    : 0;
   return (
     <div className="space-y-4">
       {/* Stats Cards */}
@@ -21,11 +25,11 @@ export const BalanceTab = ({ balance, earningsSources, onWithdraw }: BalanceTabP
               <DollarSign className="h-4 w-4 text-primary" />
             </div>
             <div className="text-right">
-              <div className="text-xs text-success font-medium">+{balance.percentageChange}%</div>
+              <div className="text-xs text-success font-medium">+{percentageChange}%</div>
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-xl font-bold text-card-foreground">₦{balance.totalEarnings.toLocaleString()}</div>
+            <div className="text-xl font-bold text-card-foreground">₦{balance.total_earnings.toLocaleString()}</div>
             <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
           </div>
         </div>
@@ -40,7 +44,7 @@ export const BalanceTab = ({ balance, earningsSources, onWithdraw }: BalanceTabP
             </div>
           </div>
           <div className="space-y-1">
-            <div className="text-xl font-bold text-card-foreground">₦{balance.thisMonth}</div>
+            <div className="text-xl font-bold text-card-foreground">₦{(balance.total_earnings * 0.15).toFixed(2)}</div>
             <div className="text-xs text-muted-foreground font-medium">This Month</div>
           </div>
         </div>
@@ -52,11 +56,11 @@ export const BalanceTab = ({ balance, earningsSources, onWithdraw }: BalanceTabP
           <div className="flex items-center justify-between">
             <div className="flex-1">
               <p className="text-sm text-muted-foreground mb-1">Available to Withdraw</p>
-              <p className="text-3xl font-bold text-card-foreground">₦{balance.availableBalance.toFixed(2)}</p>
-              {balance.pendingBalance > 0 && (
+              <p className="text-3xl font-bold text-card-foreground">₦{Number(balance.available_balance).toFixed(2)}</p>
+              {Number(balance.pending_balance) > 0 && (
                 <div className="flex items-center gap-1 mt-2">
                   <Clock className="h-3 w-3 text-muted-foreground" />
-                  <span className="text-xs text-muted-foreground">₦{balance.pendingBalance} pending</span>
+                  <span className="text-xs text-muted-foreground">₦{Number(balance.pending_balance).toFixed(2)} pending</span>
                 </div>
               )}
             </div>

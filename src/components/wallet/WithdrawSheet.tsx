@@ -1,46 +1,91 @@
 import { useState } from 'react';
-import { X, DollarSign, Clock, AlertCircle } from 'lucide-react';
+import { X, DollarSign, Clock, AlertCircle, Loader2 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { PayoutMethod } from '@/types/wallet';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
+import { usePayoutMethods } from '@/hooks/usePayoutMethods';
 
 interface WithdrawSheetProps {
   open: boolean;
   onClose: () => void;
   availableBalance: number;
-  payoutMethods: PayoutMethod[];
+  onSuccess?: () => void;
 }
 
-export const WithdrawSheet = ({ open, onClose, availableBalance, payoutMethods }: WithdrawSheetProps) => {
+export const WithdrawSheet = ({ open, onClose, availableBalance, onSuccess }: WithdrawSheetProps) => {
   const [amount, setAmount] = useState('');
-  const [selectedMethod, setSelectedMethod] = useState<string>(
-    payoutMethods.find(m => m.isPrimary)?.id || payoutMethods[0]?.id || ''
-  );
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [loading, setLoading] = useState(false);
+  const { toast } = useToast();
+  const { payoutMethods } = usePayoutMethods();
 
   const withdrawalAmount = parseFloat(amount) || 0;
-  const fee = withdrawalAmount * 0.025; // 2.5% fee
+  const fee = withdrawalAmount >= 5000 ? 50 : withdrawalAmount > 0 ? 25 : 0;
   const netAmount = withdrawalAmount - fee;
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     if (!amount || withdrawalAmount <= 0) {
-      toast.error('Please enter a valid amount');
+      toast({
+        title: 'Error',
+        description: 'Please enter a valid amount',
+        variant: 'destructive',
+      });
       return;
     }
     if (withdrawalAmount > availableBalance) {
-      toast.error('Insufficient balance');
+      toast({
+        title: 'Error',
+        description: 'Insufficient balance',
+        variant: 'destructive',
+      });
       return;
     }
     if (!selectedMethod) {
-      toast.error('Please select a payout method');
+      toast({
+        title: 'Error',
+        description: 'Please select a payout method',
+        variant: 'destructive',
+      });
       return;
     }
 
-    // TODO: Implement actual withdrawal logic
-    toast.success('Withdrawal request submitted successfully!');
-    onClose();
-    setAmount('');
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase.functions.invoke('paystack-initiate-withdrawal', {
+        body: {
+          payout_method_id: selectedMethod,
+          amount: withdrawalAmount,
+          description: 'Withdrawal from wallet',
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.success) {
+        toast({
+          title: 'Success',
+          description: 'Withdrawal request submitted successfully!',
+        });
+        setAmount('');
+        setSelectedMethod('');
+        onSuccess?.();
+        onClose();
+      } else {
+        throw new Error(data.error || 'Failed to initiate withdrawal');
+      }
+    } catch (error: any) {
+      console.error('Error initiating withdrawal:', error);
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to process withdrawal',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -68,13 +113,13 @@ export const WithdrawSheet = ({ open, onClose, availableBalance, payoutMethods }
               Withdrawal Amount
             </label>
             <div className="relative">
-              <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">₦</span>
               <Input
                 type="number"
                 placeholder="0.00"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
-                className="pl-10 text-lg font-semibold"
+                className="pl-8 text-lg font-semibold"
               />
             </div>
             {withdrawalAmount > availableBalance && (
@@ -90,17 +135,24 @@ export const WithdrawSheet = ({ open, onClose, availableBalance, payoutMethods }
             <label className="text-sm font-semibold text-card-foreground mb-2 block">
               Payout Method
             </label>
-            <select
-              value={selectedMethod}
-              onChange={(e) => setSelectedMethod(e.target.value)}
-              className="w-full px-4 py-3 rounded-[16px] bg-secondary/30 border border-border text-foreground font-medium"
-            >
-              {payoutMethods.map((method) => (
-                <option key={method.id} value={method.id}>
-                  {method.name} - {method.details}
-                </option>
-              ))}
-            </select>
+            {payoutMethods.length === 0 ? (
+              <div className="text-sm text-muted-foreground p-4 bg-secondary/20 rounded-lg">
+                No payout methods available. Please add a bank account first.
+              </div>
+            ) : (
+              <select
+                value={selectedMethod}
+                onChange={(e) => setSelectedMethod(e.target.value)}
+                className="w-full px-4 py-3 rounded-[16px] bg-secondary/30 border border-border text-foreground font-medium"
+              >
+                <option value="">Select a payout method</option>
+                {payoutMethods.map((method) => (
+                  <option key={method.id} value={method.id}>
+                    {method.bank_name} - {method.account_number}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
 
           {/* Fee Breakdown */}
@@ -111,7 +163,7 @@ export const WithdrawSheet = ({ open, onClose, availableBalance, payoutMethods }
                 <span className="font-semibold text-card-foreground">₦{withdrawalAmount.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground">Processing Fee (2.5%)</span>
+                <span className="text-muted-foreground">Processing Fee</span>
                 <span className="font-semibold text-destructive">-₦{fee.toFixed(2)}</span>
               </div>
               <div className="h-px bg-border my-2"></div>
@@ -131,10 +183,17 @@ export const WithdrawSheet = ({ open, onClose, availableBalance, payoutMethods }
           {/* Withdraw Button */}
           <Button 
             onClick={handleWithdraw}
-            disabled={!amount || withdrawalAmount <= 0 || withdrawalAmount > availableBalance}
+            disabled={!amount || withdrawalAmount <= 0 || withdrawalAmount > availableBalance || !selectedMethod || loading}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-base"
           >
-            Confirm Withdrawal
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              'Confirm Withdrawal'
+            )}
           </Button>
         </div>
       </SheetContent>
