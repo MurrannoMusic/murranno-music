@@ -13,24 +13,24 @@ const iconMap = {
 };
 
 const methodColors = {
-  bank: 'from-blue-50 to-blue-100 border-blue-200',
-  mobile_money: 'from-green-50 to-green-100 border-green-200',
-  payoneer: 'from-orange-50 to-orange-100 border-orange-200',
-  paypal: 'from-purple-50 to-purple-100 border-purple-200',
+  bank: 'from-primary/10 to-primary/5 border-primary/20',
+  mobile_money: 'from-success/10 to-success/5 border-success/20',
+  payoneer: 'from-accent/10 to-accent/5 border-accent/20',
+  paypal: 'from-secondary/10 to-secondary/5 border-secondary/20',
 };
 
 const iconColors = {
-  bank: 'bg-blue-100 text-blue-600',
-  mobile_money: 'bg-green-100 text-green-600',
-  payoneer: 'bg-orange-100 text-orange-600',
-  paypal: 'bg-purple-100 text-purple-600',
+  bank: 'bg-primary/20 text-primary',
+  mobile_money: 'bg-success/20 text-success',
+  payoneer: 'bg-accent/20 text-accent',
+  paypal: 'bg-secondary/20 text-secondary',
 };
 
 const verifiedColors = {
-  bank: 'text-blue-600',
-  mobile_money: 'text-green-600',
-  payoneer: 'text-orange-600',
-  paypal: 'text-purple-600',
+  bank: 'text-primary',
+  mobile_money: 'text-success',
+  payoneer: 'text-accent',
+  paypal: 'text-secondary',
 };
 
 export const PayoutMethodCard = ({ method }: PayoutMethodCardProps) => {
@@ -55,7 +55,7 @@ export const PayoutMethodCard = ({ method }: PayoutMethodCardProps) => {
               <p className="text-sm text-muted-foreground mt-0.5">{method.details}</p>
             </div>
             {method.isPrimary && (
-              <Star className="h-4 w-4 text-yellow-500 fill-yellow-500 flex-shrink-0" />
+              <Star className="h-4 w-4 text-accent fill-accent flex-shrink-0" />
             )}
           </div>
           <div className="flex items-center gap-1 mt-2">

@@ -12,8 +12,8 @@ interface TransactionDetailsSheetProps {
 
 const statusColors = {
   paid: 'text-success bg-success/10',
-  pending: 'text-yellow-600 bg-yellow-600/10',
-  processing: 'text-blue-600 bg-blue-600/10',
+  pending: 'text-accent bg-accent/10',
+  processing: 'text-primary bg-primary/10',
   failed: 'text-destructive bg-destructive/10',
   cancelled: 'text-muted-foreground bg-muted/10',
 };
