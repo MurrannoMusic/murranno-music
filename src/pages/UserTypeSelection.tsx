@@ -61,11 +61,6 @@ export const UserTypeSelection = () => {
   return (
     <div className="min-h-screen bg-background">
       <div className="mobile-container py-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">Welcome to Murranno</h1>
-          <p className="text-muted-foreground">Choose your account type to get started</p>
-        </div>
-
         <div className="space-y-4">
           {userTypes.map(({ type, label, icon: Icon, description, color }) => (
             <Card 
