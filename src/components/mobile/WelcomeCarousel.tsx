@@ -1,33 +1,32 @@
 import { useState } from 'react';
-import { ChevronRight, Music, TrendingUp, DollarSign } from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import prototypeOne from '@/assets/prototype-1.jpg';
+import prototypeTwo from '@/assets/prototype-2.jpg';
+import prototypeThree from '@/assets/prototype-3.jpg';
 
 interface SlideProps {
-  icon: React.ElementType;
   title: string;
   description: string;
-  gradient: string;
+  backgroundImage: string;
 }
 
 const slides: SlideProps[] = [
   {
-    icon: Music,
     title: "Distribute Your Music Globally",
     description: "Upload once and reach all major streaming platforms including Spotify, Apple Music, Boomplay, and more.",
-    gradient: "gradient-primary"
+    backgroundImage: prototypeOne
   },
   {
-    icon: TrendingUp,
     title: "Promote & Grow Your Fanbase",
     description: "Run targeted campaigns, playlist pitching, and influencer partnerships to amplify your reach.",
-    gradient: "gradient-secondary"
+    backgroundImage: prototypeTwo
   },
   {
-    icon: DollarSign,
     title: "Track Royalties & Get Paid Fast",
     description: "Real-time analytics, transparent earnings, and fast payouts to your bank or mobile money wallet.",
-    gradient: "gradient-dark"
+    backgroundImage: prototypeThree
   }
 ];
 
@@ -51,11 +50,28 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      <div className="flex-1 flex flex-col justify-center items-center px-6 py-8">
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Background images */}
+      {slides.map((slide, index) => (
+        <div
+          key={`bg-${index}`}
+          className={`absolute inset-0 transition-opacity duration-500 ${
+            index === currentSlide ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url(${slide.backgroundImage})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
+          <div className="absolute inset-0 bg-black/40" />
+        </div>
+      ))}
+
+      <div className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-8">
         <div className="w-full max-w-sm">
           {slides.map((slide, index) => (
-            <Card
+            <div
               key={index}
               className={`transition-smooth transform ${
                 index === currentSlide 
@@ -65,21 +81,19 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
                     : 'opacity-0 scale-95 translate-x-full absolute'
               } ${index === currentSlide ? 'relative' : ''}`}
             >
-              <div className="p-8 text-center space-y-6">
-                <div className={`w-20 h-20 mx-auto rounded-2xl ${slide.gradient} flex items-center justify-center shadow-glow`}>
-                  <slide.icon className="h-10 w-10 text-white" />
+              <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+                <div className="p-8 text-center space-y-6">
+                  <div className="space-y-4">
+                    <h2 className="text-2xl font-bold text-white leading-tight drop-shadow-lg">
+                      {slide.title}
+                    </h2>
+                    <p className="text-white/90 text-base leading-relaxed drop-shadow-md">
+                      {slide.description}
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="space-y-4">
-                  <h2 className="text-2xl font-bold text-foreground leading-tight">
-                    {slide.title}
-                  </h2>
-                  <p className="text-muted-foreground text-base leading-relaxed">
-                    {slide.description}
-                  </p>
-                </div>
-              </div>
-            </Card>
+              </Card>
+            </div>
           ))}
         </div>
 
@@ -97,7 +111,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
       </div>
 
       {/* Navigation */}
-      <div className="p-6 space-y-4">
+      <div className="relative z-10 p-6 space-y-4">
         <Button 
           onClick={nextSlide}
           className="w-full gradient-primary music-button shadow-primary"
@@ -117,7 +131,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
           <Button 
             onClick={skipToEnd}
             variant="ghost" 
-            className="w-full"
+            className="w-full text-white hover:text-white hover:bg-white/10"
           >
             Skip
           </Button>
