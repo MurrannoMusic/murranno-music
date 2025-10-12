@@ -36,7 +36,7 @@ export const StreamingPlatformCard = ({
 
   if (isEditing || isLocalEditing) {
     return (
-      <Card className="backdrop-blur-xl bg-white/5 border-white/10">
+      <Card className="backdrop-blur-xl bg-white/10 border-white/20">
         <CardContent className="p-4">
           <div className="flex items-center gap-3 mb-3">
             <div className="text-white/90">{icon}</div>
@@ -47,7 +47,7 @@ export const StreamingPlatformCard = ({
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               placeholder={placeholder}
-              className="bg-white/5 border-white/20 text-white text-sm placeholder:text-white/30"
+              className="bg-white/10 border-white/30 text-white text-sm placeholder:text-white/40"
             />
             <Button size="sm" onClick={handleSave} className="shrink-0">
               <Check className="w-4 h-4" />
@@ -62,7 +62,7 @@ export const StreamingPlatformCard = ({
   }
 
   return (
-    <Card className="backdrop-blur-xl bg-white/5 border-white/10 hover:bg-white/10 transition-all">
+    <Card className="backdrop-blur-xl bg-white/10 border-white/20 hover:bg-white/[0.15] transition-all">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">

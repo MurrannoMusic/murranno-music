@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Settings, Edit, Save, X, Music, Music2, Disc3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -34,7 +33,7 @@ export const ArtistProfile = () => {
     twitter_url: '',
   });
 
-  useState(() => {
+  useEffect(() => {
     if (profile) {
       setFormData({
         stage_name: profile.stage_name || '',
@@ -53,7 +52,7 @@ export const ArtistProfile = () => {
         twitter_url: profile.twitter_url || '',
       });
     }
-  });
+  }, [profile]);
 
   const handleImageSelect = async (file: File) => {
     const url = await uploadProfileImage(file);
@@ -96,18 +95,21 @@ export const ArtistProfile = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="mobile-container py-6 space-y-6">
-          <Skeleton className="h-8 w-full" />
-          <Skeleton className="h-64 w-full" />
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 flex items-center justify-center">
+        <div className="space-y-4 text-center">
+          <Skeleton className="h-8 w-48 mx-auto" />
+          <Skeleton className="h-64 w-80" />
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      <div className="mobile-container py-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 relative">
+      {/* Background blur effect */}
+      <div className="absolute inset-0 bg-[url('/musician-background.jpg')] bg-cover bg-center opacity-5 blur-sm" />
+      
+      <div className="relative mobile-container py-6 space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <Button
@@ -134,7 +136,7 @@ export const ArtistProfile = () => {
         </div>
 
         {/* Profile Header */}
-        <Card className="backdrop-blur-xl bg-white/5 border-white/10">
+        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
           <CardContent className="p-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <ProfileImageUpload
@@ -149,29 +151,29 @@ export const ArtistProfile = () => {
                     value={formData.stage_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, stage_name: e.target.value }))}
                     placeholder="Stage Name"
-                    className="bg-white/5 border-white/20 text-white text-center"
+                    className="bg-white/10 border-white/30 text-white text-center placeholder:text-white/40"
                   />
                   <Textarea
                     value={formData.bio}
                     onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                     placeholder="Bio"
-                    className="bg-white/5 border-white/20 text-white resize-none"
+                    className="bg-white/10 border-white/30 text-white resize-none placeholder:text-white/40"
                     rows={3}
                   />
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-white">{profile?.stage_name}</h2>
+                  <h2 className="text-2xl font-bold text-white/95">{profile?.stage_name}</h2>
                   {profile?.bio && (
                     <p className="text-sm text-white/70 max-w-md">{profile.bio}</p>
                   )}
-                  <div className="flex gap-6 text-sm text-white/50">
+                  <div className="flex gap-6 text-sm text-white/60">
                     <div>
-                      <div className="text-lg font-semibold text-white">0</div>
+                      <div className="text-lg font-semibold text-white/90">0</div>
                       <div>Releases</div>
                     </div>
                     <div>
-                      <div className="text-lg font-semibold text-white">
+                      <div className="text-lg font-semibold text-white/90">
                         {profile?.created_at && new Date(profile.created_at).getFullYear()}
                       </div>
                       <div>Member Since</div>
@@ -205,9 +207,9 @@ export const ArtistProfile = () => {
         </div>
 
         {/* Streaming Platforms */}
-        <Card className="backdrop-blur-xl bg-white/5 border-white/10">
+        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Major Streaming Services</CardTitle>
+            <CardTitle className="text-lg text-white/95">Major Streaming Services</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <StreamingPlatformCard
@@ -238,9 +240,9 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Additional Platforms */}
-        <Card className="backdrop-blur-xl bg-white/5 border-white/10">
+        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Additional Streaming Platforms</CardTitle>
+            <CardTitle className="text-lg text-white/95">Additional Streaming Platforms</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <StreamingPlatformCard
@@ -279,9 +281,9 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Social Media */}
-        <Card className="backdrop-blur-xl bg-white/5 border-white/10">
+        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
           <CardHeader>
-            <CardTitle className="text-lg text-white">Social Media</CardTitle>
+            <CardTitle className="text-lg text-white/95">Social Media</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <SocialLinkCard
@@ -319,6 +321,6 @@ export const ArtistProfile = () => {
           </CardContent>
         </Card>
       </div>
-    </PageContainer>
+    </div>
   );
 };
