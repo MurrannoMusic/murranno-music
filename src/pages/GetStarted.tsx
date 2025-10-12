@@ -74,7 +74,7 @@ export default function GetStarted() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-mesh overflow-y-auto">
+    <div className="dark min-h-screen bg-gradient-mesh overflow-y-auto">
       <div className="w-full max-w-6xl mx-auto p-4 space-y-8 py-8">
         
         {/* Hero Section */}
