@@ -67,7 +67,7 @@ export const Signup = () => {
         
         <div className="mobile-container">
 
-          <Card className="backdrop-blur-2xl bg-background/80 border-2 border-border/30 shadow-2xl">
+          <Card className="backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
             <CardHeader className="bg-gradient-to-br from-primary/5 to-accent/5 border-b border-border/20">
               <CardTitle className="text-center text-2xl">Join Murranno Music</CardTitle>
             </CardHeader>
