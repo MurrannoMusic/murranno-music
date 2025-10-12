@@ -13,7 +13,7 @@ import { HistoryTab } from '@/components/wallet/HistoryTab';
 import { WithdrawSheet } from '@/components/wallet/WithdrawSheet';
 import { useWallet } from '@/hooks/useWallet';
 import { useWalletBalance } from '@/hooks/useWalletBalance';
-import { mockEarningsSources } from '@/utils/mockWallet';
+
 
 export const Earnings = () => {
   const [activeTab, setActiveTab] = useState('balance');
@@ -25,6 +25,7 @@ export const Earnings = () => {
     setStatusFilter,
     typeFilter,
     setTypeFilter,
+    earningsSources,
   } = useWallet();
 
   const { balance, loading: balanceLoading, refetch: refetchBalance } = useWalletBalance();
@@ -68,7 +69,7 @@ export const Earnings = () => {
               ) : (
                 <BalanceTab 
                   balance={balance}
-                  earningsSources={mockEarningsSources}
+                  earningsSources={earningsSources}
                   onWithdraw={handleWithdraw}
                 />
               )

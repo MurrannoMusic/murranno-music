@@ -112,7 +112,7 @@ export const Dashboard = () => {
     return [];
   };
 
-  const stats = getStatsAsItems(selectedArtist);
+  const stats = getStatsAsItems();
   const headerContent = getHeaderContent();
   const recentActivity = getRecentActivity();
   const HeaderIcon = headerContent.icon;

@@ -1,64 +1,72 @@
 import { useState, useEffect } from 'react';
-import { UserType, User } from '@/types/user';
-
-const USER_TYPE_KEY = 'murranno-user-type';
-
-// Mock user data for UI demonstration
-const mockUsers = {
-  artist: {
-    id: '1',
-    name: 'Alex Rivera',
-    email: 'alex@example.com',
-    accountType: 'artist' as UserType,
-    profileImage: undefined
-  },
-  label: {
-    id: '2', 
-    name: 'Sound Wave Records',
-    email: 'contact@soundwave.com',
-    accountType: 'label' as UserType,
-    artists: [
-      { id: 'a1', name: 'Luna Sol', stageName: 'Luna Sol', isActive: true, labelId: '2', profileImage: undefined },
-      { id: 'a2', name: 'The Echoes', stageName: 'The Echoes', isActive: true, labelId: '2', profileImage: undefined },
-      { id: 'a3', name: 'Midnight Drive', stageName: 'Midnight Drive', isActive: true, labelId: '2', profileImage: undefined }
-    ],
-    companyName: 'Sound Wave Records'
-  },
-  agency: {
-    id: '3',
-    name: 'Promo Masters',
-    email: 'hello@promomasters.com', 
-    accountType: 'agency' as UserType,
-    companyName: 'Promo Masters Agency',
-    clientArtists: ['a1', 'a2', 'a4', 'a5']
-  }
-};
-
-// Get initial user type from localStorage or default to null
-const getInitialUserType = (): UserType | null => {
-  const stored = localStorage.getItem(USER_TYPE_KEY);
-  if (stored && (stored === 'artist' || stored === 'label' || stored === 'agency')) {
-    return stored as UserType;
-  }
-  return null;
-};
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const useUserType = () => {
-  const [currentUserType, setCurrentUserType] = useState<UserType | null>(getInitialUserType);
+  const [userType, setUserType] = useState<'artist' | 'label' | 'manager' | 'agency' | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
-  // Persist user type to localStorage whenever it changes
   useEffect(() => {
-    if (currentUserType) {
-      localStorage.setItem(USER_TYPE_KEY, currentUserType);
+    fetchUserType();
+  }, []);
+
+  const fetchUserType = async () => {
+    try {
+      setLoading(true);
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        setUserType(null);
+        setCurrentUser(null);
+        return;
+      }
+
+      // Fetch user profile
+      const { data: profileData, error: profileError } = await supabase.functions.invoke('get-profile');
+
+      if (profileError) throw profileError;
+
+      if (profileData?.success && profileData.profile) {
+        setUserType(profileData.profile.tier);
+        setCurrentUser({
+          id: profileData.profile.id,
+          name: profileData.profile.full_name,
+          email: profileData.profile.email,
+          accountType: profileData.profile.tier,
+        });
+      }
+    } catch (error: any) {
+      console.error('Error fetching user type:', error);
+      toast.error('Failed to load user type');
+      setUserType('artist'); // Default fallback
+    } finally {
+      setLoading(false);
     }
-  }, [currentUserType]);
+  };
 
-  const currentUser = currentUserType ? mockUsers[currentUserType] : null;
+  const switchUserType = async (newType: 'artist' | 'label' | 'manager' | 'agency') => {
+    try {
+      const { data, error } = await supabase.functions.invoke('update-subscription-tier', {
+        body: { tier: newType }
+      });
 
-  const switchUserType = (type: UserType) => {
-    setCurrentUserType(type);
-    setSelectedArtist(null);
+      if (error) throw error;
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to update user type');
+      }
+
+      setUserType(newType);
+      toast.success(`Switched to ${newType} account`);
+      
+      // Reload the page to refresh all data
+      window.location.reload();
+    } catch (error: any) {
+      console.error('Error switching user type:', error);
+      toast.error(error.message || 'Failed to switch account type');
+    }
   };
 
   const selectArtist = (artistId: string) => {
@@ -66,13 +74,16 @@ export const useUserType = () => {
   };
 
   return {
-    currentUserType,
+    currentUserType: userType,
+    userType,
     currentUser,
     selectedArtist,
+    loading,
     switchUserType,
     selectArtist,
-    isLabel: currentUserType === 'label',
-    isAgency: currentUserType === 'agency',
-    isArtist: currentUserType === 'artist'
+    refetch: fetchUserType,
+    isLabel: userType === 'label',
+    isAgency: userType === 'agency',
+    isArtist: userType === 'artist',
   };
 };

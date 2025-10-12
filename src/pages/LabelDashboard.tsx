@@ -50,7 +50,7 @@ export const LabelDashboard = () => {
     }
   ];
 
-  const stats = getStatsAsItems(selectedArtist);
+  const stats = getStatsAsItems();
 
   const headerTitle = selectedArtist 
     ? `Managing: ${(currentUser as any).artists.find((a: any) => a.id === selectedArtist)?.stageName}`

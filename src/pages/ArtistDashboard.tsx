@@ -12,7 +12,7 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
 import { TopTracksCard } from '@/components/modern/TopTracksCard';
-import { mockTopTracks } from '@/utils/mockData';
+
 import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const ArtistDashboard = () => {
@@ -139,7 +139,7 @@ export const ArtistDashboard = () => {
         </Card>
 
         {/* Top Tracks Performance */}
-        <TopTracksCard tracks={mockTopTracks} />
+        <TopTracksCard tracks={[]} />
       </div>
 
       <FloatingActionButton />

@@ -1,46 +1,94 @@
-import { useState } from 'react';
-import { StatItem, ArtistStats, LabelStats } from '@/types/stats';
-import { mockLabelStats } from '@/utils/mockData';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+
+export interface StatsSummary {
+  totalStreams: number;
+  totalEarnings: number;
+  monthlyGrowth: number;
+  activeReleases: number;
+}
 
 export const useStats = () => {
-  const [stats] = useState<LabelStats>(mockLabelStats);
+  const [stats, setStats] = useState<StatsSummary>({
+    totalStreams: 0,
+    totalEarnings: 0,
+    monthlyGrowth: 0,
+    activeReleases: 0,
+  });
+  const [loading, setLoading] = useState(true);
 
-  const getArtistStats = (artistId?: string): ArtistStats => {
-    // Mock individual artist stats
-    const artistSpecificStats = {
-      'a1': { streams: '12.5K', earnings: '₦342', followers: '2.1K', releases: '8' },
-      'a2': { streams: '8.9K', earnings: '₦234', followers: '1.8K', releases: '6' }, 
-      'a3': { streams: '6.2K', earnings: '₦178', followers: '1.2K', releases: '4' }
-    };
+  useEffect(() => {
+    fetchStats();
+  }, []);
 
-    if (artistId && artistSpecificStats[artistId as keyof typeof artistSpecificStats]) {
-      return artistSpecificStats[artistId as keyof typeof artistSpecificStats];
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+
+      // Fetch analytics data for stats
+      const { data: analyticsData, error: analyticsError } = await supabase.functions.invoke('get-analytics-data', {
+        body: { period: 30 }
+      });
+
+      if (analyticsError) throw analyticsError;
+
+      // Fetch wallet balance
+      const { data: walletData, error: walletError } = await supabase.functions.invoke('get-wallet-balance');
+
+      if (walletError) throw walletError;
+
+      // Fetch releases to count active ones
+      const { data: releasesData, error: releasesError } = await supabase.functions.invoke('get-user-releases');
+
+      if (releasesError) throw releasesError;
+
+      const activeReleases = releasesData?.releases?.filter(
+        (r: any) => r.status === 'Published' || r.status === 'Live'
+      ).length || 0;
+
+      setStats({
+        totalStreams: analyticsData?.totalStreams || 0,
+        totalEarnings: walletData?.balance?.total_earnings || 0,
+        monthlyGrowth: 0, // Would need historical data to calculate this
+        activeReleases,
+      });
+
+    } catch (error: any) {
+      console.error('Error fetching stats:', error);
+      toast.error('Failed to load statistics');
+    } finally {
+      setLoading(false);
     }
-
-    return {
-      streams: stats.streams,
-      earnings: stats.earnings,
-      followers: stats.followers,
-      releases: stats.releases
-    };
   };
 
-  const getLabelStats = (): LabelStats => stats;
-
-  const getStatsAsItems = (artistId?: string): StatItem[] => {
-    const currentStats = getArtistStats(artistId);
-    
+  const getStatsAsItems = () => {
     return [
-      { title: 'Total Streams', value: currentStats.streams, change: '+23%', changeType: 'positive' },
-      { title: 'Earnings', value: currentStats.earnings, change: '+12%', changeType: 'positive' },
-      { title: 'Followers', value: currentStats.followers, change: '+5%', changeType: 'positive' },
-      { title: 'Releases', value: currentStats.releases, change: '+2', changeType: 'positive' }
+      { 
+        title: 'Total Streams', 
+        value: stats.totalStreams.toLocaleString(), 
+        change: `+${stats.monthlyGrowth}%`, 
+        changeType: stats.monthlyGrowth >= 0 ? 'positive' : 'negative' 
+      },
+      { 
+        title: 'Earnings', 
+        value: `₦${stats.totalEarnings.toLocaleString()}`, 
+        change: '+12%', 
+        changeType: 'positive' 
+      },
+      { 
+        title: 'Active Releases', 
+        value: stats.activeReleases.toString(), 
+        change: '+2', 
+        changeType: 'positive' 
+      },
     ];
   };
 
   return {
-    getArtistStats,
-    getLabelStats,
-    getStatsAsItems
+    stats,
+    loading,
+    refetch: fetchStats,
+    getStatsAsItems,
   };
 };
