@@ -48,15 +48,18 @@ export const Login = () => {
         }}
       />
 
-      {/* Content positioned at bottom */}
-      <div className="relative z-10 min-h-screen flex flex-col justify-end pb-8">
+      {/* Content positioned with header at top */}
+      <div className="relative z-10 min-h-screen flex flex-col justify-between pt-8 pb-8">
         <div className="mobile-container">
           <div className="flex items-center mb-8">
             <Link to="/get-started" className="mr-4">
-              <ArrowLeft className="h-6 w-6 text-muted-foreground" />
+              <ArrowLeft className="h-6 w-6 text-white drop-shadow-lg" />
             </Link>
-            <h1 className="text-2xl font-bold">Welcome Back</h1>
+            <h1 className="text-2xl font-bold text-white drop-shadow-lg">Welcome Back</h1>
           </div>
+        </div>
+        
+        <div className="mobile-container">
 
           <Card className="backdrop-blur-md bg-background/95 border-border/50">
             <CardHeader>
