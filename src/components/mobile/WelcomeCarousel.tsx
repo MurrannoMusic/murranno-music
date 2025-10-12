@@ -68,7 +68,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
         </div>
       ))}
 
-      <div className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 py-8">
+      <div className="relative z-10 flex-1 flex flex-col justify-end items-center px-6 py-8">
         <div className="w-full max-w-sm">
           {slides.map((slide, index) => (
             <div
