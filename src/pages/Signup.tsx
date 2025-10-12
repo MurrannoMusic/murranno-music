@@ -1,17 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 export const Signup = () => {
-  const navigate = useNavigate();
-  const { signUp, user } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -19,50 +15,22 @@ export const Signup = () => {
     confirmPassword: '',
     accountType: '',
   });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSignup = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
-    if (formData.password.length < 6) {
-      toast.error('Password must be at least 6 characters');
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await signUp(formData.email, formData.password, formData.name);
-    setLoading(false);
-
-    if (!error) {
-      navigate('/dashboard');
-    }
+    // TODO: Implement signup logic
+    console.log('Signup attempt:', formData);
   };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mobile-container">
         <div className="flex items-center mb-8">
-          <Link to="/landing" className="mr-4">
+          <Link to="/welcome" className="mr-4">
             <ArrowLeft className="h-6 w-6 text-muted-foreground" />
           </Link>
           <h1 className="text-2xl font-bold">Create Account</h1>
@@ -138,13 +106,8 @@ export const Signup = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full gradient-primary music-button shadow-primary" 
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? 'Creating Account...' : 'Create Account'}
+              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg">
+                Create Account
               </Button>
             </form>
 

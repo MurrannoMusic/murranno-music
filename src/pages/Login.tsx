@@ -1,48 +1,29 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (user) {
-      navigate('/dashboard');
-    }
-  }, [user, navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!email || !password) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    setLoading(true);
-    const { error } = await signIn(email, password);
-    setLoading(false);
-
-    if (!error) {
-      navigate('/dashboard');
-    }
+    // TODO: Implement authentication logic
+    console.log('Login attempt:', { email, password });
+    // Navigate to user type selection after successful login
+    navigate('/user-type-selection');
   };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mobile-container">
         <div className="flex items-center mb-8">
-          <Link to="/landing" className="mr-4">
+          <Link to="/welcome" className="mr-4">
             <ArrowLeft className="h-6 w-6 text-muted-foreground" />
           </Link>
           <h1 className="text-2xl font-bold">Welcome Back</h1>
@@ -80,13 +61,8 @@ export const Login = () => {
                 </div>
               </div>
 
-              <Button 
-                type="submit" 
-                className="w-full gradient-primary music-button shadow-primary" 
-                size="lg"
-                disabled={loading}
-              >
-                {loading ? 'Logging in...' : 'Log In'}
+              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg">
+                Log In
               </Button>
             </form>
 
