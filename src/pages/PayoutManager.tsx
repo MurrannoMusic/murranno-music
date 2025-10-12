@@ -30,11 +30,11 @@ export const PayoutManager = () => {
     console.log('Requesting bulk payout for all pending amounts...');
   };
 
-  const handleApprove = (id: number) => {
+  const handleApprove = (id: string) => {
     console.log('Approving payout:', id);
   };
 
-  const handleViewDetails = (id: number) => {
+  const handleViewDetails = (id: string) => {
     console.log('Viewing details for payout:', id);
   };
 
@@ -110,11 +110,11 @@ export const PayoutManager = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-card-foreground">{payout.artist}</h3>
+                      <h3 className="text-sm font-semibold text-card-foreground">{payout.artist_name}</h3>
                       <Badge 
                         variant={
-                          payout.status === 'Pending' ? 'secondary' :
-                          payout.status === 'Completed' ? 'default' :
+                          payout.status === 'pending' ? 'secondary' :
+                          payout.status === 'paid' ? 'default' :
                           'destructive'
                         }
                         className="text-xs"
@@ -122,12 +122,14 @@ export const PayoutManager = () => {
                         {payout.status}
                       </Badge>
                     </div>
-                    <span className="text-sm font-bold text-card-foreground">{payout.amount}</span>
+                    <span className="text-sm font-bold text-card-foreground">
+                      {payout.currency} {payout.amount.toFixed(2)}
+                    </span>
                   </div>
-                  <p className="text-xs text-muted-foreground">{payout.streams} streams • {payout.requestDate}</p>
+                  <p className="text-xs text-muted-foreground">{payout.streams} streams • {new Date(payout.requested_at).toLocaleDateString()}</p>
                   <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/10">
-                    <span className="text-xs text-muted-foreground">Type: {payout.type}</span>
-                    {payout.status === 'Pending' && isLabel && (
+                    <span className="text-xs text-muted-foreground">Period: {new Date(payout.period_start).toLocaleDateString()} - {new Date(payout.period_end).toLocaleDateString()}</span>
+                    {payout.status === 'pending' && isLabel && (
                       <div className="flex gap-2">
                         <Button 
                           size="sm"
