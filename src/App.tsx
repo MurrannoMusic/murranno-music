@@ -29,6 +29,7 @@ import { CampaignManager } from "./pages/CampaignManager";
 import { PayoutManager } from "./pages/PayoutManager";
 import { Results } from "./pages/Results";
 import { Profile } from "./pages/Profile";
+import { ArtistProfile } from "./pages/ArtistProfile";
 import { Settings } from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -65,6 +66,7 @@ const App = () => (
               <Route path="/payout-manager" element={<ProtectedRoute><PayoutManager /></ProtectedRoute>} />
               <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/artist-profile" element={<ProtectedRoute><ArtistProfile /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
               <Route path="/releases" element={<ProtectedRoute><Releases /></ProtectedRoute>} />
               <Route path="/releases/:id" element={<ProtectedRoute><ReleaseDetail /></ProtectedRoute>} />

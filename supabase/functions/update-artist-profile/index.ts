@@ -31,7 +31,24 @@ serve(async (req) => {
       );
     }
 
-    const { stage_name, bio, profile_image, spotify_id, apple_music_id } = await req.json();
+    const { 
+      stage_name, 
+      bio, 
+      profile_image, 
+      spotify_id, 
+      apple_music_id,
+      spotify_url,
+      youtube_url,
+      audiomack_url,
+      soundcloud_url,
+      apple_music_url,
+      deezer_url,
+      tidal_url,
+      instagram_url,
+      facebook_url,
+      tiktok_url,
+      twitter_url
+    } = await req.json();
 
     console.log('Updating artist profile for user:', user.id);
 
@@ -57,6 +74,17 @@ serve(async (req) => {
     if (profile_image !== undefined) updates.profile_image = profile_image;
     if (spotify_id !== undefined) updates.spotify_id = spotify_id;
     if (apple_music_id !== undefined) updates.apple_music_id = apple_music_id;
+    if (spotify_url !== undefined) updates.spotify_url = spotify_url;
+    if (youtube_url !== undefined) updates.youtube_url = youtube_url;
+    if (audiomack_url !== undefined) updates.audiomack_url = audiomack_url;
+    if (soundcloud_url !== undefined) updates.soundcloud_url = soundcloud_url;
+    if (apple_music_url !== undefined) updates.apple_music_url = apple_music_url;
+    if (deezer_url !== undefined) updates.deezer_url = deezer_url;
+    if (tidal_url !== undefined) updates.tidal_url = tidal_url;
+    if (instagram_url !== undefined) updates.instagram_url = instagram_url;
+    if (facebook_url !== undefined) updates.facebook_url = facebook_url;
+    if (tiktok_url !== undefined) updates.tiktok_url = tiktok_url;
+    if (twitter_url !== undefined) updates.twitter_url = twitter_url;
 
     if (Object.keys(updates).length === 0) {
       return new Response(

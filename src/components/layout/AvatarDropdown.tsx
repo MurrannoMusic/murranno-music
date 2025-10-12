@@ -40,10 +40,19 @@ export const AvatarDropdown = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
+        {currentUser.accountType === 'artist' && (
+          <Link to="/artist-profile">
+            <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
+              <User className="h-4 w-4 mr-2" />
+              Artist Profile
+            </DropdownMenuItem>
+          </Link>
+        )}
+        
         <Link to="/profile">
           <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
             <User className="h-4 w-4 mr-2" />
-            Profile
+            Account
           </DropdownMenuItem>
         </Link>
         

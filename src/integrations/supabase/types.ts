@@ -17,36 +17,69 @@ export type Database = {
       artists: {
         Row: {
           apple_music_id: string | null
+          apple_music_url: string | null
+          audiomack_url: string | null
           bio: string | null
           created_at: string
+          deezer_url: string | null
+          facebook_url: string | null
           id: string
+          instagram_url: string | null
           profile_image: string | null
+          soundcloud_url: string | null
           spotify_id: string | null
+          spotify_url: string | null
           stage_name: string
+          tidal_url: string | null
+          tiktok_url: string | null
+          twitter_url: string | null
           updated_at: string
           user_id: string | null
+          youtube_url: string | null
         }
         Insert: {
           apple_music_id?: string | null
+          apple_music_url?: string | null
+          audiomack_url?: string | null
           bio?: string | null
           created_at?: string
+          deezer_url?: string | null
+          facebook_url?: string | null
           id?: string
+          instagram_url?: string | null
           profile_image?: string | null
+          soundcloud_url?: string | null
           spotify_id?: string | null
+          spotify_url?: string | null
           stage_name: string
+          tidal_url?: string | null
+          tiktok_url?: string | null
+          twitter_url?: string | null
           updated_at?: string
           user_id?: string | null
+          youtube_url?: string | null
         }
         Update: {
           apple_music_id?: string | null
+          apple_music_url?: string | null
+          audiomack_url?: string | null
           bio?: string | null
           created_at?: string
+          deezer_url?: string | null
+          facebook_url?: string | null
           id?: string
+          instagram_url?: string | null
           profile_image?: string | null
+          soundcloud_url?: string | null
           spotify_id?: string | null
+          spotify_url?: string | null
           stage_name?: string
+          tidal_url?: string | null
+          tiktok_url?: string | null
+          twitter_url?: string | null
           updated_at?: string
           user_id?: string | null
+          youtube_url?: string | null
         }
         Relationships: []
       }
