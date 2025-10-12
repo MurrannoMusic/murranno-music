@@ -36,18 +36,18 @@ export const StreamingPlatformCard = ({
 
   if (isEditing || isLocalEditing) {
     return (
-      <Card className="backdrop-blur-xl bg-white/10 border-white/20">
+      <Card className="bg-secondary/20 border border-border rounded-[12px]">
         <CardContent className="p-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="text-white/90">{icon}</div>
-            <span className="text-sm font-medium text-white/90">{name}</span>
+            <div className="text-foreground">{icon}</div>
+            <span className="text-sm font-medium text-card-foreground">{name}</span>
           </div>
           <div className="flex gap-2">
             <Input
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               placeholder={placeholder}
-              className="bg-white/10 border-white/30 text-white text-sm placeholder:text-white/40"
+              className="bg-background border-border text-sm"
             />
             <Button size="sm" onClick={handleSave} className="shrink-0">
               <Check className="w-4 h-4" />
@@ -62,20 +62,20 @@ export const StreamingPlatformCard = ({
   }
 
   return (
-    <Card className="backdrop-blur-xl bg-white/10 border-white/20 hover:bg-white/[0.15] transition-all">
+    <Card className="bg-secondary/20 border border-border rounded-[12px] hover:bg-secondary/30 transition-smooth">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="text-white/90">{icon}</div>
+            <div className="text-foreground">{icon}</div>
             <div>
-              <div className="text-sm font-medium text-white/90">{name}</div>
+              <div className="text-sm font-medium text-card-foreground">{name}</div>
               {url ? (
-                <div className="text-xs text-white/50 flex items-center gap-1 mt-0.5">
-                  <Check className="w-3 h-3 text-green-400" />
+                <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                  <Check className="w-3 h-3 text-success" />
                   Connected
                 </div>
               ) : (
-                <div className="text-xs text-white/30 mt-0.5">Not connected</div>
+                <div className="text-xs text-muted-foreground/50 mt-0.5">Not connected</div>
               )}
             </div>
           </div>
@@ -86,7 +86,7 @@ export const StreamingPlatformCard = ({
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-white/50 hover:text-white/90 transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-smooth"
               >
                 <ExternalLink className="w-4 h-4" />
               </a>
@@ -95,7 +95,7 @@ export const StreamingPlatformCard = ({
                 size="sm"
                 variant="ghost"
                 onClick={() => setIsLocalEditing(true)}
-                className="text-white/70 hover:text-white hover:bg-white/10"
+                className="hover:bg-secondary/30"
               >
                 <Plus className="w-4 h-4" />
               </Button>

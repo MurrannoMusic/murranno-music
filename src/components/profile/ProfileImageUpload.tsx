@@ -30,10 +30,10 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
         onClick={handleClick}
         className={`relative w-32 h-32 ${!disabled && 'cursor-pointer'}`}
       >
-        <Avatar className="w-32 h-32 border-2 border-white/20">
+        <Avatar className="w-32 h-32 border-2 border-border">
           <AvatarImage src={imageUrl || undefined} alt="Profile" />
           <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
-            <User className="w-16 h-16 text-white/50" />
+            <User className="w-16 h-16 text-muted-foreground" />
           </AvatarFallback>
         </Avatar>
         

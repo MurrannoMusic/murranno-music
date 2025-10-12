@@ -95,7 +95,7 @@ export const ArtistProfile = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-dark flex items-center justify-center mobile-safe-top">
         <div className="space-y-4 text-center">
           <Skeleton className="h-8 w-48 mx-auto" />
           <Skeleton className="h-64 w-80" />
@@ -105,38 +105,37 @@ export const ArtistProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-background/95 relative">
-      {/* Background blur effect */}
-      <div className="absolute inset-0 bg-[url('/musician-background.jpg')] bg-cover bg-center opacity-5 blur-sm" />
-      
-      <div className="relative mobile-container py-6 space-y-6">
+    <div className="min-h-screen bg-gradient-dark mobile-safe-top mobile-safe-bottom">
+      <div className="mobile-container py-6 space-y-4">
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate(-1)}
-            className="text-white/70 hover:text-white hover:bg-white/10"
-          >
-            <ArrowLeft className="w-4 h-4" />
-          </Button>
+        <div className="bg-gradient-dark backdrop-blur-xl border-b border-border/20 -mx-4 px-4 py-3 mb-2">
+          <div className="flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate(-1)}
+              className="hover:bg-secondary/30"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </Button>
 
-          <Badge variant="outline" className="border-white/20 text-white/90">
-            ARTIST PROFILE
-          </Badge>
+            <Badge variant="outline">
+              ARTIST PROFILE
+            </Badge>
 
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate('/settings')}
-            className="text-white/70 hover:text-white hover:bg-white/10"
-          >
-            <Settings className="w-4 h-4" />
-          </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/settings')}
+              className="hover:bg-secondary/30"
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
 
         {/* Profile Header */}
-        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardContent className="p-6">
             <div className="flex flex-col items-center text-center space-y-4">
               <ProfileImageUpload
@@ -151,29 +150,29 @@ export const ArtistProfile = () => {
                     value={formData.stage_name}
                     onChange={(e) => setFormData(prev => ({ ...prev, stage_name: e.target.value }))}
                     placeholder="Stage Name"
-                    className="bg-white/10 border-white/30 text-white text-center placeholder:text-white/40"
+                    className="bg-background border-border text-center"
                   />
                   <Textarea
                     value={formData.bio}
                     onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
                     placeholder="Bio"
-                    className="bg-white/10 border-white/30 text-white resize-none placeholder:text-white/40"
+                    className="bg-background border-border resize-none"
                     rows={3}
                   />
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-white/95">{profile?.stage_name}</h2>
+                  <h2 className="text-2xl font-bold text-foreground">{profile?.stage_name}</h2>
                   {profile?.bio && (
-                    <p className="text-sm text-white/70 max-w-md">{profile.bio}</p>
+                    <p className="text-sm text-muted-foreground max-w-md">{profile.bio}</p>
                   )}
-                  <div className="flex gap-6 text-sm text-white/60">
+                  <div className="flex gap-6 text-sm text-muted-foreground">
                     <div>
-                      <div className="text-lg font-semibold text-white/90">0</div>
+                      <div className="text-lg font-semibold text-foreground">0</div>
                       <div>Releases</div>
                     </div>
                     <div>
-                      <div className="text-lg font-semibold text-white/90">
+                      <div className="text-lg font-semibold text-foreground">
                         {profile?.created_at && new Date(profile.created_at).getFullYear()}
                       </div>
                       <div>Member Since</div>
@@ -207,9 +206,9 @@ export const ArtistProfile = () => {
         </div>
 
         {/* Streaming Platforms */}
-        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader>
-            <CardTitle className="text-lg text-white/95">Major Streaming Services</CardTitle>
+            <CardTitle className="text-lg text-card-foreground">Major Streaming Services</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <StreamingPlatformCard
@@ -240,9 +239,9 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Additional Platforms */}
-        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader>
-            <CardTitle className="text-lg text-white/95">Additional Streaming Platforms</CardTitle>
+            <CardTitle className="text-lg text-card-foreground">Additional Streaming Platforms</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <StreamingPlatformCard
@@ -281,9 +280,9 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Social Media */}
-        <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
           <CardHeader>
-            <CardTitle className="text-lg text-white/95">Social Media</CardTitle>
+            <CardTitle className="text-lg text-card-foreground">Social Media</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <SocialLinkCard
