@@ -22,18 +22,12 @@ serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      console.error('Authentication error:', authError);
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
+    // Make authentication optional - allow unauthenticated users to view plans
+    const { data: { user } } = await supabase.auth.getUser();
 
     console.log('Fetching subscription plans');
 
-    // Get all available subscription plans
+    // Get all available subscription plans (public information)
     const { data: plans, error: plansError } = await supabase
       .from('subscription_plans')
       .select('*')
@@ -41,12 +35,16 @@ serve(async (req) => {
 
     if (plansError) throw plansError;
 
-    // Get user's current subscription
-    const { data: currentSubscription } = await supabase
-      .from('subscriptions')
-      .select('tier, status')
-      .eq('user_id', user.id)
-      .maybeSingle();
+    // Only get user's current subscription if they are logged in
+    let currentSubscription = null;
+    if (user) {
+      const { data } = await supabase
+        .from('subscriptions')
+        .select('tier, status')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      currentSubscription = data;
+    }
 
     console.log('Subscription plans fetched successfully');
 
