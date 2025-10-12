@@ -1,10 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { Campaign, CampaignStats } from '@/types/campaign';
-import { mockCampaigns, mockCampaignStats } from '@/utils/mockData';
+import { toast } from 'sonner';
 
 export const useCampaigns = () => {
-  const [campaigns] = useState<Campaign[]>(mockCampaigns);
-  const [stats] = useState<CampaignStats>(mockCampaignStats);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [stats, setStats] = useState<CampaignStats>({
+    totalCampaigns: 0,
+    activeCampaigns: 0,
+    totalSpent: '0',
+    totalReach: '0',
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCampaigns();
+  }, []);
+
+  const fetchCampaigns = async (status?: string) => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.functions.invoke('get-user-campaigns', {
+        body: { status }
+      });
+
+      if (error) throw error;
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to fetch campaigns');
+      }
+
+      setCampaigns(data.campaigns || []);
+      setStats(data.stats || {
+        totalCampaigns: 0,
+        activeCampaigns: 0,
+        totalSpent: '0',
+        totalReach: '0',
+      });
+    } catch (error: any) {
+      console.error('Error fetching campaigns:', error);
+      toast.error('Failed to load campaigns');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getFilteredCampaigns = (statusFilter: string = 'all'): Campaign[] => {
     if (statusFilter === 'all') return campaigns;
@@ -22,7 +61,6 @@ export const useCampaigns = () => {
   };
 
   const getPlatformIcon = (platform: string) => {
-    // This would return appropriate icons for each platform
     return platform;
   };
 
@@ -31,6 +69,8 @@ export const useCampaigns = () => {
     stats,
     getFilteredCampaigns,
     getStatusBadgeVariant,
-    getPlatformIcon
+    getPlatformIcon,
+    loading,
+    refetch: fetchCampaigns,
   };
 };

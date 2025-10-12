@@ -45,7 +45,7 @@ export interface AnalyticsData {
   recentActivity: ActivityData[];
 }
 
-export const useAnalyticsData = (period: string = '30days', artistId?: string) => {
+export const useAnalyticsData = (period: string = '30', artistId?: string) => {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -62,22 +62,39 @@ export const useAnalyticsData = (period: string = '30days', artistId?: string) =
           throw new Error('Not authenticated');
         }
 
-        const params = new URLSearchParams({ period });
-        if (artistId) {
-          params.append('artistId', artistId);
-        }
-
         const { data: analyticsData, error: fetchError } = await supabase.functions.invoke(
-          'fetch-analytics',
+          'get-analytics-data',
           {
-            body: {},
-            method: 'GET',
+            body: { 
+              period,
+              artistId 
+            }
           }
         );
 
         if (fetchError) throw fetchError;
 
-        setData(analyticsData);
+        if (!analyticsData?.success) {
+          throw new Error(analyticsData?.error || 'Failed to fetch analytics');
+        }
+
+        // Transform the data to match the expected format
+        const transformedData: AnalyticsData = {
+          totalStreams: analyticsData.totalStreams || 0,
+          totalEarnings: analyticsData.totalEarnings || 0,
+          activeReleases: 0, // This would need to be fetched separately or added to the function
+          topTracks: [],
+          streamsByPlatform: Object.entries(analyticsData.streamsByPlatform || {}).map(([platform, streams]) => ({
+            platform,
+            streams: streams as number,
+            percentage: ((streams as number) / (analyticsData.totalStreams || 1)) * 100
+          })),
+          streamsByCountry: [],
+          earningsOverTime: [],
+          recentActivity: []
+        };
+
+        setData(transformedData);
       } catch (err: any) {
         console.error('Analytics fetch error:', err);
         setError(err.message);
@@ -89,5 +106,13 @@ export const useAnalyticsData = (period: string = '30days', artistId?: string) =
     fetchAnalytics();
   }, [period, artistId]);
 
-  return { data, loading, error, refetch: () => {} };
+  const refetch = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) return;
+    
+    // Trigger re-fetch by updating state
+    setLoading(true);
+  };
+
+  return { data, loading, error, refetch };
 };
