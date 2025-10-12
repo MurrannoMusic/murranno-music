@@ -332,7 +332,7 @@ export default function GetStarted() {
               <Button
                 size="lg"
                 variant="outline"
-                className="flex-1 rounded-full hover:bg-primary/10 hover:border-primary/40"
+                className="flex-1 rounded-full border-2 border-primary/60 bg-primary/5 hover:bg-primary/10 hover:border-primary text-foreground"
                 onClick={() => navigate('/login')}
               >
                 Sign In
