@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
+import musicianBg from '@/assets/musician-background.jpg';
 
 export const Signup = () => {
   const navigate = useNavigate();
@@ -41,81 +42,98 @@ export const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mobile-container">
-        <div className="flex items-center mb-8">
-          <Link to="/get-started" className="mr-4">
-            <ArrowLeft className="h-6 w-6 text-muted-foreground" />
-          </Link>
-          <h1 className="text-2xl font-bold">Create Account</h1>
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      {/* Background Image */}
+      <div 
+        className="absolute inset-0"
+        style={{ 
+          backgroundImage: `url(${musicianBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: '65% center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
+
+      {/* Content positioned with header at top */}
+      <div className="relative z-10 min-h-screen flex flex-col justify-between pt-8 pb-8">
+        <div className="mobile-container">
+          <div className="flex items-center mb-8">
+            <Link to="/get-started" className="mr-4">
+              <ArrowLeft className="h-6 w-6 text-white drop-shadow-lg" />
+            </Link>
+            <h1 className="text-2xl font-bold text-white drop-shadow-lg">Create Account</h1>
+          </div>
         </div>
+        
+        <div className="mobile-container">
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-center">Join Murranno Music</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSignup} className="space-y-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email"
-                    required
-                  />
+          <Card className="backdrop-blur-md bg-background/95 border-border/50">
+            <CardHeader>
+              <CardTitle className="text-center">Join Murranno Music</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSignup} className="space-y-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Enter your email"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="password">Password</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Create a password"
+                      required
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="Confirm your password"
+                      required
+                    />
+                  </div>
                 </div>
-                
-                <div>
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Create a password"
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="confirmPassword">Confirm Password</Label>
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirm your password"
-                    required
-                  />
-                </div>
+
+                <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center">
+                <p className="text-muted-foreground">
+                  Already have an account?{' '}
+                  <Link to="/login" className="text-primary font-medium hover:underline">
+                    Log in
+                  </Link>
+                </p>
               </div>
-
-              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating account...
-                  </>
-                ) : (
-                  'Create Account'
-                )}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-muted-foreground">
-                Already have an account?{' '}
-                <Link to="/login" className="text-primary font-medium hover:underline">
-                  Log in
-                </Link>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
