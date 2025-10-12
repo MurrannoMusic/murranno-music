@@ -27,13 +27,15 @@ export const usePayoutMethods = () => {
   const fetchPayoutMethods = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('payout_methods')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.functions.invoke('get-payout-methods');
 
       if (error) throw error;
-      setPayoutMethods(data || []);
+      
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to fetch payout methods');
+      }
+      
+      setPayoutMethods(data.payoutMethods || []);
     } catch (error: any) {
       console.error('Error fetching payout methods:', error);
       toast({
@@ -48,12 +50,15 @@ export const usePayoutMethods = () => {
 
   const deleteMethod = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('payout_methods')
-        .delete()
-        .eq('id', id);
+      const { data, error } = await supabase.functions.invoke('delete-payout-method', {
+        body: { payoutMethodId: id }
+      });
 
       if (error) throw error;
+      
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to delete payout method');
+      }
 
       toast({
         title: 'Success',
@@ -73,17 +78,15 @@ export const usePayoutMethods = () => {
 
   const setPrimary = async (id: string) => {
     try {
-      await supabase
-        .from('payout_methods')
-        .update({ is_primary: false })
-        .neq('id', id);
-
-      const { error } = await supabase
-        .from('payout_methods')
-        .update({ is_primary: true })
-        .eq('id', id);
+      const { data, error } = await supabase.functions.invoke('paystack-set-primary-method', {
+        body: { payoutMethodId: id }
+      });
 
       if (error) throw error;
+      
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to update primary method');
+      }
 
       toast({
         title: 'Success',

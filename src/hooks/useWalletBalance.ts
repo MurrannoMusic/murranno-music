@@ -42,46 +42,19 @@ export const useWalletBalance = () => {
 
       console.log('Fetching wallet balance for user:', user.id);
 
-      const { data, error } = await supabase
-        .from('wallet_balance')
-        .select('*')
-        .eq('user_id', user.id)
-        .maybeSingle();
+      const { data, error } = await supabase.functions.invoke('get-wallet-balance');
 
       if (error) {
         console.error('Error fetching wallet balance:', error);
         throw error;
       }
 
-      if (!data) {
-        console.log('No wallet balance found, creating new one...');
-        const { data: newBalance, error: createError } = await supabase
-          .from('wallet_balance')
-          .insert({
-            user_id: user.id,
-            available_balance: 0,
-            pending_balance: 0,
-            total_earnings: 0,
-            currency: 'NGN',
-          })
-          .select()
-          .single();
-
-        if (createError) {
-          console.error('Error creating wallet balance:', createError);
-          throw createError;
-        }
-        
-        console.log('Wallet balance created successfully:', newBalance);
-        setBalance(newBalance);
-        toast({
-          title: 'Wallet Initialized',
-          description: 'Your wallet has been set up successfully!',
-        });
-      } else {
-        console.log('Wallet balance found:', data);
-        setBalance(data);
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to fetch wallet balance');
       }
+
+      console.log('Wallet balance fetched:', data.balance);
+      setBalance(data.balance);
     } catch (error: any) {
       console.error('Error in fetchBalance:', error);
       toast({
@@ -89,7 +62,6 @@ export const useWalletBalance = () => {
         description: error.message || 'Failed to fetch wallet balance',
         variant: 'destructive',
       });
-      // Set balance to null on error so empty state shows
       setBalance(null);
     } finally {
       setLoading(false);
