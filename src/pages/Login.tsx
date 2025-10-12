@@ -43,7 +43,7 @@ export const Login = () => {
         style={{ 
           backgroundImage: `url(${musicianBg})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center center',
           backgroundRepeat: 'no-repeat'
         }}
       />
