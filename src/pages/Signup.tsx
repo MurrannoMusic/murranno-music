@@ -67,9 +67,9 @@ export const Signup = () => {
         
         <div className="mobile-container">
 
-          <Card className="backdrop-blur-md bg-background/95 border-border/50">
-            <CardHeader>
-              <CardTitle className="text-center">Join Murranno Music</CardTitle>
+          <Card className="backdrop-blur-2xl bg-background/80 border-2 border-border/30 shadow-2xl">
+            <CardHeader className="bg-gradient-to-br from-primary/5 to-accent/5 border-b border-border/20">
+              <CardTitle className="text-center text-2xl">Join Murranno Music</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignup} className="space-y-6">
