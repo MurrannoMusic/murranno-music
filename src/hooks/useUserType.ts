@@ -61,11 +61,12 @@ export const useUserType = () => {
       setUserType(newType);
       toast.success(`Switched to ${newType} account`);
       
-      // Reload the page to refresh all data
-      window.location.reload();
+      // Refresh user data instead of reloading
+      await fetchUserType();
     } catch (error: any) {
       console.error('Error switching user type:', error);
       toast.error(error.message || 'Failed to switch account type');
+      throw error; // Re-throw to allow caller to handle
     }
   };
 

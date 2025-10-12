@@ -39,11 +39,11 @@ export const UserTypeSelection = () => {
     }
   ];
 
-  const handleUserTypeSelect = (type: UserType) => {
-    switchUserType(type);
-    
-    // Use setTimeout to ensure state update completes before navigation
-    setTimeout(() => {
+  const handleUserTypeSelect = async (type: UserType) => {
+    try {
+      await switchUserType(type);
+      
+      // Navigate after successful switch
       switch(type) {
         case 'artist':
           navigate('/artist-dashboard');
@@ -55,7 +55,10 @@ export const UserTypeSelection = () => {
           navigate('/agency-dashboard');
           break;
       }
-    }, 0);
+    } catch (error) {
+      // Error is already handled in switchUserType
+      console.error('Failed to switch user type:', error);
+    }
   };
 
   return (

@@ -16,20 +16,22 @@ import { TopTracksCard } from '@/components/modern/TopTracksCard';
 import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const ArtistDashboard = () => {
-  const { currentUser } = useUserType();
+  const { currentUser, loading } = useUserType();
   const { getStatsAsItems } = useStats();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!currentUser) {
+    if (!loading && !currentUser) {
       navigate('/user-type-selection', { replace: true });
     }
-  }, [currentUser, navigate]);
+  }, [currentUser, loading, navigate]);
 
-  if (!currentUser) {
+  if (loading || !currentUser) {
     return (
       <PageContainer>
-        <div className="mobile-container py-8 text-center text-muted-foreground text-sm">Redirecting…</div>
+        <div className="mobile-container py-8 text-center text-muted-foreground text-sm">
+          {loading ? 'Loading...' : 'Redirecting…'}
+        </div>
       </PageContainer>
     );
   }
