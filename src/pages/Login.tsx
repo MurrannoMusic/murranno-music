@@ -39,12 +39,14 @@ export const Login = () => {
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Image */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${musicianBg})` }}
-      >
-        {/* Dark overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/60" />
-      </div>
+        className="absolute inset-0"
+        style={{ 
+          backgroundImage: `url(${musicianBg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+      />
 
       {/* Content positioned at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end pb-8">
