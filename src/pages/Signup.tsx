@@ -68,44 +68,47 @@ export const Signup = () => {
         <div className="mobile-container">
 
           <Card className="backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
-            <CardHeader className="bg-gradient-to-br from-primary/5 to-accent/5 border-b border-border/20">
-              <CardTitle className="text-center text-2xl">Join Murranno Music</CardTitle>
+            <CardHeader className="bg-white/5 border-b border-white/10">
+              <CardTitle className="text-center text-2xl text-white drop-shadow-lg">Join Murranno Music</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSignup} className="space-y-6">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
                     <Input
                       id="email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="Enter your email"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
                       required
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="password">Password</Label>
+                    <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>
                     <Input
                       id="password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Create a password"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
                       required
                     />
                   </div>
                   
                   <div>
-                    <Label htmlFor="confirmPassword">Confirm Password</Label>
+                    <Label htmlFor="confirmPassword" className="text-white/90 drop-shadow-md">Confirm Password</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       placeholder="Confirm your password"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
                       required
                     />
                   </div>
@@ -124,9 +127,9 @@ export const Signup = () => {
               </form>
 
               <div className="mt-6 text-center">
-                <p className="text-muted-foreground">
+                <p className="text-white/90 drop-shadow-md">
                   Already have an account?{' '}
-                  <Link to="/login" className="text-primary font-medium hover:underline">
+                  <Link to="/login" className="text-primary font-medium hover:underline drop-shadow-lg">
                     Log in
                   </Link>
                 </p>
