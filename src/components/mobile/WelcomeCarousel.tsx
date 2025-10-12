@@ -36,6 +36,10 @@ interface WelcomeCarouselProps {
 
 export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
+  const minSwipeDistance = 50;
 
   const nextSlide = () => {
     if (currentSlide < slides.length - 1) {
@@ -45,12 +49,47 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
     }
   };
 
+  const previousSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+    }
+  };
+
   const skipToEnd = () => {
     onComplete();
   };
 
+  const onTouchStart = (e: React.TouchEvent) => {
+    setTouchEnd(0);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    if (isLeftSwipe) {
+      nextSlide();
+    }
+    if (isRightSwipe) {
+      previousSlide();
+    }
+  };
+
   return (
-    <div className="min-h-screen flex flex-col relative overflow-hidden">
+    <div 
+      className="min-h-screen flex flex-col relative overflow-hidden"
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       {/* Background images */}
       {slides.map((slide, index) => (
         <div
