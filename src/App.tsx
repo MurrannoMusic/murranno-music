@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import GetStarted from "./pages/GetStarted";
+import { Splash } from "./pages/Splash";
 import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -42,9 +43,10 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <Routes>
-              <Route path="/" element={<Navigate to="/get-started" replace />} />
-              <Route path="/get-started" element={<GetStarted />} />
+              <Route path="/" element={<Navigate to="/splash" replace />} />
+              <Route path="/splash" element={<Splash />} />
               <Route path="/welcome" element={<Welcome />} />
+              <Route path="/get-started" element={<GetStarted />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/user-type-selection" element={<ProtectedRoute><UserTypeSelection /></ProtectedRoute>} />
