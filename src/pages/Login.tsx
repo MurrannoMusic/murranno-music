@@ -1,29 +1,44 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 
 export const Login = () => {
   const navigate = useNavigate();
+  const { signIn, user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement authentication logic
-    console.log('Login attempt:', { email, password });
-    // Navigate to user type selection after successful login
-    navigate('/user-type-selection');
+    setLoading(true);
+    
+    try {
+      await signIn(email, password);
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Login error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mobile-container">
         <div className="flex items-center mb-8">
-          <Link to="/welcome" className="mr-4">
+          <Link to="/get-started" className="mr-4">
             <ArrowLeft className="h-6 w-6 text-muted-foreground" />
           </Link>
           <h1 className="text-2xl font-bold">Welcome Back</h1>
@@ -61,8 +76,15 @@ export const Login = () => {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg">
-                Log In
+              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Logging in...
+                  </>
+                ) : (
+                  'Log In'
+                )}
               </Button>
             </form>
 

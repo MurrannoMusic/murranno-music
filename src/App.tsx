@@ -4,6 +4,9 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import GetStarted from "./pages/GetStarted";
 import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
@@ -37,33 +40,35 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Navigate to="/welcome" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/artist-dashboard" element={<ArtistDashboard />} />
-            <Route path="/label-dashboard" element={<LabelDashboard />} />
-            <Route path="/agency-dashboard" element={<AgencyDashboard />} />
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/user-type-selection" element={<UserTypeSelection />} />
-            <Route path="/user-type-switcher" element={<UserTypeSwitcher />} />
-            <Route path="/upload" element={<Upload />} />
-            <Route path="/promotions" element={<Promotions />} />
-            <Route path="/earnings" element={<Earnings />} />
-            <Route path="/analytics" element={<Analytics />} />
-            <Route path="/label-analytics" element={<LabelAnalytics />} />
-            <Route path="/artist-management" element={<ArtistManagement />} />
-            <Route path="/campaign-manager" element={<CampaignManager />} />
-            <Route path="/payout-manager" element={<PayoutManager />} />
-            <Route path="/results" element={<Results />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="/releases" element={<Releases />} />
-            <Route path="/releases/:id" element={<ReleaseDetail />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+          <AuthProvider>
+            <Routes>
+              <Route path="/" element={<Navigate to="/get-started" replace />} />
+              <Route path="/get-started" element={<GetStarted />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/user-type-selection" element={<ProtectedRoute><UserTypeSelection /></ProtectedRoute>} />
+              <Route path="/user-type-switcher" element={<ProtectedRoute><UserTypeSwitcher /></ProtectedRoute>} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+              <Route path="/artist-dashboard" element={<ProtectedRoute><ArtistDashboard /></ProtectedRoute>} />
+              <Route path="/label-dashboard" element={<ProtectedRoute><LabelDashboard /></ProtectedRoute>} />
+              <Route path="/agency-dashboard" element={<ProtectedRoute><AgencyDashboard /></ProtectedRoute>} />
+              <Route path="/upload" element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+              <Route path="/promotions" element={<ProtectedRoute><Promotions /></ProtectedRoute>} />
+              <Route path="/earnings" element={<ProtectedRoute><Earnings /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+              <Route path="/label-analytics" element={<ProtectedRoute><LabelAnalytics /></ProtectedRoute>} />
+              <Route path="/artist-management" element={<ProtectedRoute><ArtistManagement /></ProtectedRoute>} />
+              <Route path="/campaign-manager" element={<ProtectedRoute><CampaignManager /></ProtectedRoute>} />
+              <Route path="/payout-manager" element={<ProtectedRoute><PayoutManager /></ProtectedRoute>} />
+              <Route path="/results" element={<ProtectedRoute><Results /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+              <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+              <Route path="/releases" element={<ProtectedRoute><Releases /></ProtectedRoute>} />
+              <Route path="/releases/:id" element={<ProtectedRoute><ReleaseDetail /></ProtectedRoute>} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
     </ThemeProvider>

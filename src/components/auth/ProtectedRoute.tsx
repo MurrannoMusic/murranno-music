@@ -13,27 +13,23 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
 
   useEffect(() => {
     if (!loading) {
-      // Not authenticated
       if (!user) {
-        navigate('/login');
+        navigate('/get-started');
         return;
       }
 
-      // Check subscription status
       if (subscription?.status === 'expired' || subscription?.status === 'cancelled') {
         const now = new Date();
         const periodEnd = subscription.current_period_end 
           ? new Date(subscription.current_period_end) 
           : null;
         
-        // If period has ended, redirect to upgrade
         if (!periodEnd || periodEnd < now) {
           navigate('/subscription/plans');
           return;
         }
       }
 
-      // Check trial expiry
       if (subscription?.status === 'trial' && subscription.trial_ends_at) {
         const trialEnd = new Date(subscription.trial_ends_at);
         if (trialEnd < new Date()) {
@@ -42,9 +38,7 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
         }
       }
 
-      // Check tier access
       if (requiredTier && userRole?.tier !== requiredTier) {
-        // Redirect to appropriate dashboard
         const dashboardMap = {
           artist: '/artist-dashboard',
           label: '/label-dashboard',

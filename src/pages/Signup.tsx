@@ -1,36 +1,50 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 
 export const Signup = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    accountType: '',
-  });
+  const navigate = useNavigate();
+  const { signUp, user } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
-  const handleSignup = (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement signup logic
-    console.log('Signup attempt:', formData);
+    
+    if (password !== confirmPassword) {
+      return;
+    }
+    
+    setLoading(true);
+    
+    try {
+      await signUp(email, password, '');
+      navigate('/user-type-selection');
+    } catch (error) {
+      console.error('Signup error:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div className="min-h-screen bg-background">
       <div className="mobile-container">
         <div className="flex items-center mb-8">
-          <Link to="/welcome" className="mr-4">
+          <Link to="/get-started" className="mr-4">
             <ArrowLeft className="h-6 w-6 text-muted-foreground" />
           </Link>
           <h1 className="text-2xl font-bold">Create Account</h1>
@@ -44,41 +58,15 @@ export const Signup = () => {
             <form onSubmit={handleSignup} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="name">Full Name / Stage Name</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    value={formData.name}
-                    onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="Enter your name"
-                    required
-                  />
-                </div>
-                
-                <div>
                   <Label htmlFor="email">Email</Label>
                   <Input
                     id="email"
                     type="email"
-                    value={formData.email}
-                    onChange={(e) => handleInputChange('email', e.target.value)}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     placeholder="Enter your email"
                     required
                   />
-                </div>
-
-                <div>
-                  <Label htmlFor="accountType">Account Type</Label>
-                  <Select value={formData.accountType} onValueChange={(value) => handleInputChange('accountType', value)}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select account type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="artist">Independent Artist</SelectItem>
-                      <SelectItem value="label">Record Label / Manager</SelectItem>
-                      <SelectItem value="agency">Promoter / PR Agency</SelectItem>
-                    </SelectContent>
-                  </Select>
                 </div>
                 
                 <div>
@@ -86,8 +74,8 @@ export const Signup = () => {
                   <Input
                     id="password"
                     type="password"
-                    value={formData.password}
-                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                     placeholder="Create a password"
                     required
                   />
@@ -98,16 +86,23 @@ export const Signup = () => {
                   <Input
                     id="confirmPassword"
                     type="password"
-                    value={formData.confirmPassword}
-                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm your password"
                     required
                   />
                 </div>
               </div>
 
-              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg">
-                Create Account
+              <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Creating account...
+                  </>
+                ) : (
+                  'Create Account'
+                )}
               </Button>
             </form>
 

@@ -5,8 +5,7 @@ const Index = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Redirect to dashboard where all user flows are implemented
-    navigate('/dashboard');
+    navigate('/get-started');
   }, [navigate]);
 
   return null;
