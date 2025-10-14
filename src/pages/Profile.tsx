@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
@@ -114,11 +115,12 @@ export const Profile = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-              <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center">
-                <span className="text-primary font-bold text-xl">
+              <Avatar className="w-16 h-16">
+                <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
+                <AvatarFallback className="bg-primary/20 text-primary font-bold text-xl">
                   {(currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'NA')}
-                </span>
-              </div>
+                </AvatarFallback>
+              </Avatar>
               <div className="flex-1">
                 <h2 className="text-lg font-bold text-card-foreground">{currentUser?.name ?? 'Unknown User'}</h2>
                 <p className="text-sm text-muted-foreground">{currentUser?.accountType ? currentUser.accountType.toUpperCase() : ''}</p>
