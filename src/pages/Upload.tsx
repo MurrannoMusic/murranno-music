@@ -18,6 +18,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { validateAudioFile, validateImageFile, getAudioDuration } from "@/utils/fileValidation";
 import { formatFileSize } from "@/utils/formatters";
 
+// Upload page component
 export default function Upload() {
   const navigate = useNavigate();
   const audioInputRef = useRef<HTMLInputElement>(null);
