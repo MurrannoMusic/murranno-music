@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Newspaper } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import {
   Carousel,
   CarouselContent,
@@ -9,7 +10,6 @@ import {
 } from '@/components/ui/carousel';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { NewsDialog } from './NewsDialog';
 import { NewsItem } from '@/types/news';
 import newsDistribution from '@/assets/news-distribution.png';
 import newsTrending from '@/assets/news-trending.png';
@@ -69,12 +69,10 @@ const mockNews: NewsItem[] = [
 ];
 
 export const NewsCarousel = () => {
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const navigate = useNavigate();
 
   const handleViewNews = (news: NewsItem) => {
-    setSelectedNews(news);
-    setDialogOpen(true);
+    navigate(`/news/${news.id}`, { state: { news } });
   };
 
   return (
@@ -135,12 +133,6 @@ export const NewsCarousel = () => {
           <CarouselNext className="hidden md:flex -right-4" />
         </Carousel>
       </div>
-
-      <NewsDialog
-        news={selectedNews}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
     </>
   );
 };
