@@ -28,7 +28,7 @@ export const AvatarDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-smooth focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
-          <Avatar className="w-10 h-10">
+          <Avatar className="w-10 h-10 border-2 border-primary/30">
             <AvatarImage src={profile?.profile_image || ''} alt={currentUser.name} />
             <AvatarFallback className="bg-primary/20 text-primary font-bold text-sm">
               {currentUser.name.slice(0, 2).toUpperCase()}
