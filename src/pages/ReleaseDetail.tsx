@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { SlidersHorizontal, Share2, ExternalLink } from 'lucide-react';
 import { ReleaseStatus } from '@/types/release';
 import { toast } from 'sonner';
+import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 
 const statusColors: Record<ReleaseStatus, string> = {
   Live: 'bg-green-500 text-white',
@@ -57,6 +58,21 @@ const ReleaseDetail = () => {
     navigate(`/analytics?release=${release.id}`);
   };
 
+  // Extract Cloudinary public ID from URL
+  const getPublicIdFromUrl = (url: string) => {
+    if (url.includes('cloudinary.com')) {
+      const parts = url.split('/upload/');
+      if (parts.length > 1) {
+        const pathParts = parts[1].split('/');
+        const publicIdParts = pathParts.filter(p => !p.startsWith('v'));
+        return publicIdParts.join('/').replace(/\.[^/.]+$/, '');
+      }
+    }
+    return null;
+  };
+
+  const coverArtPublicId = getPublicIdFromUrl(release.coverArt);
+
   return (
     <PageContainer>
       <PageHeader title="Release Details" backTo="/releases" />
@@ -66,23 +82,44 @@ const ReleaseDetail = () => {
         <div 
           className="relative min-h-[400px] flex items-center justify-center px-4 py-12"
           style={{
-            backgroundImage: `url(${release.coverArt})`,
+            backgroundImage: coverArtPublicId ? 'none' : `url(${release.coverArt})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center'
           }}
         >
           {/* Blur Overlay */}
           <div className="absolute inset-0 backdrop-blur-3xl bg-black/60" />
+          {coverArtPublicId && (
+            <div className="absolute inset-0 opacity-50">
+              <CloudinaryImage 
+                publicId={coverArtPublicId} 
+                alt={release.title}
+                width={1920}
+                height={1080}
+                className="w-full h-full object-cover blur-3xl"
+              />
+            </div>
+          )}
           
           {/* Content */}
           <div className="relative z-10 text-center max-w-md">
             {/* Album Art */}
             <div className="relative inline-block mb-6">
-              <img
-                src={release.coverArt}
-                alt={release.title}
-                className="w-48 h-48 rounded-[20px] shadow-2xl"
-              />
+              {coverArtPublicId ? (
+                <CloudinaryImage 
+                  publicId={coverArtPublicId} 
+                  alt={release.title}
+                  width={192}
+                  height={192}
+                  className="w-48 h-48 rounded-[20px] shadow-2xl"
+                />
+              ) : (
+                <img
+                  src={release.coverArt}
+                  alt={release.title}
+                  className="w-48 h-48 rounded-[20px] shadow-2xl"
+                />
+              )}
               <Badge 
                 className={`absolute top-2 right-2 ${statusColors[release.status]} border-0`}
               >
