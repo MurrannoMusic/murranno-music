@@ -1,4 +1,4 @@
-import { Music } from 'lucide-react';
+import mmLogo from '@/assets/mm_logo.png';
 
 export const AnimatedLogo = () => {
   return (
@@ -11,8 +11,8 @@ export const AnimatedLogo = () => {
         {/* Inner gradient overlay */}
         <div className="absolute inset-2 rounded-full bg-gradient-to-br from-background/10 to-transparent" />
         
-        {/* Music icon */}
-        <Music className="relative z-10 w-16 h-16 md:w-20 md:h-20 text-white drop-shadow-lg" strokeWidth={1.5} />
+        {/* Murranno logo */}
+        <img src={mmLogo} alt="Murranno Music" className="relative z-10 w-20 h-20 md:w-24 md:h-24 object-contain drop-shadow-lg" />
         
         {/* Rotating ring accent */}
         <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-spin" style={{ animationDuration: '8s' }}>
