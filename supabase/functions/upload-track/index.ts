@@ -75,33 +75,40 @@ serve(async (req) => {
       artist = newArtist;
     }
 
-    // Upload cover art if provided
+    // Upload cover art to Cloudinary if provided
     let coverArtUrl = null;
     if (coverArtFile) {
       const { base64, fileName, contentType } = coverArtFile;
-      const fileExt = fileName.split('.').pop();
-      const filePath = `${user.id}/${Date.now()}.${fileExt}`;
-
-      // Convert base64 to blob
-      const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('cover-art')
-        .upload(filePath, binaryData, {
-          contentType: contentType,
-          upsert: false,
-        });
-
-      if (uploadError) {
-        console.error('Cover art upload error:', uploadError);
-        throw uploadError;
+      // Convert base64 to blob for Cloudinary upload
+      const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      const blob = new Blob([binaryData], { type: contentType });
+      const file = new File([blob], fileName, { type: contentType });
+      
+      // Upload to Cloudinary via edge function
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'cover-art');
+      
+      const uploadResponse = await fetch(
+        `${Deno.env.get('SUPABASE_URL')}/functions/v1/upload-image-cloudinary`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: req.headers.get('Authorization')!,
+          },
+          body: formData,
+        }
+      );
+      
+      if (!uploadResponse.ok) {
+        const errorText = await uploadResponse.text();
+        console.error('Cover art upload error:', errorText);
+        throw new Error(`Failed to upload cover art: ${errorText}`);
       }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('cover-art')
-        .getPublicUrl(filePath);
-
-      coverArtUrl = publicUrl;
+      
+      const uploadResult = await uploadResponse.json();
+      coverArtUrl = uploadResult.url;
     }
 
     // Create release
@@ -138,28 +145,36 @@ serve(async (req) => {
       let audioFileUrl = null;
       if (audioFile) {
         const { base64, fileName, contentType } = audioFile;
-        const fileExt = fileName.split('.').pop();
-        const filePath = `${user.id}/${release.id}/${Date.now()}_${i}.${fileExt}`;
-
-        const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
         
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('track-uploads')
-          .upload(filePath, binaryData, {
-            contentType: contentType,
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error('Audio file upload error:', uploadError);
-          throw uploadError;
+        // Convert base64 to blob for Cloudinary upload
+        const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+        const blob = new Blob([binaryData], { type: contentType });
+        const file = new File([blob], fileName, { type: contentType });
+        
+        // Upload to Cloudinary via edge function
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('folder', 'track-uploads');
+        
+        const uploadResponse = await fetch(
+          `${Deno.env.get('SUPABASE_URL')}/functions/v1/upload-audio-cloudinary`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: req.headers.get('Authorization')!,
+            },
+            body: formData,
+          }
+        );
+        
+        if (!uploadResponse.ok) {
+          const errorText = await uploadResponse.text();
+          console.error('Audio file upload error:', errorText);
+          throw new Error(`Failed to upload audio file: ${errorText}`);
         }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('track-uploads')
-          .getPublicUrl(filePath);
-
-        audioFileUrl = publicUrl;
+        
+        const uploadResult = await uploadResponse.json();
+        audioFileUrl = uploadResult.url;
       }
 
       const { data: createdTrack, error: trackError } = await supabase
