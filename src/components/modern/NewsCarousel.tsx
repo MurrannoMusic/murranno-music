@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Gift, Zap, Star, TrendingUp, Award } from 'lucide-react';
+import { Newspaper, TrendingUp, Users, FileText, Sparkles } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -13,52 +13,52 @@ import { NewsDialog } from './NewsDialog';
 import { NewsItem } from '@/types/news';
 
 const iconMap = {
-  gift: Gift,
-  zap: Zap,
-  star: Star,
+  newspaper: Newspaper,
   trending: TrendingUp,
-  award: Award,
+  users: Users,
+  filetext: FileText,
+  sparkles: Sparkles,
 };
 
 const mockNews: NewsItem[] = [
   {
     id: '1',
-    title: 'Get Daily Cashback',
-    subtitle: 'Buy Airtime, Get up to 6% cashback',
-    description: 'Earn amazing cashback rewards every time you purchase airtime through our platform. The more you buy, the more you save! Start earning today and watch your savings grow.\n\nHow it works:\n• Purchase airtime directly from your dashboard\n• Automatically receive up to 6% cashback\n• Cashback credited instantly to your wallet\n• No limits on how much you can earn\n\nDon\'t miss out on this exclusive offer for our valued users!',
-    icon: 'gift',
+    title: 'New Distribution Partnership Announced',
+    subtitle: 'Major streaming platforms integration',
+    description: 'We\'re excited to announce our new distribution partnership with major streaming platforms, expanding your music\'s reach globally.\n\nKey Highlights:\n• Direct integration with 150+ platforms\n• Faster release processing times\n• Enhanced royalty tracking\n• Priority playlist consideration\n• Global territory coverage\n\nThis partnership ensures your music reaches audiences worldwide with improved efficiency and transparency.',
+    icon: 'newspaper',
     publishedAt: new Date('2025-01-10'),
   },
   {
     id: '2',
-    title: 'New Analytics Dashboard',
-    subtitle: 'Advanced insights for your music',
-    description: 'We\'ve completely redesigned our analytics dashboard to give you deeper insights into your music performance.\n\nNew Features:\n• Real-time streaming data\n• Audience demographics breakdown\n• Geographic performance maps\n• Revenue forecasting tools\n• Engagement metrics\n\nUpgrade your strategy with data-driven decisions!',
-    icon: 'zap',
+    title: 'Industry Report: Streaming Revenue Up 23%',
+    subtitle: 'Latest market insights',
+    description: 'The latest industry report reveals streaming revenue has increased by 23% year-over-year, signaling continued growth in the digital music landscape.\n\nKey Findings:\n• Global streaming subscriptions hit 600M+\n• Independent artists capture 35% market share\n• Emerging markets show 40% growth\n• Playlist placements drive 60% of discovery\n• Video content boosts engagement by 45%\n\nLearn how to capitalize on these trends and grow your audience.',
+    icon: 'trending',
     publishedAt: new Date('2025-01-08'),
   },
   {
     id: '3',
-    title: 'Artist Spotlight',
-    subtitle: 'Featured artist of the month',
-    description: 'This month we\'re featuring extraordinary talent from our community! Get inspired by their journey, learn from their strategies, and discover how they achieved success.\n\nSpotlight includes:\n• Exclusive artist interview\n• Behind-the-scenes content\n• Success tips and strategies\n• Music samples and highlights\n\nStay tuned for next month\'s feature!',
-    icon: 'star',
+    title: 'Artist Success Story: From Bedroom to Billboard',
+    subtitle: 'Featured success case',
+    description: 'Discover how independent artist Maya Johnson went from recording in her bedroom to charting on Billboard in just 18 months.\n\nHer Journey:\n• Started with zero followers and $200 budget\n• Focused on consistent releases and engagement\n• Built authentic connections with fans\n• Leveraged data to optimize strategy\n• Achieved 10M+ streams and label interest\n\nGet inspired and learn actionable strategies from her remarkable journey.',
+    icon: 'users',
     publishedAt: new Date('2025-01-05'),
   },
   {
     id: '4',
-    title: 'Boost Your Streams',
-    subtitle: 'Expert promotion tips & tricks',
-    description: 'Learn the secrets to maximizing your streaming numbers with our comprehensive promotion guide.\n\nTopics covered:\n• Social media marketing strategies\n• Playlist placement tactics\n• Collaboration opportunities\n• Release timing optimization\n• Fan engagement techniques\n\nTake your music career to the next level!',
-    icon: 'trending',
+    title: 'New Release Strategy Guide',
+    subtitle: 'Expert tips for 2025',
+    description: 'Our comprehensive 2025 release strategy guide helps you maximize impact and reach with your upcoming music.\n\nStrategy Highlights:\n• Pre-release campaign planning (4-6 weeks)\n• Content creation and social media timeline\n• Playlist pitching best practices\n• Email marketing automation\n• Post-release momentum tactics\n• Collaboration opportunities\n\nDownload the full guide and take your releases to the next level.',
+    icon: 'filetext',
     publishedAt: new Date('2025-01-03'),
   },
   {
     id: '5',
-    title: 'VIP Rewards Program',
-    subtitle: 'Exclusive benefits for top artists',
-    description: 'Join our elite VIP Rewards Program and unlock exclusive benefits designed for our most successful artists.\n\nVIP Benefits:\n• Priority customer support\n• Early access to new features\n• Reduced platform fees\n• Exclusive networking events\n• Premium promotion tools\n\nQualify today by reaching our streaming milestones!',
-    icon: 'award',
+    title: 'Platform Update: Enhanced Analytics Tools',
+    subtitle: 'Feature announcement',
+    description: 'We\'ve launched enhanced analytics tools to give you deeper insights into your music performance and audience behavior.\n\nNew Features:\n• Real-time streaming dashboards\n• Demographic and geographic breakdowns\n• Revenue forecasting models\n• Engagement metrics and trends\n• Custom report generation\n• Comparative performance analysis\n\nUpgrade your strategy with data-driven decision making.',
+    icon: 'sparkles',
     publishedAt: new Date('2025-01-01'),
   },
 ];
@@ -76,8 +76,8 @@ export const NewsCarousel = () => {
     <>
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <Gift className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-bold">Special Bonus For You</h2>
+          <Newspaper className="h-5 w-5 text-primary" />
+          <h2 className="text-xl font-bold">News</h2>
         </div>
 
         <Carousel
@@ -89,31 +89,32 @@ export const NewsCarousel = () => {
         >
           <CarouselContent className="-ml-2 md:-ml-4">
             {mockNews.map((news) => {
-              const IconComponent = iconMap[news.icon as keyof typeof iconMap] || Gift;
+              const IconComponent = iconMap[news.icon as keyof typeof iconMap] || Newspaper;
               
               return (
                 <CarouselItem key={news.id} className="pl-2 md:pl-4 basis-[85%] md:basis-[45%] lg:basis-[30%]">
-                  <Card className="bg-gradient-to-br from-gray-800 via-gray-900 to-black border-border/50 p-4 rounded-[20px] hover:scale-[1.02] transition-smooth">
-                    <div className="flex items-center justify-between gap-3">
-                      <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <div className="p-3 bg-primary/20 rounded-full flex-shrink-0">
-                          <IconComponent className="h-6 w-6 text-primary" />
+                  <Card className="bg-gray-900/80 border-gray-800/50 p-3 rounded-[20px] hover:scale-[1.02] transition-smooth shadow-lg">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-1 min-w-0">
+                        <div className="p-2.5 bg-primary rounded-full flex-shrink-0">
+                          <IconComponent className="h-5 w-5 text-white" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-white text-sm truncate">
+                          <h3 className="font-semibold text-white text-sm truncate">
                             {news.title}
                           </h3>
-                          <p className="text-xs text-gray-400 truncate">
+                          <p className="text-xs text-gray-500 truncate">
                             {news.subtitle}
                           </p>
                         </div>
                       </div>
                       <Button
                         size="sm"
-                        className="bg-primary hover:bg-primary/90 text-primary-foreground rounded-full px-4 flex-shrink-0"
+                        variant="outline"
+                        className="rounded-full px-4 flex-shrink-0 border-gray-700 hover:bg-gray-800"
                         onClick={() => handleViewNews(news)}
                       >
-                        GO
+                        View
                       </Button>
                     </div>
                   </Card>
