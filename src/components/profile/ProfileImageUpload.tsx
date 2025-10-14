@@ -46,16 +46,16 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
     <div className="relative group">
       <div 
         onClick={handleClick}
-        className={`relative w-32 h-32 ${!disabled && 'cursor-pointer'}`}
+        className={`relative w-16 h-16 ${!disabled && 'cursor-pointer'}`}
       >
-        <Avatar className="w-32 h-32 border-2 border-border">
+        <Avatar className="w-16 h-16 border-2 border-border">
           {publicId ? (
             <div className="w-full h-full overflow-hidden rounded-full">
               <CloudinaryImage 
                 publicId={publicId} 
                 alt="Profile" 
-                width={128} 
-                height={128} 
+                width={64} 
+                height={64} 
                 crop="fill" 
                 gravity="face"
                 className="w-full h-full object-cover"
@@ -65,7 +65,7 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
             <>
               <AvatarImage src={imageUrl || undefined} alt="Profile" />
               <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
-                <User className="w-16 h-16 text-muted-foreground" />
+                <User className="w-8 h-8 text-muted-foreground" />
               </AvatarFallback>
             </>
           )}
@@ -73,7 +73,7 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
         
         {!disabled && (
           <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Camera className="w-8 h-8 text-white" />
+            <Camera className="w-4 h-4 text-white" />
           </div>
         )}
       </div>
