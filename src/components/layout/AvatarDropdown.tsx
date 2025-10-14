@@ -11,11 +11,14 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/components/ThemeProvider';
 import { useUserType } from '@/hooks/useUserType';
+import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { Link } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const AvatarDropdown = () => {
   const { theme, setTheme } = useTheme();
   const { currentUser } = useUserType();
+  const { profile } = useArtistProfile();
 
   if (!currentUser) {
     return null;
@@ -24,10 +27,13 @@ export const AvatarDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center hover:bg-primary/30 transition-smooth focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
-          <span className="text-primary font-bold text-sm">
-            {currentUser.name.slice(0, 2).toUpperCase()}
-          </span>
+        <button className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-80 transition-smooth focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-background">
+          <Avatar className="w-10 h-10">
+            <AvatarImage src={profile?.profile_image || ''} alt={currentUser.name} />
+            <AvatarFallback className="bg-primary/20 text-primary font-bold text-sm">
+              {currentUser.name.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
