@@ -11,6 +11,8 @@ import { StreamingPlatformCard } from '@/components/profile/StreamingPlatformCar
 import { SocialLinkCard } from '@/components/profile/SocialLinkCard';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { Skeleton } from '@/components/ui/skeleton';
+import { validateImageFile } from '@/utils/fileValidation';
+import { toast } from '@/hooks/use-toast';
 
 export const ArtistProfile = () => {
   const navigate = useNavigate();
@@ -55,6 +57,16 @@ export const ArtistProfile = () => {
   }, [profile]);
 
   const handleImageSelect = async (file: File) => {
+    const { valid, error } = validateImageFile(file);
+    if (!valid) {
+      toast({
+        title: 'Invalid image',
+        description: error,
+        variant: 'destructive',
+      });
+      return;
+    }
+
     const url = await uploadProfileImage(file);
     if (url) {
       setFormData(prev => ({ ...prev, profile_image: url }));
