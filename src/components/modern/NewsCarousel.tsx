@@ -98,8 +98,8 @@ export const NewsCarousel = () => {
                 <CarouselItem key={news.id} className="pl-2 md:pl-4 basis-[85%] md:basis-[45%] lg:basis-[30%]">
                   <Card className="bg-gray-900/80 border-gray-800/50 p-3 rounded-[20px] hover:scale-[1.02] transition-smooth shadow-lg">
                     <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
+                      <div className="flex items-center gap-3 flex-1 min-w-0">
+                        <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
                           <img 
                             src={newsImage} 
                             alt={news.title}
