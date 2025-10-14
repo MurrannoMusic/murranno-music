@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import { Camera, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 
 interface ProfileImageUploadProps {
   imageUrl: string | null;
@@ -24,6 +25,23 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
     }
   };
 
+  // Extract public ID from Cloudinary URL if present
+  const getPublicIdFromUrl = (url: string | null) => {
+    if (!url) return null;
+    if (url.includes('cloudinary.com')) {
+      const parts = url.split('/upload/');
+      if (parts.length > 1) {
+        const pathParts = parts[1].split('/');
+        // Remove version (v1234567890) and get the rest
+        const publicIdParts = pathParts.filter(p => !p.startsWith('v'));
+        return publicIdParts.join('/').replace(/\.[^/.]+$/, ''); // Remove file extension
+      }
+    }
+    return null;
+  };
+
+  const publicId = getPublicIdFromUrl(imageUrl);
+
   return (
     <div className="relative group">
       <div 
@@ -31,10 +49,26 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
         className={`relative w-32 h-32 ${!disabled && 'cursor-pointer'}`}
       >
         <Avatar className="w-32 h-32 border-2 border-border">
-          <AvatarImage src={imageUrl || undefined} alt="Profile" />
-          <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
-            <User className="w-16 h-16 text-muted-foreground" />
-          </AvatarFallback>
+          {publicId ? (
+            <div className="w-full h-full overflow-hidden rounded-full">
+              <CloudinaryImage 
+                publicId={publicId} 
+                alt="Profile" 
+                width={128} 
+                height={128} 
+                crop="fill" 
+                gravity="face"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ) : (
+            <>
+              <AvatarImage src={imageUrl || undefined} alt="Profile" />
+              <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
+                <User className="w-16 h-16 text-muted-foreground" />
+              </AvatarFallback>
+            </>
+          )}
         </Avatar>
         
         {!disabled && (

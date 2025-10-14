@@ -82,21 +82,18 @@ export const useArtistProfile = () => {
 
   const uploadProfileImage = async (file: File) => {
     try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'profile-images');
 
-      const { error: uploadError } = await supabase.storage
-        .from('profile-images')
-        .upload(filePath, file);
+      const { data, error } = await supabase.functions.invoke('upload-image-cloudinary', {
+        body: formData,
+      });
 
-      if (uploadError) throw uploadError;
+      if (error) throw error;
+      if (!data?.url) throw new Error('No URL returned from upload');
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('profile-images')
-        .getPublicUrl(filePath);
-
-      return publicUrl;
+      return data.url;
     } catch (error: any) {
       console.error('Error uploading image:', error);
       toast({
