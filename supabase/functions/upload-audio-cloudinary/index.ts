@@ -37,11 +37,20 @@ serve(async (req) => {
 
     // Generate signature for signed upload (SHA-1 of string_to_sign + api_secret)
     const timestamp = Math.floor(Date.now() / 1000);
-    const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+    const paramsToSign = `folder=${folder}&resource_type=video&timestamp=${timestamp}`;
     const encoder = new TextEncoder();
     const signatureBuffer = await crypto.subtle.digest('SHA-1', encoder.encode(paramsToSign + apiSecret));
     const signatureArray = Array.from(new Uint8Array(signatureBuffer));
     const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    // Debug logs (masked for security)
+    console.log('Upload params:', {
+      cloudNamePreview: cloudName.substring(0, 6) + '...',
+      apiKeyPreview: apiKey.substring(0, 6) + '...',
+      stringToSign: paramsToSign,
+      signatureLength: signature.length,
+      signaturePreview: signature.substring(0, 6) + '...'
+    });
 
     // Prepare Cloudinary upload with signed parameters
     const uploadFormData = new FormData();

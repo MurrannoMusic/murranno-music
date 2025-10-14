@@ -46,6 +46,15 @@ serve(async (req) => {
     const signatureArray = Array.from(new Uint8Array(signatureBuffer));
     const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
+    // Debug logs (masked for security)
+    console.log('Upload params:', {
+      cloudNamePreview: cloudName.substring(0, 6) + '...',
+      apiKeyPreview: apiKey.substring(0, 6) + '...',
+      stringToSign,
+      signatureLength: signature.length,
+      signaturePreview: signature.substring(0, 6) + '...'
+    });
+
     // Prepare Cloudinary upload with signed parameters
     const uploadFormData = new FormData();
     uploadFormData.append('file', dataUri);
