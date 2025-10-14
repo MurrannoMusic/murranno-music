@@ -51,7 +51,7 @@ serve(async (req) => {
     if (!artist) {
       console.log('No artist profile found for user');
       return new Response(
-        JSON.stringify({ releases: [] }),
+        JSON.stringify({ success: true, releases: [] }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
@@ -108,7 +108,7 @@ serve(async (req) => {
     })) || [];
 
     return new Response(
-      JSON.stringify({ releases: transformedReleases }),
+      JSON.stringify({ success: true, releases: transformedReleases }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
