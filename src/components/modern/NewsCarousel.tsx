@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Newspaper, TrendingUp, Users, FileText, Sparkles } from 'lucide-react';
+import { Newspaper } from 'lucide-react';
 import {
   Carousel,
   CarouselContent,
@@ -11,13 +11,18 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { NewsDialog } from './NewsDialog';
 import { NewsItem } from '@/types/news';
+import newsDistribution from '@/assets/news-distribution.png';
+import newsTrending from '@/assets/news-trending.png';
+import newsSuccess from '@/assets/news-success.png';
+import newsStrategy from '@/assets/news-strategy.png';
+import newsUpdate from '@/assets/news-update.png';
 
-const iconMap = {
-  newspaper: Newspaper,
-  trending: TrendingUp,
-  users: Users,
-  filetext: FileText,
-  sparkles: Sparkles,
+const imageMap = {
+  distribution: newsDistribution,
+  trending: newsTrending,
+  success: newsSuccess,
+  strategy: newsStrategy,
+  update: newsUpdate,
 };
 
 const mockNews: NewsItem[] = [
@@ -26,7 +31,7 @@ const mockNews: NewsItem[] = [
     title: 'New Distribution Partnership Announced',
     subtitle: 'Major streaming platforms integration',
     description: 'We\'re excited to announce our new distribution partnership with major streaming platforms, expanding your music\'s reach globally.\n\nKey Highlights:\n• Direct integration with 150+ platforms\n• Faster release processing times\n• Enhanced royalty tracking\n• Priority playlist consideration\n• Global territory coverage\n\nThis partnership ensures your music reaches audiences worldwide with improved efficiency and transparency.',
-    icon: 'newspaper',
+    icon: 'distribution',
     publishedAt: new Date('2025-01-10'),
   },
   {
@@ -42,7 +47,7 @@ const mockNews: NewsItem[] = [
     title: 'Artist Success Story: From Bedroom to Billboard',
     subtitle: 'Featured success case',
     description: 'Discover how independent artist Maya Johnson went from recording in her bedroom to charting on Billboard in just 18 months.\n\nHer Journey:\n• Started with zero followers and $200 budget\n• Focused on consistent releases and engagement\n• Built authentic connections with fans\n• Leveraged data to optimize strategy\n• Achieved 10M+ streams and label interest\n\nGet inspired and learn actionable strategies from her remarkable journey.',
-    icon: 'users',
+    icon: 'success',
     publishedAt: new Date('2025-01-05'),
   },
   {
@@ -50,7 +55,7 @@ const mockNews: NewsItem[] = [
     title: 'New Release Strategy Guide',
     subtitle: 'Expert tips for 2025',
     description: 'Our comprehensive 2025 release strategy guide helps you maximize impact and reach with your upcoming music.\n\nStrategy Highlights:\n• Pre-release campaign planning (4-6 weeks)\n• Content creation and social media timeline\n• Playlist pitching best practices\n• Email marketing automation\n• Post-release momentum tactics\n• Collaboration opportunities\n\nDownload the full guide and take your releases to the next level.',
-    icon: 'filetext',
+    icon: 'strategy',
     publishedAt: new Date('2025-01-03'),
   },
   {
@@ -58,7 +63,7 @@ const mockNews: NewsItem[] = [
     title: 'Platform Update: Enhanced Analytics Tools',
     subtitle: 'Feature announcement',
     description: 'We\'ve launched enhanced analytics tools to give you deeper insights into your music performance and audience behavior.\n\nNew Features:\n• Real-time streaming dashboards\n• Demographic and geographic breakdowns\n• Revenue forecasting models\n• Engagement metrics and trends\n• Custom report generation\n• Comparative performance analysis\n\nUpgrade your strategy with data-driven decision making.',
-    icon: 'sparkles',
+    icon: 'update',
     publishedAt: new Date('2025-01-01'),
   },
 ];
@@ -89,15 +94,19 @@ export const NewsCarousel = () => {
         >
           <CarouselContent className="-ml-2 md:-ml-4">
             {mockNews.map((news) => {
-              const IconComponent = iconMap[news.icon as keyof typeof iconMap] || Newspaper;
+              const newsImage = imageMap[news.icon as keyof typeof imageMap];
               
               return (
                 <CarouselItem key={news.id} className="pl-2 md:pl-4 basis-[85%] md:basis-[45%] lg:basis-[30%]">
                   <Card className="bg-gray-900/80 border-gray-800/50 p-3 rounded-[20px] hover:scale-[1.02] transition-smooth shadow-lg">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 flex-1 min-w-0">
-                        <div className="p-2.5 bg-primary rounded-full flex-shrink-0">
-                          <IconComponent className="h-5 w-5 text-white" />
+                        <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
+                          <img 
+                            src={newsImage} 
+                            alt={news.title}
+                            className="w-full h-full object-cover"
+                          />
                         </div>
                         <div className="flex-1 min-w-0">
                           <h3 className="font-semibold text-white text-sm truncate">
