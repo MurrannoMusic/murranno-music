@@ -11,12 +11,16 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useToast } from '@/hooks/use-toast';
+import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
+import { useArtistProfile } from '@/hooks/useArtistProfile';
 
 export const Profile = () => {
   const { currentUser } = useUserType();
   const { toast } = useToast();
+  const { profile, uploadProfileImage } = useArtistProfile();
   
   const [isEditingLinks, setIsEditingLinks] = useState(false);
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [spotifyUrl, setSpotifyUrl] = useState('');
   const [appleMusicUrl, setAppleMusicUrl] = useState('');
   const [savedSpotifyUrl, setSavedSpotifyUrl] = useState('');
@@ -58,6 +62,25 @@ export const Profile = () => {
     setAppleMusicUrl(savedAppleMusicUrl);
     setIsEditingLinks(true);
     setErrors({ spotify: '', appleMusic: '' });
+  };
+
+  const handleImageSelect = async (file: File) => {
+    setIsUploadingImage(true);
+    try {
+      await uploadProfileImage(file);
+      toast({
+        title: "Profile image updated",
+        description: "Your profile image has been successfully updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload profile image. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsUploadingImage(false);
+    }
   };
 
   if (!currentUser) {
@@ -115,12 +138,11 @@ export const Profile = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-              <Avatar className="w-16 h-16">
-                <AvatarImage src={currentUser?.avatar} alt={currentUser?.name} />
-                <AvatarFallback className="bg-primary/20 text-primary font-bold text-xl">
-                  {(currentUser?.name ? currentUser.name.slice(0, 2).toUpperCase() : 'NA')}
-                </AvatarFallback>
-              </Avatar>
+              <ProfileImageUpload
+                imageUrl={profile?.profile_image || currentUser?.avatar}
+                onImageSelect={handleImageSelect}
+                disabled={isUploadingImage}
+              />
               <div className="flex-1">
                 <h2 className="text-lg font-bold text-card-foreground">{currentUser?.name ?? 'Unknown User'}</h2>
                 <p className="text-sm text-muted-foreground">{currentUser?.accountType ? currentUser.accountType.toUpperCase() : ''}</p>
