@@ -1,4 +1,5 @@
 import { Music, Clock, Upload, Play, ArrowLeft, DollarSign, BarChart3 } from 'lucide-react';
+import { NewsCarousel } from '@/components/modern/NewsCarousel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -102,6 +103,9 @@ export const ArtistDashboard = () => {
             <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
           </div>
         </div>
+
+        {/* News Carousel */}
+        <NewsCarousel />
 
         {/* Recent Activity */}
         <Card className="bg-card border border-border rounded-[20px] shadow-soft">

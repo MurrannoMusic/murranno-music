@@ -1,4 +1,5 @@
 import { Music, Clock, TrendingUp, Users, Zap, BarChart3, Upload, Play, DollarSign } from 'lucide-react';
+import { NewsCarousel } from '@/components/modern/NewsCarousel';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -180,6 +181,9 @@ export const Dashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* News Carousel */}
+        <NewsCarousel />
 
         {/* Recent Activity */}
         <Card className="bg-card border border-border rounded-[20px] shadow-soft">
