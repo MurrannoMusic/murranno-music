@@ -35,11 +35,34 @@ serve(async (req) => {
     const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
     const dataUri = `data:${file.type};base64,${base64}`;
 
-    // Prepare Cloudinary upload
+    // Generate signature for signed upload
+    const timestamp = Math.floor(Date.now() / 1000);
+    const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
+    
+    // Create HMAC-SHA256 signature
+    const encoder = new TextEncoder();
+    const keyData = encoder.encode(apiSecret);
+    const messageData = encoder.encode(paramsToSign);
+    
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    
+    const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+    const signatureArray = Array.from(new Uint8Array(signatureBuffer));
+    const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+    // Prepare Cloudinary upload with signed parameters
     const uploadFormData = new FormData();
     uploadFormData.append('file', dataUri);
     uploadFormData.append('folder', folder);
-    uploadFormData.append('upload_preset', 'ml_default'); // Using default preset
+    uploadFormData.append('api_key', apiKey);
+    uploadFormData.append('timestamp', timestamp.toString());
+    uploadFormData.append('signature', signature);
 
     // Upload to Cloudinary
     const uploadResponse = await fetch(
