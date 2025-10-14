@@ -39,20 +39,10 @@ serve(async (req) => {
     const timestamp = Math.floor(Date.now() / 1000);
     const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
     
-    // Create HMAC-SHA256 signature
+    // Create SHA-1 signature per Cloudinary spec: sha1(string_to_sign + api_secret)
     const encoder = new TextEncoder();
-    const keyData = encoder.encode(apiSecret);
-    const messageData = encoder.encode(paramsToSign);
-    
-    const cryptoKey = await crypto.subtle.importKey(
-      'raw',
-      keyData,
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-    
-    const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, messageData);
+    const stringToSign = paramsToSign;
+    const signatureBuffer = await crypto.subtle.digest('SHA-1', encoder.encode(stringToSign + apiSecret));
     const signatureArray = Array.from(new Uint8Array(signatureBuffer));
     const signature = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
