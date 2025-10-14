@@ -1,280 +1,466 @@
-import { useState } from 'react';
-import { ArrowLeft, Upload as UploadIcon, Music, Image, Calendar, Info, FileText } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Switch } from '@/components/ui/switch';
-import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { GenreSelector } from '@/components/forms/GenreSelector';
-import { DynamicTextField } from '@/components/forms/DynamicTextField';
+import { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft, Upload as UploadIcon, X, Music, Image as ImageIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
+import { PageContainer } from "@/components/layout/PageContainer";
+import { AvatarDropdown } from "@/components/layout/AvatarDropdown";
+import { GenreSelector } from "@/components/forms/GenreSelector";
+import { DynamicTextField } from "@/components/forms/DynamicTextField";
+import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
+import { supabase } from "@/integrations/supabase/client";
+import { validateAudioFile, validateImageFile, getAudioDuration } from "@/utils/fileValidation";
+import { formatFileSize } from "@/utils/formatters";
 
-export const Upload = () => {
-  const [trackTitle, setTrackTitle] = useState('');
-  const [artist, setArtist] = useState('');
-  const [primaryGenre, setPrimaryGenre] = useState('');
-  const [secondaryGenre, setSecondaryGenre] = useState('');
-  const [customPrimaryGenre, setCustomPrimaryGenre] = useState('');
-  const [customSecondaryGenre, setCustomSecondaryGenre] = useState('');
-  const [releaseDate, setReleaseDate] = useState('');
-  const [description, setDescription] = useState('');
+export default function Upload() {
+  const navigate = useNavigate();
+  const audioInputRef = useRef<HTMLInputElement>(null);
+  const coverArtInputRef = useRef<HTMLInputElement>(null);
+  
+  const { uploadImage, uploadAudio, uploading, progress } = useCloudinaryUpload();
+  
+  // File states
+  const [audioFile, setAudioFile] = useState<File | null>(null);
+  const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
+  const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
+  const [audioDuration, setAudioDuration] = useState<number | null>(null);
+  
+  // Form states
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [trackTitle, setTrackTitle] = useState("");
+  const [artistName, setArtistName] = useState("");
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
+  const [customGenre, setCustomGenre] = useState("");
   const [featuredArtists, setFeaturedArtists] = useState<string[]>([]);
-  const [labelName, setLabelName] = useState('');
-  const [trackType, setTrackType] = useState<'clean' | 'explicit'>('clean');
+  const [labelName, setLabelName] = useState("");
+  const [trackType, setTrackType] = useState<"clean" | "explicit">("clean");
   const [producers, setProducers] = useState<string[]>([]);
   const [songwriters, setSongwriters] = useState<string[]>([]);
-  const [songDescription, setSongDescription] = useState('');
-  
-  // DSP toggles
-  const [dsps, setDsps] = useState({
-    spotify: true,
-    appleMusic: true,
-    boomplay: true,
-    audiomack: true,
-    deezer: false,
-    youtubeMusic: false,
-  });
+  const [releaseDate, setReleaseDate] = useState("");
+  const [songDescription, setSongDescription] = useState("");
 
-  const handleDspToggle = (platform: keyof typeof dsps) => {
-    setDsps(prev => ({ ...prev, [platform]: !prev[platform] }));
+  const handleAudioSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateAudioFile(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      return;
+    }
+
+    try {
+      const duration = await getAudioDuration(file);
+      setAudioDuration(duration);
+      setAudioFile(file);
+      toast.success("Audio file selected");
+    } catch (error) {
+      toast.error("Failed to load audio file");
+    }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleCoverArtSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const validation = validateImageFile(file);
+    if (!validation.valid) {
+      toast.error(validation.error);
+      return;
+    }
+
+    setCoverArtFile(file);
+    const previewUrl = URL.createObjectURL(file);
+    setCoverArtPreview(previewUrl);
+    toast.success("Cover art selected");
+  };
+
+  const removeAudioFile = () => {
+    setAudioFile(null);
+    setAudioDuration(null);
+    if (audioInputRef.current) audioInputRef.current.value = "";
+  };
+
+  const removeCoverArt = () => {
+    setCoverArtFile(null);
+    if (coverArtPreview) URL.revokeObjectURL(coverArtPreview);
+    setCoverArtPreview(null);
+    if (coverArtInputRef.current) coverArtInputRef.current.value = "";
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const finalPrimaryGenre = primaryGenre === 'Other' ? customPrimaryGenre : primaryGenre;
-    const finalSecondaryGenre = secondaryGenre === 'Other' ? customSecondaryGenre : secondaryGenre;
-    // TODO: Implement upload logic
-    console.log('Upload data:', { 
-      trackTitle, 
-      artist, 
-      primaryGenre: finalPrimaryGenre, 
-      secondaryGenre: finalSecondaryGenre, 
-      releaseDate, 
-      description,
-      featuredArtists: featuredArtists.filter(a => a.trim()),
-      labelName,
-      trackType,
-      producers: producers.filter(p => p.trim()),
-      songwriters: songwriters.filter(s => s.trim()),
-      songDescription,
-      dsps 
-    });
+
+    // Validation
+    if (!audioFile) {
+      toast.error("Please select an audio file");
+      return;
+    }
+
+    if (!trackTitle || !artistName || !releaseDate) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (selectedGenres.length === 0 && !customGenre) {
+      toast.error("Please select or enter a genre");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Get user's artist profile
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { data: artistProfile } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!artistProfile) throw new Error("Artist profile not found");
+
+      // Upload cover art if provided
+      let coverArtUrl = null;
+      if (coverArtFile) {
+        toast.info("Uploading cover art...");
+        const coverResult = await uploadImage(coverArtFile, 'cover-art');
+        coverArtUrl = coverResult.url;
+      }
+
+      // Upload audio file
+      toast.info("Uploading audio file...");
+      const audioResult = await uploadAudio(audioFile, 'tracks');
+
+      // Prepare data for edge function
+      const finalGenre = customGenre || selectedGenres[0];
+      const releaseData = {
+        title: trackTitle,
+        type: 'Single',
+        releaseDate,
+        genre: finalGenre,
+        label: labelName || null,
+        language: 'English'
+      };
+
+      const trackData = {
+        title: trackTitle,
+        duration: audioDuration || 0,
+        featuredArtists,
+        producers,
+        songwriters,
+        trackType,
+        description: songDescription
+      };
+
+      // Call upload-track edge function
+      toast.info("Creating release...");
+      const { data, error } = await supabase.functions.invoke('upload-track', {
+        body: {
+          releaseData,
+          tracks: [trackData],
+          coverArtFile: coverArtUrl ? { url: coverArtUrl } : null,
+          audioFiles: [{ url: audioResult.url }]
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success("Track uploaded successfully!");
+      
+      // Redirect to releases page after 1 second
+      setTimeout(() => {
+        navigate('/releases');
+      }, 1000);
+
+    } catch (error: any) {
+      console.error('Upload error:', error);
+      toast.error(error.message || 'Failed to upload track');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  const isFormValid = audioFile && trackTitle && artistName && releaseDate && 
+    (selectedGenres.length > 0 || customGenre);
 
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
-              UPLOAD
-            </Badge>
+      <div className="min-h-screen bg-background p-4 pb-24">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate(-1)}
+              className="rounded-full"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </Button>
+            <Badge variant="outline" className="text-sm">UPLOAD</Badge>
           </div>
-          
-          {/* Avatar Dropdown (Right) */}
           <AvatarDropdown />
         </div>
-      </div>
 
-      <div className="mobile-container space-y-4 mt-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* File Upload Section */}
-          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-                <Music className="h-5 w-5 text-primary" />
-                Audio File
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed border-border rounded-[16px] p-8 text-center bg-secondary/20">
-                <UploadIcon className="h-12 w-12 mx-auto mb-4 text-primary" />
-                <p className="text-card-foreground font-semibold mb-2">Upload your track</p>
-                <p className="text-xs text-muted-foreground mb-4">
-                  Supports MP3, WAV, FLAC (Max 100MB)
-                </p>
-                <button type="button" className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-3 px-6 rounded-[12px] transition-all duration-200">
-                  Choose File
-                </button>
+        <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-6">
+          {/* Audio File Upload */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Audio File</h3>
+            <input
+              ref={audioInputRef}
+              type="file"
+              accept="audio/*"
+              onChange={handleAudioSelect}
+              className="hidden"
+            />
+            
+            {!audioFile ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-32 border-dashed"
+                onClick={() => audioInputRef.current?.click()}
+                disabled={uploading || isSubmitting}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <Music className="h-8 w-8 text-muted-foreground" />
+                  <span>Select Audio File</span>
+                  <span className="text-xs text-muted-foreground">MP3, WAV, FLAC (Max 100MB)</span>
+                </div>
+              </Button>
+            ) : (
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  <Music className="h-8 w-8 text-primary" />
+                  <div>
+                    <p className="font-medium">{audioFile.name}</p>
+                    <p className="text-sm text-muted-foreground">{formatFileSize(audioFile.size)}</p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={removeAudioFile}
+                  disabled={uploading || isSubmitting}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-            </CardContent>
+            )}
           </Card>
 
-          {/* Artwork Upload */}
-          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-                <Image className="h-5 w-5 text-primary" />
-                Artwork
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border-2 border-dashed border-border rounded-[16px] p-6 text-center bg-secondary/20">
-                <Image className="h-8 w-8 mx-auto text-primary mb-3" />
-                <p className="text-xs text-muted-foreground mb-3">
-                  3000x3000px recommended
-                </p>
-                <button type="button" className="bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-2 px-4 rounded-[8px] transition-all duration-200 border border-border">
-                  Upload Artwork
-                </button>
+          {/* Cover Art Upload */}
+          <Card className="p-6">
+            <h3 className="text-lg font-semibold mb-4">Artwork</h3>
+            <input
+              ref={coverArtInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleCoverArtSelect}
+              className="hidden"
+            />
+            
+            {!coverArtFile ? (
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-32 border-dashed"
+                onClick={() => coverArtInputRef.current?.click()}
+                disabled={uploading || isSubmitting}
+              >
+                <div className="flex flex-col items-center gap-2">
+                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                  <span>Select Cover Art</span>
+                  <span className="text-xs text-muted-foreground">JPG, PNG, WEBP (Recommended: 3000x3000px)</span>
+                </div>
+              </Button>
+            ) : (
+              <div className="flex items-center justify-between p-4 border rounded-lg">
+                <div className="flex items-center gap-3">
+                  {coverArtPreview && (
+                    <img src={coverArtPreview} alt="Cover preview" className="w-16 h-16 rounded object-cover" />
+                  )}
+                  <div>
+                    <p className="font-medium">{coverArtFile.name}</p>
+                    <p className="text-sm text-muted-foreground">{formatFileSize(coverArtFile.size)}</p>
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={removeCoverArt}
+                  disabled={uploading || isSubmitting}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
               </div>
-            </CardContent>
+            )}
           </Card>
 
           {/* Track Information */}
-          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-                <Info className="h-5 w-5 text-primary" />
-                Track Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="title" className="text-sm font-medium text-muted-foreground mb-2 block">Track Title</Label>
-                <input
-                  id="title"
-                  value={trackTitle}
-                  onChange={(e) => setTrackTitle(e.target.value)}
-                  placeholder="Enter track title"
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="artist" className="text-sm font-medium text-muted-foreground mb-2 block">Artist Name</Label>
-                <input
-                  id="artist"
-                  value={artist}
-                  onChange={(e) => setArtist(e.target.value)}
-                  placeholder="Enter artist name"
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
-                  required
-                />
-              </div>
-
-              <GenreSelector
-                primaryGenre={primaryGenre}
-                secondaryGenre={secondaryGenre}
-                customPrimaryGenre={customPrimaryGenre}
-                customSecondaryGenre={customSecondaryGenre}
-                onPrimaryGenreChange={setPrimaryGenre}
-                onSecondaryGenreChange={setSecondaryGenre}
-                onCustomPrimaryGenreChange={setCustomPrimaryGenre}
-                onCustomSecondaryGenreChange={setCustomSecondaryGenre}
+          <Card className="p-6 space-y-4">
+            <h3 className="text-lg font-semibold">Track Information</h3>
+            
+            <div>
+              <Label htmlFor="title">Track Title *</Label>
+              <Input
+                id="title"
+                value={trackTitle}
+                onChange={(e) => setTrackTitle(e.target.value)}
+                placeholder="Enter track title"
+                disabled={uploading || isSubmitting}
+                required
               />
+            </div>
 
-              <DynamicTextField
-                label="Featured Artist Name (Optional)"
-                values={featuredArtists}
-                onChange={setFeaturedArtists}
-                maxFields={3}
-                placeholder="Enter featured artist name"
+            <div>
+              <Label htmlFor="artist">Artist Name *</Label>
+              <Input
+                id="artist"
+                value={artistName}
+                onChange={(e) => setArtistName(e.target.value)}
+                placeholder="Enter artist name"
+                disabled={uploading || isSubmitting}
+                required
               />
+            </div>
 
-              <div>
-                <Label htmlFor="labelName" className="text-sm font-medium text-muted-foreground mb-2 block">Label Name (if available)</Label>
-                <input
-                  id="labelName"
-                  value={labelName}
-                  onChange={(e) => setLabelName(e.target.value)}
-                  placeholder="Enter label name"
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
-                />
-              </div>
+            <GenreSelector
+              primaryGenre={selectedGenres[0] || ""}
+              secondaryGenre={selectedGenres[1] || ""}
+              customPrimaryGenre={customGenre}
+              customSecondaryGenre=""
+              onPrimaryGenreChange={(value) => setSelectedGenres([value, selectedGenres[1] || ""])}
+              onSecondaryGenreChange={(value) => setSelectedGenres([selectedGenres[0] || "", value])}
+              onCustomPrimaryGenreChange={setCustomGenre}
+              onCustomSecondaryGenreChange={() => {}}
+            />
 
-              <div>
-                <Label className="text-sm font-medium text-muted-foreground mb-3 block">Track Type</Label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="trackType"
-                      value="clean"
-                      checked={trackType === 'clean'}
-                      onChange={(e) => setTrackType(e.target.value as 'clean' | 'explicit')}
-                      className="w-4 h-4 text-primary border-border focus:ring-primary"
-                    />
-                    <span className="text-sm text-foreground">Clean - No presence of curse words</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="radio"
-                      name="trackType"
-                      value="explicit"
-                      checked={trackType === 'explicit'}
-                      onChange={(e) => setTrackType(e.target.value as 'clean' | 'explicit')}
-                      className="w-4 h-4 text-primary border-border focus:ring-primary"
-                    />
-                    <span className="text-sm text-foreground">Explicit - Contains strong language</span>
-                  </label>
-                </div>
-              </div>
+            <DynamicTextField
+              label="Featured Artists"
+              values={featuredArtists}
+              onChange={setFeaturedArtists}
+              placeholder="Add featured artist"
+              disabled={uploading || isSubmitting}
+            />
 
-              <DynamicTextField
-                label="Producer Name"
-                values={producers}
-                onChange={setProducers}
-                maxFields={5}
-                placeholder="Enter producer name"
+            <div>
+              <Label htmlFor="label">Label Name</Label>
+              <Input
+                id="label"
+                value={labelName}
+                onChange={(e) => setLabelName(e.target.value)}
+                placeholder="Enter label name (optional)"
+                disabled={uploading || isSubmitting}
               />
+            </div>
 
-              <DynamicTextField
-                label="Songwriter Name"
-                values={songwriters}
-                onChange={setSongwriters}
-                maxFields={5}
-                placeholder="Enter songwriter name"
+            <div>
+              <Label>Track Type</Label>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  type="button"
+                  variant={trackType === "clean" ? "default" : "outline"}
+                  onClick={() => setTrackType("clean")}
+                  disabled={uploading || isSubmitting}
+                >
+                  Clean
+                </Button>
+                <Button
+                  type="button"
+                  variant={trackType === "explicit" ? "default" : "outline"}
+                  onClick={() => setTrackType("explicit")}
+                  disabled={uploading || isSubmitting}
+                >
+                  Explicit
+                </Button>
+              </div>
+            </div>
+
+            <DynamicTextField
+              label="Producers"
+              values={producers}
+              onChange={setProducers}
+              placeholder="Add producer"
+              disabled={uploading || isSubmitting}
+            />
+
+            <DynamicTextField
+              label="Songwriters"
+              values={songwriters}
+              onChange={setSongwriters}
+              placeholder="Add songwriter"
+              disabled={uploading || isSubmitting}
+            />
+
+            <div>
+              <Label htmlFor="releaseDate">Release Date *</Label>
+              <Input
+                id="releaseDate"
+                type="date"
+                value={releaseDate}
+                onChange={(e) => setReleaseDate(e.target.value)}
+                disabled={uploading || isSubmitting}
+                required
               />
+            </div>
 
-              <div>
-                <Label htmlFor="releaseDate" className="text-sm font-medium text-muted-foreground mb-2 block">Release Date</Label>
-                <input
-                  id="releaseDate"
-                  type="date"
-                  value={releaseDate}
-                  onChange={(e) => setReleaseDate(e.target.value)}
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground"
-                  required
-                />
-              </div>
-
-              <div>
-                <Label htmlFor="songDescription" className="text-sm font-medium text-muted-foreground mb-2 block">Song Description (Optional)</Label>
-                <textarea
-                  id="songDescription"
-                  value={songDescription}
-                  onChange={(e) => setSongDescription(e.target.value)}
-                  placeholder="Tell your fans about this track..."
-                  className="w-full p-3 bg-input border border-border rounded-[12px] text-foreground placeholder-muted-foreground"
-                  rows={4}
-                />
-              </div>
-            </CardContent>
+            <div>
+              <Label htmlFor="description">Song Description</Label>
+              <Textarea
+                id="description"
+                value={songDescription}
+                onChange={(e) => setSongDescription(e.target.value)}
+                placeholder="Tell us about your track..."
+                disabled={uploading || isSubmitting}
+              />
+            </div>
           </Card>
 
+          {/* Upload Progress */}
+          {uploading && (
+            <Card className="p-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span>Uploading...</span>
+                  <span>{progress}%</span>
+                </div>
+                <Progress value={progress} />
+              </div>
+            </Card>
+          )}
+
           {/* Submit Button */}
-          <button 
-            type="submit" 
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]"
+          <Button
+            type="submit"
+            className="w-full h-12 text-lg"
+            disabled={!isFormValid || uploading || isSubmitting}
           >
-            Submit for Review
-          </button>
+            {isSubmitting ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin">⏳</span>
+                Uploading...
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <UploadIcon className="h-5 w-5" />
+                Submit for Review
+              </span>
+            )}
+          </Button>
         </form>
       </div>
     </PageContainer>
   );
-};
+}

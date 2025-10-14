@@ -18,7 +18,7 @@ import { LabelDashboard } from "./pages/LabelDashboard";
 import { UserTypeSwitcher } from "./pages/UserTypeSwitcher";
 import Releases from "./pages/Releases";
 import ReleaseDetail from "./pages/ReleaseDetail";
-import { Upload } from "./pages/Upload";
+import Upload from "./pages/Upload";
 import { Promotions } from "./pages/Promotions";
 import { Earnings } from "./pages/Earnings";
 import { Analytics } from "./pages/Analytics";
