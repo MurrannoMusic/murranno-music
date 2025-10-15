@@ -1,4 +1,4 @@
-import mmLogo from '@/assets/mm_logo.png';
+// Using favicon from public folder
 
 export const AnimatedLogo = () => {
   return (
@@ -12,7 +12,7 @@ export const AnimatedLogo = () => {
         <div className="absolute inset-2 rounded-full bg-gradient-to-br from-background/10 to-transparent" />
         
         {/* Murranno logo */}
-        <img src={mmLogo} alt="Murranno Music" className="relative z-10 w-20 h-20 md:w-24 md:h-24 object-contain drop-shadow-lg" />
+        <img src="/favicon.png" alt="Murranno Music" className="relative z-10 w-20 h-20 md:w-24 md:h-24 object-contain drop-shadow-lg" />
         
         {/* Rotating ring accent */}
         <div className="absolute inset-0 rounded-full border-2 border-white/30 animate-spin" style={{ animationDuration: '8s' }}>
