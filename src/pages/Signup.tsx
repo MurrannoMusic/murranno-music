@@ -1,20 +1,26 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useUserType } from '@/hooks/useUserType';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import musicianBg from '@/assets/musician-background.jpg';
+import { UserType } from '@/types/user';
 
 export const Signup = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { signUp, user } = useAuth();
+  const { switchUserType } = useUserType();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  
+  const preselectedTier = location.state?.tier as UserType | undefined;
 
   useEffect(() => {
     if (user) {
@@ -33,7 +39,27 @@ export const Signup = () => {
     
     try {
       await signUp(email, password, '');
-      navigate('/user-type-selection');
+      
+      // If a tier was preselected from the welcome screen, set it and navigate to dashboard
+      if (preselectedTier) {
+        await switchUserType(preselectedTier);
+        
+        // Navigate to appropriate dashboard
+        switch(preselectedTier) {
+          case 'artist':
+            navigate('/artist-dashboard');
+            break;
+          case 'label':
+            navigate('/label-dashboard');
+            break;
+          case 'agency':
+            navigate('/agency-dashboard');
+            break;
+        }
+      } else {
+        // No preselected tier, go to user type selection
+        navigate('/user-type-selection');
+      }
     } catch (error) {
       console.error('Signup error:', error);
     } finally {
@@ -57,7 +83,7 @@ export const Signup = () => {
       {/* Content positioned with card at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end pt-8 pb-8">
         <div className="mobile-container">
-          <Link to="/get-started" className="mb-4 inline-block">
+          <Link to="/welcome" className="mb-4 inline-block">
             <ArrowLeft className="h-6 w-6 text-white drop-shadow-lg" />
           </Link>
         </div>

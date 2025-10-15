@@ -31,10 +31,11 @@ const slides: SlideProps[] = [
 ];
 
 interface WelcomeCarouselProps {
-  onComplete: () => void;
+  onComplete?: () => void;
+  compact?: boolean;
 }
 
-export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
+export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarouselProps) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
@@ -85,7 +86,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
 
   return (
     <div 
-      className="min-h-screen flex flex-col relative overflow-hidden"
+      className={`${compact ? 'h-[45vh]' : 'min-h-screen'} flex flex-col relative overflow-hidden ${compact ? 'rounded-t-3xl' : ''}`}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
@@ -96,7 +97,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
           key={`bg-${index}`}
           className={`absolute inset-0 transition-opacity duration-500 ${
             index === currentSlide ? 'opacity-100' : 'opacity-0'
-          }`}
+          } ${compact ? 'rounded-t-3xl' : ''}`}
           style={{
             backgroundImage: `url(${slide.backgroundImage})`,
             backgroundSize: 'cover',
@@ -107,7 +108,7 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
         </div>
       ))}
 
-      <div className="relative z-10 flex-1 flex flex-col justify-end items-center px-6 py-8">
+      <div className={`relative z-10 flex-1 flex flex-col justify-end items-center ${compact ? 'px-4 py-4' : 'px-6 py-8'}`}>
         <div className="w-full max-w-sm">
           {slides.map((slide, index) => (
             <div
@@ -121,12 +122,12 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
               } ${index === currentSlide ? 'relative' : ''}`}
             >
               <Card className="backdrop-blur-xl bg-black/30 border-white/20">
-                <div className="p-8 text-center space-y-6">
-                  <div className="space-y-4">
-                    <h2 className="text-2xl font-bold text-white leading-tight drop-shadow-lg">
+                <div className={`${compact ? 'p-4' : 'p-8'} text-center ${compact ? 'space-y-2' : 'space-y-6'}`}>
+                  <div className={compact ? 'space-y-2' : 'space-y-4'}>
+                    <h2 className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-white leading-tight drop-shadow-lg`}>
                       {slide.title}
                     </h2>
-                    <p className="text-white/90 text-base leading-relaxed drop-shadow-md">
+                    <p className={`text-white/90 ${compact ? 'text-sm' : 'text-base'} leading-relaxed drop-shadow-md`}>
                       {slide.description}
                     </p>
                   </div>
@@ -137,45 +138,47 @@ export const WelcomeCarousel = ({ onComplete }: WelcomeCarouselProps) => {
         </div>
 
         {/* Progress indicators */}
-        <div className="flex space-x-2 mt-8">
+        <div className={`flex space-x-2 ${compact ? 'mt-3' : 'mt-8'}`}>
           {slides.map((_, index) => (
             <div
               key={index}
               className={`w-2 h-2 rounded-full transition-smooth ${
-                index === currentSlide ? 'bg-primary' : 'bg-muted'
+                index === currentSlide ? 'bg-primary' : 'bg-white/50'
               }`}
             />
           ))}
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="relative z-10 p-6 space-y-4">
-        <Button 
-          onClick={nextSlide}
-          className="w-full gradient-primary music-button shadow-primary"
-          size="lg"
-        >
-          {currentSlide < slides.length - 1 ? (
-            <>
-              Next
-              <ChevronRight className="ml-2 h-5 w-5" />
-            </>
-          ) : (
-            'Get Started'
-          )}
-        </Button>
-        
-        {currentSlide < slides.length - 1 && (
+      {/* Navigation - Only show in full mode */}
+      {!compact && (
+        <div className="relative z-10 p-6 space-y-4">
           <Button 
-            onClick={skipToEnd}
-            variant="ghost" 
-            className="w-full text-white hover:text-white hover:bg-white/10"
+            onClick={nextSlide}
+            className="w-full gradient-primary music-button shadow-primary"
+            size="lg"
           >
-            Skip
+            {currentSlide < slides.length - 1 ? (
+              <>
+                Next
+                <ChevronRight className="ml-2 h-5 w-5" />
+              </>
+            ) : (
+              'Get Started'
+            )}
           </Button>
-        )}
-      </div>
+          
+          {currentSlide < slides.length - 1 && (
+            <Button 
+              onClick={skipToEnd}
+              variant="ghost" 
+              className="w-full text-white hover:text-white hover:bg-white/10"
+            >
+              Skip
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   );
 };
