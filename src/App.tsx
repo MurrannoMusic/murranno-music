@@ -33,6 +33,7 @@ import { ArtistProfile } from "./pages/ArtistProfile";
 import { Settings } from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import NewsDetail from "./pages/NewsDetail";
+import SubscriptionPlans from "./pages/SubscriptionPlans";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +73,7 @@ const App = () => (
               <Route path="/releases" element={<ProtectedRoute><Releases /></ProtectedRoute>} />
               <Route path="/releases/:id" element={<ProtectedRoute><ReleaseDetail /></ProtectedRoute>} />
               <Route path="/news/:id" element={<ProtectedRoute><NewsDetail /></ProtectedRoute>} />
+              <Route path="/subscription/plans" element={<ProtectedRoute><SubscriptionPlans /></ProtectedRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>
