@@ -199,7 +199,7 @@ export default function SubscriptionPlans() {
                       <CardTitle className="text-xl capitalize">{plan.tier}</CardTitle>
                       <div className="flex items-baseline justify-center gap-1 mt-2">
                         <span className="text-3xl font-bold text-foreground">
-                          ${plan.price_monthly}
+                          ₦{plan.price_monthly.toLocaleString()}
                         </span>
                         <span className="text-muted-foreground">/month</span>
                       </div>
