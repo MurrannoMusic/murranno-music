@@ -148,6 +148,21 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
             />
           ))}
         </div>
+
+        {/* Compact mode navigation */}
+        {compact && currentSlide < slides.length - 1 && (
+          <div className="flex gap-2 mt-4">
+            <Button
+              onClick={nextSlide}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:text-white hover:bg-white/10"
+            >
+              Next
+              <ChevronRight className="ml-1 h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Navigation - Only show in full mode */}
