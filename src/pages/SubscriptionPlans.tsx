@@ -17,6 +17,19 @@ export default function SubscriptionPlans() {
   const [upgradingTo, setUpgradingTo] = useState<string | null>(null);
 
   const currentTier = userRole?.tier || 'artist';
+  
+  // Determine correct dashboard path based on user tier
+  const getDashboardPath = () => {
+    switch (currentTier) {
+      case 'label':
+        return '/label-dashboard';
+      case 'agency':
+        return '/agency-dashboard';
+      case 'artist':
+      default:
+        return '/artist-dashboard';
+    }
+  };
   const isTrialEnded = subscription?.status === 'trial' && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
   const isExpired = subscription?.status === 'expired' || subscription?.status === 'cancelled';
 
@@ -107,7 +120,7 @@ export default function SubscriptionPlans() {
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate(getDashboardPath())}
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
