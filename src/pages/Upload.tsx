@@ -31,6 +31,8 @@ export default function Upload() {
   const [coverArtFile, setCoverArtFile] = useState<File | null>(null);
   const [coverArtPreview, setCoverArtPreview] = useState<string | null>(null);
   const [audioDuration, setAudioDuration] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Form states
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,7 +116,12 @@ export default function Upload() {
       return;
     }
 
+    await uploadTrack();
+  };
+
+  const uploadTrack = async () => {
     setIsSubmitting(true);
+    setUploadError(null);
 
     try {
       // Get user's artist profile
@@ -133,13 +140,22 @@ export default function Upload() {
       let coverArtUrl = null;
       if (coverArtFile) {
         toast.info("Uploading cover art...");
-        const coverResult = await uploadImage(coverArtFile, 'cover-art');
-        coverArtUrl = coverResult.url;
+        try {
+          const coverResult = await uploadImage(coverArtFile, 'cover-art');
+          coverArtUrl = coverResult.url;
+        } catch (error) {
+          throw new Error("Failed to upload cover art");
+        }
       }
 
       // Upload audio file
       toast.info("Uploading audio file...");
-      const audioResult = await uploadAudio(audioFile, 'tracks');
+      let audioResult;
+      try {
+        audioResult = await uploadAudio(audioFile!, 'tracks');
+      } catch (error) {
+        throw new Error("Failed to upload audio file");
+      }
 
       // Prepare data for edge function
       const finalGenre = customGenre || selectedGenres[0];
@@ -184,10 +200,16 @@ export default function Upload() {
 
     } catch (error: any) {
       console.error('Upload error:', error);
+      setUploadError(error.message || 'Failed to upload track');
       toast.error(error.message || 'Failed to upload track');
+      setRetryCount(prev => prev + 1);
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleRetry = () => {
+    uploadTrack();
   };
 
   const isFormValid = audioFile && trackTitle && artistName && releaseDate && 
@@ -431,35 +453,74 @@ export default function Upload() {
 
           {/* Upload Progress */}
           {uploading && (
-            <Card className="p-6">
+            <Card className="p-6 animate-fade-in">
               <div className="space-y-2">
                 <div className="flex justify-between text-sm">
-                  <span>Uploading...</span>
-                  <span>{progress}%</span>
+                  <span className="flex items-center gap-2">
+                    <span className="animate-spin">⏳</span>
+                    Uploading...
+                  </span>
+                  <span className="font-bold text-primary">{progress}%</span>
                 </div>
-                <Progress value={progress} />
+                <Progress value={progress} className="h-2" />
+              </div>
+            </Card>
+          )}
+
+          {/* Upload Error */}
+          {uploadError && (
+            <Card className="p-6 bg-destructive/10 border-destructive/30 animate-fade-in">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-destructive/20 rounded-full flex items-center justify-center flex-shrink-0">
+                    <span className="text-destructive">!</span>
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-destructive mb-1">Upload Failed</p>
+                    <p className="text-sm text-muted-foreground">{uploadError}</p>
+                    {retryCount > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">Retry attempt: {retryCount}</p>
+                    )}
+                  </div>
+                </div>
+                <Button 
+                  onClick={handleRetry}
+                  variant="outline"
+                  className="w-full border-destructive/30 text-destructive hover:bg-destructive/20"
+                  disabled={isSubmitting}
+                >
+                  Retry Upload
+                </Button>
               </div>
             </Card>
           )}
 
           {/* Submit Button */}
-          <Button
-            type="submit"
-            className="w-full h-12 text-lg"
-            disabled={!isFormValid || uploading || isSubmitting}
-          >
-            {isSubmitting ? (
-              <span className="flex items-center gap-2">
-                <span className="animate-spin">⏳</span>
-                Uploading...
-              </span>
-            ) : (
-              <span className="flex items-center gap-2">
-                <UploadIcon className="h-5 w-5" />
-                Submit for Review
-              </span>
+          <div className="space-y-2">
+            <Button
+              type="submit"
+              className="w-full h-12 text-lg shadow-primary hover:shadow-glow transition-all duration-200"
+              disabled={!isFormValid || uploading || isSubmitting}
+            >
+              {isSubmitting ? (
+                <span className="flex items-center gap-2">
+                  <span className="animate-spin">⏳</span>
+                  {uploading ? `Uploading... ${progress}%` : 'Processing...'}
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <UploadIcon className="h-5 w-5" />
+                  Submit for Review
+                </span>
+              )}
+            </Button>
+            
+            {!isFormValid && audioFile && (
+              <p className="text-xs text-center text-muted-foreground">
+                Please fill in all required fields to continue
+              </p>
             )}
-          </Button>
+          </div>
         </form>
       </div>
     </PageContainer>
