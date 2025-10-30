@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
 import { AppLayout } from "./layouts/AppLayout";
 import GetStarted from "./pages/GetStarted";
@@ -14,6 +15,7 @@ import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
 import { UserTypeSelection } from "./pages/UserTypeSelection";
+import { DesktopLanding } from "./pages/DesktopLanding";
 import { Dashboard } from "./pages/Dashboard";
 import { ArtistDashboard } from "./pages/ArtistDashboard";
 import { LabelDashboard } from "./pages/LabelDashboard";
@@ -56,13 +58,14 @@ const App = () => (
           <AuthProvider>
             <Routes>
               <Route path="/" element={<Navigate to="/splash" replace />} />
-              <Route path="/splash" element={<Splash />} />
-              <Route path="/welcome" element={<Welcome />} />
-              <Route path="/get-started" element={<GetStarted />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              <Route path="/desktop" element={<DesktopLanding />} />
+              <Route path="/splash" element={<MobileOnlyRoute><Splash /></MobileOnlyRoute>} />
+              <Route path="/welcome" element={<MobileOnlyRoute><Welcome /></MobileOnlyRoute>} />
+              <Route path="/get-started" element={<MobileOnlyRoute><GetStarted /></MobileOnlyRoute>} />
+              <Route path="/login" element={<MobileOnlyRoute><Login /></MobileOnlyRoute>} />
+              <Route path="/signup" element={<MobileOnlyRoute><Signup /></MobileOnlyRoute>} />
               
-              <Route path="/app" element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
+              <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />

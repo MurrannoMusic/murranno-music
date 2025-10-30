@@ -1,4 +1,5 @@
 import * as React from "react"
+import { isNativeApp } from "@/utils/platformDetection"
 
 const MOBILE_BREAKPOINT = 768
 
@@ -6,6 +7,12 @@ export function useIsMobile() {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined)
 
   React.useEffect(() => {
+    // If running in native app, always consider it mobile
+    if (isNativeApp()) {
+      setIsMobile(true)
+      return
+    }
+
     const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
