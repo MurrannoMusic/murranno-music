@@ -51,6 +51,11 @@ export default function SubscriptionPlans() {
       if (data?.authorization_url) {
         // Redirect to Paystack payment page
         window.location.href = data.authorization_url;
+      } else if (data?.redirect_url) {
+        // Free upgrade completed
+        toast.success(data.message || 'Upgrade successful!');
+        await refreshUserData();
+        navigate(data.redirect_url);
       }
     } catch (error: any) {
       console.error('Upgrade error:', error);
@@ -80,6 +85,11 @@ export default function SubscriptionPlans() {
 
       if (data?.authorization_url) {
         window.location.href = data.authorization_url;
+      } else if (data?.redirect_url) {
+        // Free subscription activated
+        toast.success(data.message || 'Subscription activated!');
+        await refreshUserData();
+        navigate(data.redirect_url);
       }
     } catch (error: any) {
       console.error('Subscription initialization error:', error);

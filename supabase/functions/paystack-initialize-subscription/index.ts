@@ -60,7 +60,55 @@ Deno.serve(async (req) => {
       );
     }
 
-    // Initialize Paystack subscription
+    // Handle free subscriptions (for development)
+    if (plan.price_monthly === 0) {
+      console.log('Free subscription detected, activating directly');
+      
+      // Update user role
+      const { error: roleError } = await supabaseClient
+        .from('user_roles')
+        .update({ tier })
+        .eq('user_id', user.id);
+
+      if (roleError) {
+        console.error('Role update error:', roleError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update user role' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Update subscription to active
+      const { error: subError } = await supabaseClient
+        .from('subscriptions')
+        .update({
+          tier,
+          status: 'active',
+          trial_ends_at: null,
+          current_period_start: new Date().toISOString(),
+          current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        })
+        .eq('user_id', user.id);
+
+      if (subError) {
+        console.error('Subscription update error:', subError);
+        return new Response(
+          JSON.stringify({ error: 'Failed to update subscription' }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      return new Response(
+        JSON.stringify({ 
+          success: true,
+          message: 'Free subscription activated',
+          redirect_url: tier === 'label' ? '/label-dashboard' : '/agency-dashboard'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Initialize Paystack subscription for paid plans
     const paystackResponse = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
       headers: {
