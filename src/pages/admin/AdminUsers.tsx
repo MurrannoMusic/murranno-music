@@ -22,17 +22,17 @@ export default function AdminUsers() {
   const { data, isLoading } = useQuery({
     queryKey: ['admin-users', page, search, tierFilter, statusFilter],
     queryFn: async () => {
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '20',
+      const payload: any = {
+        page,
+        limit: 20,
         ...(search && { search }),
-        ...(tierFilter && tierFilter !== 'all' && { tier: tierFilter }),
-        ...(statusFilter && statusFilter !== 'all' && { status: statusFilter }),
-      });
+      };
+      if (tierFilter && tierFilter !== 'all') payload.tier = tierFilter;
+      if (statusFilter && statusFilter !== 'all') payload.status = statusFilter;
 
-      const { data, error } = await supabase.functions.invoke(
-        `admin-get-all-users?${params.toString()}`
-      );
+      const { data, error } = await supabase.functions.invoke('admin-get-all-users', {
+        body: payload,
+      });
       if (error) throw error;
       return data;
     },

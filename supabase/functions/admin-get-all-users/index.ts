@@ -36,13 +36,32 @@ serve(async (req) => {
       });
     }
 
-    // Get pagination parameters
-    const url = new URL(req.url);
-    const page = parseInt(url.searchParams.get('page') || '1');
-    const limit = parseInt(url.searchParams.get('limit') || '50');
-    const search = url.searchParams.get('search') || '';
-    const tierFilter = url.searchParams.get('tier') || '';
-    const statusFilter = url.searchParams.get('status') || '';
+    // Get pagination and filters from body (preferred) or query params (fallback)
+    let page = 1;
+    let limit = 50;
+    let search = '';
+    let tierFilter = '';
+    let statusFilter = '';
+
+    try {
+      if (req.method === 'POST') {
+        const body = await req.json();
+        page = parseInt(String(body?.page ?? '1'));
+        limit = parseInt(String(body?.limit ?? '50'));
+        search = String(body?.search ?? '');
+        tierFilter = String(body?.tier ?? '');
+        statusFilter = String(body?.status ?? '');
+      } else {
+        const url = new URL(req.url);
+        page = parseInt(url.searchParams.get('page') || '1');
+        limit = parseInt(url.searchParams.get('limit') || '50');
+        search = url.searchParams.get('search') || '';
+        tierFilter = url.searchParams.get('tier') || '';
+        statusFilter = url.searchParams.get('status') || '';
+      }
+    } catch (_) {
+      // Fallback to defaults if parsing fails
+    }
 
     const offset = (page - 1) * limit;
 
