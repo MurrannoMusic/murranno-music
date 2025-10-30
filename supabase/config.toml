@@ -3,6 +3,9 @@ project_id = "nqfltvbzqxdxsobhedci"
 [functions.get-subscription-plans]
 verify_jwt = false
 
+[functions.admin-promote-user]
+verify_jwt = false
+
 [functions.paystack-resolve-account]
 verify_jwt = true
 
