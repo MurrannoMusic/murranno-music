@@ -47,7 +47,7 @@ export const AvatarDropdown = () => {
         <DropdownMenuSeparator />
         
         {currentUser.accountType === 'artist' && (
-          <Link to="/artist-profile">
+          <Link to="/app/artist-profile">
             <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
               <User className="h-4 w-4 mr-2" />
               Artist Profile
@@ -55,14 +55,14 @@ export const AvatarDropdown = () => {
           </Link>
         )}
         
-        <Link to="/profile">
+        <Link to="/app/profile">
           <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
             <User className="h-4 w-4 mr-2" />
             Account
           </DropdownMenuItem>
         </Link>
         
-        <Link to="/settings">
+        <Link to="/app/settings">
           <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
             <Settings className="h-4 w-4 mr-2" />
             Settings

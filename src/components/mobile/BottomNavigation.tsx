@@ -13,46 +13,46 @@ export const BottomNavigation = () => {
 
     // Infer user type from route only if hook flags are not set
     const inferredArtist = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/artist') || ['\u002Fupload', '\u002Fearnings', '\u002Fanalytics', '\u002Fpromotions'].includes(path)
+      path.startsWith('/app/artist') || ['/app/upload', '/app/earnings', '/app/analytics', '/app/promotions'].includes(path)
     );
     const inferredLabel = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/label') || ['\u002Fartist-management', '\u002Fpayout-manager', '\u002Flabel-analytics'].includes(path)
+      path.startsWith('/app/label') || ['/app/artist-management', '/app/payout-manager', '/app/label-analytics'].includes(path)
     );
     const inferredAgency = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/agency') || ['\u002Fcampaign-manager'].includes(path)
+      path.startsWith('/app/agency') || ['/app/campaign-manager'].includes(path)
     );
 
     if (isArtist || inferredArtist) {
       return [
-        { icon: Home, label: 'Home', path: '/artist-dashboard' },
-        { icon: BarChart3, label: 'Analytics', path: '/analytics' },
-        { icon: Music, label: 'Music', path: '/releases' },
-        { icon: DollarSign, label: 'Earnings', path: '/earnings' },
-        { icon: Upload, label: 'Upload', path: '/upload' },
+        { icon: Home, label: 'Home', path: '/app/artist-dashboard' },
+        { icon: BarChart3, label: 'Analytics', path: '/app/analytics' },
+        { icon: Music, label: 'Music', path: '/app/releases' },
+        { icon: DollarSign, label: 'Earnings', path: '/app/earnings' },
+        { icon: Upload, label: 'Upload', path: '/app/upload' },
       ];
     }
 
     if (isLabel || inferredLabel) {
       return [
-        { icon: Home, label: 'Home', path: '/label-dashboard' },
-        { icon: Users, label: 'Artists', path: '/artist-management' },
-        { icon: Upload, label: 'Upload', path: '/upload' },
-        { icon: DollarSign, label: 'Payouts', path: '/payout-manager' },
-        { icon: TrendingUp, label: 'Analytics', path: '/label-analytics' },
+        { icon: Home, label: 'Home', path: '/app/label-dashboard' },
+        { icon: Users, label: 'Artists', path: '/app/artist-management' },
+        { icon: Upload, label: 'Upload', path: '/app/upload' },
+        { icon: DollarSign, label: 'Payouts', path: '/app/payout-manager' },
+        { icon: TrendingUp, label: 'Analytics', path: '/app/label-analytics' },
       ];
     }
 
     if (isAgency || inferredAgency) {
       return [
-        { icon: Home, label: 'Home', path: '/agency-dashboard' },
-        { icon: Megaphone, label: 'Campaigns', path: '/campaign-manager' },
-        { icon: Upload, label: 'Create', path: '/promotions' },
-        { icon: BarChart3, label: 'Results', path: '/results' },
+        { icon: Home, label: 'Home', path: '/app/agency-dashboard' },
+        { icon: Megaphone, label: 'Campaigns', path: '/app/campaign-manager' },
+        { icon: Upload, label: 'Create', path: '/app/promotions' },
+        { icon: BarChart3, label: 'Results', path: '/app/results' },
       ];
     }
 
     // Default fallback
-    return [{ icon: Home, label: 'Home', path: '/dashboard' }];
+    return [{ icon: Home, label: 'Home', path: '/app/dashboard' }];
   };
 
   const navItems = getNavItems();
