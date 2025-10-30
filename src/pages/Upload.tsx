@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Upload as UploadIcon, X, Music, Image as ImageIcon } from "lucide-react";
+import { ChevronLeft, Upload as UploadIcon, X, Music, Image as ImageIcon, Camera } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,11 @@ import { AvatarDropdown } from "@/components/layout/AvatarDropdown";
 import { GenreSelector } from "@/components/forms/GenreSelector";
 import { DynamicTextField } from "@/components/forms/DynamicTextField";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
+import { useCamera } from "@/hooks/useCamera";
 import { supabase } from "@/integrations/supabase/client";
 import { validateAudioFile, validateImageFile, getAudioDuration } from "@/utils/fileValidation";
 import { formatFileSize } from "@/utils/formatters";
+import { isNativeApp } from "@/utils/platformDetection";
 
 // Upload page component
 export default function Upload() {
@@ -25,6 +27,7 @@ export default function Upload() {
   const coverArtInputRef = useRef<HTMLInputElement>(null);
   
   const { uploadImage, uploadAudio, uploading, progress } = useCloudinaryUpload();
+  const { takePhoto, pickFromGallery, isCapturing } = useCamera();
   
   // File states
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -95,6 +98,36 @@ export default function Upload() {
     if (coverArtPreview) URL.revokeObjectURL(coverArtPreview);
     setCoverArtPreview(null);
     if (coverArtInputRef.current) coverArtInputRef.current.value = "";
+  };
+
+  const handleTakePhoto = async () => {
+    const file = await takePhoto();
+    if (file) {
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        toast.error(validation.error);
+        return;
+      }
+      setCoverArtFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setCoverArtPreview(previewUrl);
+      toast.success("Photo captured");
+    }
+  };
+
+  const handlePickFromGallery = async () => {
+    const file = await pickFromGallery();
+    if (file) {
+      const validation = validateImageFile(file);
+      if (!validation.valid) {
+        toast.error(validation.error);
+        return;
+      }
+      setCoverArtFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setCoverArtPreview(previewUrl);
+      toast.success("Image selected");
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -294,19 +327,45 @@ export default function Upload() {
             />
             
             {!coverArtFile ? (
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full h-32 border-dashed"
-                onClick={() => coverArtInputRef.current?.click()}
-                disabled={uploading || isSubmitting}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                  <span>Select Cover Art</span>
-                  <span className="text-xs text-muted-foreground">JPG, PNG, WEBP (Recommended: 3000x3000px)</span>
-                </div>
-              </Button>
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full h-32 border-dashed"
+                  onClick={() => coverArtInputRef.current?.click()}
+                  disabled={uploading || isSubmitting || isCapturing}
+                >
+                  <div className="flex flex-col items-center gap-2">
+                    <ImageIcon className="h-8 w-8 text-muted-foreground" />
+                    <span>Select Cover Art</span>
+                    <span className="text-xs text-muted-foreground">JPG, PNG, WEBP (Recommended: 3000x3000px)</span>
+                  </div>
+                </Button>
+                {isNativeApp() && (
+                  <div className="flex gap-2 mt-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handleTakePhoto}
+                      disabled={uploading || isSubmitting || isCapturing}
+                    >
+                      <Camera className="h-4 w-4 mr-2" />
+                      Take Photo
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="flex-1"
+                      onClick={handlePickFromGallery}
+                      disabled={uploading || isSubmitting || isCapturing}
+                    >
+                      <ImageIcon className="h-4 w-4 mr-2" />
+                      Gallery
+                    </Button>
+                  </div>
+                )}
+              </>
             ) : (
               <div className="flex items-center justify-between p-4 border rounded-lg">
                 <div className="flex items-center gap-3">

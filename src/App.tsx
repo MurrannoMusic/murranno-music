@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { PushNotificationProvider } from "./components/app/PushNotificationProvider";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
@@ -56,7 +57,8 @@ const App = () => (
         <Sonner />
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <AuthProvider>
-            <Routes>
+            <PushNotificationProvider>
+              <Routes>
               <Route path="/" element={<Navigate to="/splash" replace />} />
               <Route path="/desktop" element={<DesktopLanding />} />
               <Route path="/splash" element={<MobileOnlyRoute><Splash /></MobileOnlyRoute>} />
@@ -98,7 +100,8 @@ const App = () => (
               <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
               <Route path="*" element={<NotFound />} />
-            </Routes>
+              </Routes>
+            </PushNotificationProvider>
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>

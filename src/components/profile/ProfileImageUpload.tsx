@@ -1,7 +1,16 @@
 import { useRef } from 'react';
-import { Camera, User } from 'lucide-react';
+import { Camera, User, ImageIcon } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
+import { useCamera } from '@/hooks/useCamera';
+import { isNativeApp } from '@/utils/platformDetection';
+import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface ProfileImageUploadProps {
   imageUrl: string | null;
@@ -11,9 +20,10 @@ interface ProfileImageUploadProps {
 
 export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: ProfileImageUploadProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { takePhoto, pickFromGallery, isCapturing } = useCamera();
 
   const handleClick = () => {
-    if (!disabled) {
+    if (!disabled && !isNativeApp()) {
       fileInputRef.current?.click();
     }
   };
@@ -23,6 +33,24 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
     if (file) {
       onImageSelect(file);
     }
+  };
+
+  const handleTakePhoto = async () => {
+    const file = await takePhoto();
+    if (file) {
+      onImageSelect(file);
+    }
+  };
+
+  const handlePickFromGallery = async () => {
+    const file = await pickFromGallery();
+    if (file) {
+      onImageSelect(file);
+    }
+  };
+
+  const handleBrowseFiles = () => {
+    fileInputRef.current?.click();
   };
 
   // Extract public ID from Cloudinary URL if present
@@ -44,10 +72,10 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
 
   return (
     <div className="relative group">
-      <div 
-        onClick={handleClick}
-        className={`relative w-16 h-16 ${!disabled && 'cursor-pointer'}`}
-      >
+      {isNativeApp() && !disabled ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <div className={`relative w-16 h-16 cursor-pointer`}>
         <Avatar className="w-16 h-16 border-2 border-border">
           {publicId ? (
             <div className="w-full h-full overflow-hidden rounded-full">
@@ -71,12 +99,63 @@ export const ProfileImageUpload = ({ imageUrl, onImageSelect, disabled }: Profil
           )}
         </Avatar>
         
-        {!disabled && (
-          <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-            <Camera className="w-4 h-4 text-white" />
-          </div>
-        )}
-      </div>
+              {!disabled && (
+                <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                  <Camera className="w-4 h-4 text-white" />
+                </div>
+              )}
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={handleTakePhoto} disabled={isCapturing}>
+              <Camera className="w-4 h-4 mr-2" />
+              Take Photo
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handlePickFromGallery} disabled={isCapturing}>
+              <ImageIcon className="w-4 h-4 mr-2" />
+              Choose from Gallery
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={handleBrowseFiles}>
+              <ImageIcon className="w-4 h-4 mr-2" />
+              Browse Files
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <div 
+          onClick={handleClick}
+          className={`relative w-16 h-16 ${!disabled && 'cursor-pointer'}`}
+        >
+          <Avatar className="w-16 h-16 border-2 border-border">
+            {publicId ? (
+              <div className="w-full h-full overflow-hidden rounded-full">
+                <CloudinaryImage 
+                  publicId={publicId} 
+                  alt="Profile" 
+                  width={64} 
+                  height={64} 
+                  crop="fill" 
+                  gravity="face"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ) : (
+              <>
+                <AvatarImage src={imageUrl || undefined} alt="Profile" />
+                <AvatarFallback className="bg-gradient-to-br from-primary/20 to-accent/20">
+                  <User className="w-8 h-8 text-muted-foreground" />
+                </AvatarFallback>
+              </>
+            )}
+          </Avatar>
+          
+          {!disabled && (
+            <div className="absolute inset-0 bg-black/50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <Camera className="w-4 h-4 text-white" />
+            </div>
+          )}
+        </div>
+      )}
 
       <input
         ref={fileInputRef}
