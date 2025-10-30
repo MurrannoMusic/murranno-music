@@ -33,9 +33,11 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-primary">
-            <Music2 className="h-5 w-5 text-primary-foreground" />
-          </div>
+          <img 
+            src="/src/assets/mm_logo.png" 
+            alt="Murranno Music Logo" 
+            className="h-10 w-10 object-contain rounded-xl"
+          />
           {!isCollapsed && (
             <div className="flex flex-col">
               <h2 className="text-sm font-bold text-foreground">Murranno Music</h2>
