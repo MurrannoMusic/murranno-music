@@ -43,6 +43,8 @@ export interface AnalyticsData {
   streamsByCountry: CountryData[];
   earningsOverTime: EarningsData[];
   recentActivity: ActivityData[];
+  bestPlatform?: { name: string; streams: number } | null;
+  topCountry?: { name: string; streams: number } | null;
 }
 
 export const useAnalyticsData = (period: string = '30', artistId?: string) => {
@@ -82,16 +84,25 @@ export const useAnalyticsData = (period: string = '30', artistId?: string) => {
         const transformedData: AnalyticsData = {
           totalStreams: analyticsData.totalStreams || 0,
           totalEarnings: analyticsData.totalEarnings || 0,
-          activeReleases: 0, // This would need to be fetched separately or added to the function
-          topTracks: [],
+          activeReleases: 0,
+          topTracks: analyticsData.topTracks || [],
           streamsByPlatform: Object.entries(analyticsData.streamsByPlatform || {}).map(([platform, streams]) => ({
             platform,
             streams: streams as number,
             percentage: ((streams as number) / (analyticsData.totalStreams || 1)) * 100
           })),
-          streamsByCountry: [],
-          earningsOverTime: [],
-          recentActivity: []
+          streamsByCountry: Object.entries(analyticsData.streamsByCountry || {}).map(([country, streams]) => ({
+            country,
+            streams: streams as number,
+            percentage: ((streams as number) / (analyticsData.totalStreams || 1)) * 100
+          })),
+          earningsOverTime: Object.entries(analyticsData.streamsByDate || {}).map(([date, amount]) => ({
+            date,
+            amount: amount as number
+          })),
+          recentActivity: [],
+          bestPlatform: analyticsData.bestPlatform,
+          topCountry: analyticsData.topCountry
         };
 
         setData(transformedData);

@@ -116,11 +116,14 @@ serve(async (req) => {
         streams,
         platform,
         country,
+        track_id,
         tracks (
           id,
           title,
+          release_id,
           releases (
-            artist_id
+            artist_id,
+            title
           )
         )
       `)
@@ -130,9 +133,11 @@ serve(async (req) => {
 
     if (streamError) throw streamError;
 
-    // Aggregate streams by date and platform
+    // Aggregate streams by date, platform, country, and track
     const streamsByDate: any = {};
     const streamsByPlatform: any = {};
+    const streamsByCountry: any = {};
+    const streamsByTrack: any = {};
     let totalStreams = 0;
 
     streamingData?.forEach((data: any) => {
@@ -150,7 +155,42 @@ serve(async (req) => {
         streamsByPlatform[data.platform] = 0;
       }
       streamsByPlatform[data.platform] += streams;
+
+      // By country
+      if (data.country) {
+        if (!streamsByCountry[data.country]) {
+          streamsByCountry[data.country] = 0;
+        }
+        streamsByCountry[data.country] += streams;
+      }
+
+      // By track
+      if (data.tracks) {
+        const trackId = data.tracks.id;
+        if (!streamsByTrack[trackId]) {
+          streamsByTrack[trackId] = {
+            id: trackId,
+            title: data.tracks.title,
+            release: data.tracks.releases?.title || 'Unknown',
+            streams: 0,
+          };
+        }
+        streamsByTrack[trackId].streams += streams;
+      }
     });
+
+    // Get top tracks
+    const topTracks = Object.values(streamsByTrack)
+      .sort((a: any, b: any) => b.streams - a.streams)
+      .slice(0, 10);
+
+    // Get best platform
+    const bestPlatform = Object.entries(streamsByPlatform)
+      .sort(([, a]: any, [, b]: any) => b - a)[0];
+
+    // Get top country
+    const topCountry = Object.entries(streamsByCountry)
+      .sort(([, a]: any, [, b]: any) => b - a)[0];
 
     // Get earnings data
     const { data: earnings, error: earningsError } = await supabase
@@ -174,8 +214,12 @@ serve(async (req) => {
         success: true,
         streamsByDate,
         streamsByPlatform,
+        streamsByCountry,
         totalStreams,
         totalEarnings,
+        topTracks,
+        bestPlatform: bestPlatform ? { name: bestPlatform[0], streams: bestPlatform[1] } : null,
+        topCountry: topCountry ? { name: topCountry[0], streams: topCountry[1] } : null,
         period: parseInt(period),
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
