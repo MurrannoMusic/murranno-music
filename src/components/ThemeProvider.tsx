@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react"
+import { useAutoStatusBar } from "@/hooks/useStatusBar"
 
 type Theme = "dark" | "light" | "system"
 
@@ -30,6 +31,11 @@ export function ThemeProvider({
     () => (localStorage.getItem(storageKey) as Theme) || defaultTheme
   )
 
+  const [resolvedTheme, setResolvedTheme] = useState<'light' | 'dark'>('dark')
+
+  // Auto sync status bar with theme
+  useAutoStatusBar(resolvedTheme)
+
   useEffect(() => {
     const root = window.document.documentElement
 
@@ -42,10 +48,12 @@ export function ThemeProvider({
         : "light"
 
       root.classList.add(systemTheme)
+      setResolvedTheme(systemTheme)
       return
     }
 
     root.classList.add(theme)
+    setResolvedTheme(theme)
   }, [theme])
 
   const value = {

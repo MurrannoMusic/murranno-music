@@ -3,6 +3,7 @@ import { ExternalLink, Plus, Check, X } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { useBrowser } from '@/hooks/useBrowser';
 
 interface StreamingPlatformCardProps {
   name: string;
@@ -11,6 +12,7 @@ interface StreamingPlatformCardProps {
   onUpdate: (url: string | null) => void;
   isEditing: boolean;
   placeholder: string;
+  type?: 'streaming' | 'social';
 }
 
 export const StreamingPlatformCard = ({
@@ -20,9 +22,11 @@ export const StreamingPlatformCard = ({
   onUpdate,
   isEditing,
   placeholder,
+  type = 'streaming',
 }: StreamingPlatformCardProps) => {
   const [editValue, setEditValue] = useState(url || '');
   const [isLocalEditing, setIsLocalEditing] = useState(false);
+  const { openStreamingPlatform, openSocialMedia } = useBrowser();
 
   const handleSave = () => {
     onUpdate(editValue.trim() || null);
@@ -32,6 +36,17 @@ export const StreamingPlatformCard = ({
   const handleCancel = () => {
     setEditValue(url || '');
     setIsLocalEditing(false);
+  };
+
+  const handleOpenLink = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (url) {
+      if (type === 'social') {
+        openSocialMedia(name, url);
+      } else {
+        openStreamingPlatform(name, url);
+      }
+    }
   };
 
   if (isEditing || isLocalEditing) {
@@ -82,14 +97,12 @@ export const StreamingPlatformCard = ({
           
           <div className="flex items-center gap-2">
             {url ? (
-              <a
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={handleOpenLink}
                 className="text-muted-foreground hover:text-foreground transition-smooth"
               >
                 <ExternalLink className="w-4 h-4" />
-              </a>
+              </button>
             ) : (
               <Button
                 size="sm"

@@ -10,5 +10,5 @@ interface SocialLinkCardProps {
 }
 
 export const SocialLinkCard = (props: SocialLinkCardProps) => {
-  return <StreamingPlatformCard {...props} />;
+  return <StreamingPlatformCard {...props} type="social" />;
 };

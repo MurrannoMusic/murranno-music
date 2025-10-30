@@ -15,6 +15,8 @@ import { GenreSelector } from "@/components/forms/GenreSelector";
 import { DynamicTextField } from "@/components/forms/DynamicTextField";
 import { useCloudinaryUpload } from "@/hooks/useCloudinaryUpload";
 import { useCamera } from "@/hooks/useCamera";
+import { useHaptics } from "@/hooks/useHaptics";
+import { useLocalNotifications } from "@/hooks/useLocalNotifications";
 import { supabase } from "@/integrations/supabase/client";
 import { validateAudioFile, validateImageFile, getAudioDuration } from "@/utils/fileValidation";
 import { formatFileSize } from "@/utils/formatters";
@@ -28,6 +30,8 @@ export default function Upload() {
   
   const { uploadImage, uploadAudio, uploading, progress } = useCloudinaryUpload();
   const { takePhoto, pickFromGallery, isCapturing } = useCamera();
+  const { success: hapticSuccess, error: hapticError } = useHaptics();
+  const { scheduleTrackUploadComplete } = useLocalNotifications();
   
   // File states
   const [audioFile, setAudioFile] = useState<File | null>(null);
@@ -224,15 +228,23 @@ export default function Upload() {
 
       if (error) throw error;
 
+      // Success haptics and notification
+      hapticSuccess();
+      await scheduleTrackUploadComplete(trackTitle);
+      
       toast.success("Track uploaded successfully!");
       
       // Redirect to releases page after 1 second
       setTimeout(() => {
-        navigate('/releases');
+        navigate('/app/releases');
       }, 1000);
 
     } catch (error: any) {
       console.error('Upload error:', error);
+      
+      // Error haptics
+      hapticError();
+      
       setUploadError(error.message || 'Failed to upload track');
       toast.error(error.message || 'Failed to upload track');
       setRetryCount(prev => prev + 1);
