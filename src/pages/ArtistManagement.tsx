@@ -10,14 +10,36 @@ import { ArtistCard } from '@/components/cards/ArtistCard';
 import { AddArtistForm } from '@/components/forms/AddArtistForm';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { useArtists } from '@/hooks/useArtists';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const ArtistManagement = () => {
   const { artists, loading, refetch } = useArtists();
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [adding, setAdding] = useState(false);
 
-  const handleAddArtist = () => {
-    setShowAddDialog(false);
-    refetch();
+  const handleAddArtist = async (artist: { name: string; stageName: string; email?: string }) => {
+    try {
+      setAdding(true);
+      
+      const { data, error } = await supabase.functions.invoke('add-artist-to-label', {
+        body: {
+          stage_name: artist.stageName,
+          email: artist.email,
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success('Artist added successfully');
+      setShowAddDialog(false);
+      refetch();
+    } catch (error: any) {
+      console.error('Error adding artist:', error);
+      toast.error(error.message || 'Failed to add artist');
+    } finally {
+      setAdding(false);
+    }
   };
 
   const headerActions = (

@@ -10,27 +10,34 @@ import { CampaignFilter } from '@/components/campaigns/CampaignFilter';
 import { CampaignList } from '@/components/campaigns/CampaignList';
 import { CampaignActions } from '@/components/campaigns/CampaignActions';
 import { useCampaigns } from '@/hooks/useCampaigns';
+import { useCampaignActions } from '@/hooks/useCampaignActions';
 
 export const CampaignManager = () => {
-  const { campaigns, stats, getFilteredCampaigns, getStatusBadgeVariant } = useCampaigns();
+  const { campaigns, stats, getFilteredCampaigns, getStatusBadgeVariant, refetch } = useCampaigns();
+  const { pauseCampaign, duplicateCampaign, viewAnalytics, editCampaign, loading } = useCampaignActions();
   const [statusFilter, setStatusFilter] = useState('all');
 
   const filteredCampaigns = getFilteredCampaigns(statusFilter);
 
   const handleEdit = (id: string) => {
-    console.log('Edit campaign:', id);
+    editCampaign(id);
   };
 
   const handleViewAnalytics = (id: string) => {
-    console.log('View analytics for campaign:', id);
+    viewAnalytics(id);
   };
 
-  const handlePause = (id: string) => {
-    console.log('Pause/Resume campaign:', id);
+  const handlePause = async (id: string) => {
+    const campaign = campaigns.find(c => c.id === id);
+    if (campaign) {
+      const success = await pauseCampaign(id, campaign.status);
+      if (success) refetch();
+    }
   };
 
-  const handleDuplicate = (id: string) => {
-    console.log('Duplicate campaign:', id);
+  const handleDuplicate = async (id: string) => {
+    const success = await duplicateCampaign(id);
+    if (success) refetch();
   };
 
   const exportToPDF = () => {

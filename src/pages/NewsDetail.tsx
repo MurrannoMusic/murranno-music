@@ -1,8 +1,11 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { NewsItem } from '@/types/news';
 import { format } from 'date-fns';
+import { PageContainer } from '@/components/layout/PageContainer';
 
 export default function NewsDetail() {
   const location = useLocation();
@@ -10,12 +13,22 @@ export default function NewsDetail() {
   const news = location.state?.news as NewsItem | null;
 
   if (!news) {
-    navigate(-1);
-    return null;
+    return (
+      <PageContainer>
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <Button onClick={() => navigate(-1)} variant="ghost">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <p className="text-center py-12 text-muted-foreground">News article not found</p>
+        </div>
+      </PageContainer>
+    );
   }
 
+
   return (
-    <div className="min-h-screen bg-background overflow-y-auto">
+    <PageContainer>
       <div className="max-w-4xl mx-auto px-4 py-8 pb-20">
         <Button
           variant="ghost"
@@ -23,19 +36,12 @@ export default function NewsDetail() {
           className="mb-6"
         >
           <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+          Back to News
         </Button>
 
         <article className="space-y-6">
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold">{news.title}</h1>
-            <p className="text-muted-foreground">
-              {format(news.publishedAt, 'PPP')}
-            </p>
-          </div>
-
           {news.image && (
-            <div className="w-full aspect-video rounded-lg overflow-hidden">
+            <div className="w-full aspect-video rounded-[20px] overflow-hidden border border-border">
               <img 
                 src={news.image} 
                 alt={news.title}
@@ -45,24 +51,44 @@ export default function NewsDetail() {
           )}
 
           <div className="space-y-4">
-            <p className="text-xl font-semibold">{news.subtitle}</p>
-            <div className="text-muted-foreground whitespace-pre-line leading-relaxed">
-              {news.description}
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Badge variant="secondary">Industry News</Badge>
+              <span>•</span>
+              <span>{format(news.publishedAt, 'PPP')}</span>
             </div>
+
+            <h1 className="text-4xl font-bold text-card-foreground">{news.title}</h1>
             
-            {news.link && (
-              <a
-                href={news.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center text-primary hover:underline font-medium"
-              >
-                Learn More →
-              </a>
+            {news.subtitle && (
+              <p className="text-xl font-semibold text-muted-foreground">{news.subtitle}</p>
             )}
           </div>
+
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+            <CardContent className="p-6">
+              <div className="text-card-foreground whitespace-pre-line leading-relaxed space-y-4">
+                {news.description.split('\n\n').map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
+              </div>
+              
+              {news.link && (
+                <div className="mt-6 pt-6 border-t border-border">
+                  <a
+                    href={news.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-primary hover:underline font-medium"
+                  >
+                    Read Full Article
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </article>
       </div>
-    </div>
+    </PageContainer>
   );
 }
