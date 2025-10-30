@@ -7,6 +7,9 @@ interface ProtectedRouteProps {
   requiredTier?: 'artist' | 'label' | 'agency';
 }
 
+// Set to false when ready to enforce subscription and tier restrictions
+const IS_DEV_MODE = true;
+
 export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) => {
   const { user, userRole, subscription, loading } = useAuth();
   const navigate = useNavigate();
@@ -15,6 +18,11 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
     if (!loading) {
       if (!user) {
         navigate('/get-started');
+        return;
+      }
+
+      // Skip subscription and tier checks in development mode
+      if (IS_DEV_MODE) {
         return;
       }
 
