@@ -9,14 +9,21 @@ interface AdminLayoutProps {
 export const AdminLayout = ({ children }: AdminLayoutProps) => {
   return (
     <SidebarProvider>
-      <div className="min-h-screen flex w-full">
+      <div className="min-h-screen flex w-full bg-background">
         <AdminSidebar />
         <div className="flex-1 flex flex-col">
-          <header className="h-14 border-b flex items-center px-4 bg-background sticky top-0 z-10">
-            <SidebarTrigger />
-            <h1 className="ml-4 font-semibold text-lg">Admin Panel</h1>
+          <header className="h-16 border-b border-border/50 flex items-center px-6 bg-card/50 backdrop-blur-xl sticky top-0 z-10">
+            <SidebarTrigger className="mr-4" />
+            <div className="flex items-center justify-between flex-1">
+              <h1 className="text-lg font-semibold text-foreground">Admin Control Panel</h1>
+              <div className="flex items-center gap-2">
+                <span className="px-3 py-1.5 bg-primary/15 text-primary text-xs font-semibold rounded-full">
+                  Super Admin
+                </span>
+              </div>
+            </div>
           </header>
-          <main className="flex-1 overflow-auto">
+          <main className="flex-1 overflow-auto bg-background">
             {children}
           </main>
         </div>
