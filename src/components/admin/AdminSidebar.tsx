@@ -32,18 +32,12 @@ export function AdminSidebar() {
   return (
     <Sidebar collapsible="icon" className="border-r border-border/50">
       <SidebarHeader className="border-b border-border/50 p-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center w-full">
           <img 
             src="/src/assets/mm_logo.png" 
             alt="Murranno Music Logo" 
-            className="h-10 w-10 object-contain rounded-xl"
+            className={`object-contain transition-all ${isCollapsed ? 'h-8 w-8' : 'h-12 w-auto'}`}
           />
-          {!isCollapsed && (
-            <div className="flex flex-col">
-              <h2 className="text-sm font-bold text-foreground">Murranno Music</h2>
-              <p className="text-xs text-muted-foreground">Admin Portal</p>
-            </div>
-          )}
         </div>
       </SidebarHeader>
 
