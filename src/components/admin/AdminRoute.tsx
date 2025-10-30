@@ -15,16 +15,19 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
   const isMobile = useIsMobile();
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        navigate('/get-started');
-        return;
-      }
+    if (loading) return; // wait for auth initialization
 
-      if (userRole?.tier !== 'admin') {
-        navigate('/');
-        return;
-      }
+    if (!user) {
+      navigate('/get-started');
+      return;
+    }
+
+    // Wait until role is loaded before deciding
+    if (!userRole) return;
+
+    if (userRole.tier !== 'admin') {
+      navigate('/');
+      return;
     }
   }, [user, userRole, loading, navigate]);
 
@@ -39,7 +42,22 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
     );
   }
 
-  if (!user || userRole?.tier !== 'admin') {
+  if (!user) {
+    return null;
+  }
+
+  if (!userRole) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-primary border-r-transparent"></div>
+          <p className="mt-4 text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (userRole.tier !== 'admin') {
     return null;
   }
 
