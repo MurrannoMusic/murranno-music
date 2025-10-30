@@ -13,3 +13,10 @@ export const formatDuration = (seconds: number): string => {
   const secs = seconds % 60;
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
+
+export const formatCurrency = (amount: number, currency: string = 'NGN'): string => {
+  return new Intl.NumberFormat('en-NG', {
+    style: 'currency',
+    currency: currency,
+  }).format(amount);
+};
