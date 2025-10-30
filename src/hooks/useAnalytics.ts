@@ -43,37 +43,69 @@ export const useAnalytics = () => {
       setLoading(true);
       const period = getPeriodDays();
 
-      const { data, error } = await supabase.functions.invoke('get-analytics-data', {
-        body: { 
-          period,
-          artistId: filters.artist || undefined
-        }
-      });
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      const { data: artist } = await supabase
+        .from('artists')
+        .select('id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!artist) {
+        setLoading(false);
+        return;
+      }
+
+      const startDate = new Date();
+      startDate.setDate(startDate.getDate() - period);
+
+      // Fetch streaming data
+      const { data: streamingData, error } = await supabase
+        .from('streaming_data')
+        .select(`
+          date,
+          streams,
+          platform,
+          tracks!inner(
+            release_id,
+            releases!inner(artist_id)
+          )
+        `)
+        .eq('tracks.releases.artist_id', artist.id)
+        .gte('date', startDate.toISOString().split('T')[0])
+        .order('date', { ascending: true });
 
       if (error) throw error;
 
-      if (!data?.success) {
-        throw new Error(data?.error || 'Failed to fetch analytics');
-      }
+      // Group by date
+      const groupedData: { [key: string]: number } = {};
+      streamingData?.forEach(item => {
+        const date = item.date;
+        if (!groupedData[date]) groupedData[date] = 0;
+        groupedData[date] += item.streams;
+      });
 
-      // Transform backend data to chart format
-      const transformedChartData: StreamData[] = Object.entries(data.streamsByDate || {}).map(([date, streams]) => ({
+      const transformedChartData: StreamData[] = Object.entries(groupedData).map(([date, streams]) => ({
         label: new Date(date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        current: streams as number,
-        previous: 0, // Would need historical comparison data
+        current: streams,
+        previous: 0,
         date
       }));
 
       setChartData(transformedChartData);
 
       // Calculate stats
-      const currentTotal = data.totalStreams || 0;
-      const dateRange = `${new Date(Date.now() - period * 24 * 60 * 60 * 1000).toLocaleDateString()} - ${new Date().toLocaleDateString()}`;
+      const currentTotal = transformedChartData.reduce((sum, d) => sum + d.current, 0);
+      const dateRange = `${startDate.toLocaleDateString()} - ${new Date().toLocaleDateString()}`;
 
       setStats({
         currentTotal,
         currentDateRange: dateRange,
-        previousTotal: 0, // Would need historical data
+        previousTotal: 0,
         previousDateRange: '',
         percentageChange: 0,
       });

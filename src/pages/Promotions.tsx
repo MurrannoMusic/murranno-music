@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { ArrowLeft, Megaphone, Target, TrendingUp, Play } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -5,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { CampaignDialog } from '@/components/promotions/CampaignDialog';
+import { useCampaigns } from '@/hooks/useCampaigns';
 
 interface CampaignPackage {
   id: string;
@@ -58,6 +61,11 @@ const campaignPackages: CampaignPackage[] = [
 ];
 
 export const Promotions = () => {
+  const [selectedPackage, setSelectedPackage] = useState<CampaignPackage | null>(null);
+  const { campaigns } = useCampaigns();
+  
+  const activeCampaigns = campaigns.filter(c => c.status !== 'Completed' && c.status !== 'Draft');
+
   return (
     <PageContainer>
       {/* Consistent Top Bar */}
@@ -144,11 +152,14 @@ export const Promotions = () => {
                   </ul>
                 </div>
 
-                <button className={`w-full font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] ${
-                  pkg.popular 
-                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
-                    : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                }`}>
+                <button 
+                  onClick={() => setSelectedPackage(pkg)}
+                  className={`w-full font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] ${
+                    pkg.popular 
+                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
+                      : 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                  }`}
+                >
                   Start Campaign
                 </button>
               </CardContent>
@@ -166,25 +177,42 @@ export const Promotions = () => {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-[16px] border border-border">
-                <div>
-                  <p className="font-medium text-card-foreground">TikTok Boost - "Summer Vibes"</p>
-                  <p className="text-sm text-muted-foreground">5 days remaining</p>
+              {activeCampaigns.length > 0 ? (
+                activeCampaigns.map(campaign => (
+                  <div key={campaign.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-[16px] border border-border">
+                    <div>
+                      <p className="font-medium text-card-foreground">{campaign.name}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {campaign.endDate ? `Ends ${new Date(campaign.endDate).toLocaleDateString()}` : 'Ongoing'}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium text-success">{campaign.status}</p>
+                      <p className="text-xs text-muted-foreground">₦{campaign.spent} spent</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center text-muted-foreground py-4">
+                  <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                  <p>Start your first campaign to see results here</p>
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-medium text-success">Active</p>
-                  <p className="text-xs text-muted-foreground">12K views</p>
-                </div>
-              </div>
-              
-              <div className="text-center text-muted-foreground py-4">
-                <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                <p>Start your first campaign to see results here</p>
-              </div>
+              )}
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Campaign Creation Dialog */}
+      {selectedPackage && (
+        <CampaignDialog
+          open={!!selectedPackage}
+          onOpenChange={(open) => !open && setSelectedPackage(null)}
+          packageId={selectedPackage.id}
+          packageTitle={selectedPackage.title}
+          packagePrice={selectedPackage.price}
+        />
+      )}
     </PageContainer>
   );
 };

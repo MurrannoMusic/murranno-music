@@ -1,37 +1,20 @@
-import { ArrowLeft, Users, DollarSign, TrendingUp, Music } from 'lucide-react';
+import { ArrowLeft, Users, TrendingUp, Music } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { StatCard } from '@/components/mobile/StatCard';
 import { ArtistSelector } from '@/components/mobile/ArtistSelector';
 import { useUserType } from '@/hooks/useUserType';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { useArtists } from '@/hooks/useArtists';
 
 export const LabelAnalytics = () => {
   const { selectedArtist, currentUser, isLabel } = useUserType();
+  const { artists, loading } = useArtists();
 
-  const getLabelStats = () => {
-    if (selectedArtist) {
-      // Individual artist stats
-      return {
-        streams: '3.2K',
-        earnings: '₦89',
-        followers: '547',
-        releases: '3'
-      };
-    }
-    // Combined label stats
-    return {
-      streams: '45.7K',
-      earnings: '₦1,234',
-      followers: '8.9K',
-      releases: '24'
-    };
-  };
-
-  const stats = getLabelStats();
+  const topArtists = artists
+    .sort((a, b) => parseFloat(b.streams.replace(/[K|M]/g, '')) - parseFloat(a.streams.replace(/[K|M]/g, '')))
+    .slice(0, 3);
 
   return (
     <PageContainer>
@@ -66,12 +49,9 @@ export const LabelAnalytics = () => {
               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
                 <Users className="h-4 w-4 text-primary" />
               </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-semibold">+5</div>
-              </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">24</div>
+              <div className="text-xl font-bold text-card-foreground">{artists.length}</div>
               <div className="text-xs text-muted-foreground font-medium">Total Artists</div>
             </div>
           </div>
@@ -81,13 +61,12 @@ export const LabelAnalytics = () => {
               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
                 <Music className="h-4 w-4 text-primary" />
               </div>
-              <div className="text-right">
-                <div className="text-xs text-success font-semibold">+15</div>
-              </div>
             </div>
             <div className="space-y-1">
-              <div className="text-xl font-bold text-card-foreground">156</div>
-              <div className="text-xs text-muted-foreground font-medium">Total Tracks</div>
+              <div className="text-xl font-bold text-card-foreground">
+                {artists.reduce((sum, a) => sum + a.releases, 0)}
+              </div>
+              <div className="text-xs text-muted-foreground font-medium">Total Releases</div>
             </div>
           </div>
         </div>
@@ -101,44 +80,26 @@ export const LabelAnalytics = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-card-foreground truncate">Luna Sol</p>
-                  <span className="text-sm font-bold text-card-foreground">1.2M streams</span>
+            {loading ? (
+              <p className="text-center text-muted-foreground py-4">Loading...</p>
+            ) : topArtists.length === 0 ? (
+              <p className="text-center text-muted-foreground py-4">No artists yet</p>
+            ) : (
+              topArtists.map(artist => (
+                <div key={artist.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-card-foreground truncate">{artist.stage_name}</p>
+                      <span className="text-sm font-bold text-card-foreground">{artist.streams} streams</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{artist.releases} releases • {artist.revenue} earned</p>
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground">+25% growth this month</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-card-foreground truncate">The Echoes</p>
-                  <span className="text-sm font-bold text-card-foreground">890K streams</span>
-                </div>
-                <p className="text-xs text-muted-foreground">+18% growth this month</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
-              <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                <Users className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between">
-                  <p className="text-sm font-semibold text-card-foreground truncate">Midnight Drive</p>
-                  <span className="text-sm font-bold text-card-foreground">645K streams</span>
-                </div>
-                <p className="text-xs text-muted-foreground">+12% growth this month</p>
-              </div>
-            </div>
+              ))
+            )}
           </CardContent>
         </Card>
 

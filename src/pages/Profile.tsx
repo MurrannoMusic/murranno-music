@@ -13,6 +13,7 @@ import { useUserType } from '@/hooks/useUserType';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
+import { supabase } from '@/integrations/supabase/client';
 
 export const Profile = () => {
   const { currentUser } = useUserType();
@@ -21,10 +22,8 @@ export const Profile = () => {
   
   const [isEditingLinks, setIsEditingLinks] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
-  const [spotifyUrl, setSpotifyUrl] = useState('');
-  const [appleMusicUrl, setAppleMusicUrl] = useState('');
-  const [savedSpotifyUrl, setSavedSpotifyUrl] = useState('');
-  const [savedAppleMusicUrl, setSavedAppleMusicUrl] = useState('');
+  const [spotifyUrl, setSpotifyUrl] = useState(profile?.spotify_url || '');
+  const [appleMusicUrl, setAppleMusicUrl] = useState(profile?.apple_music_url || '');
   const [errors, setErrors] = useState({ spotify: '', appleMusic: '' });
 
   const validateUrls = () => {
@@ -45,21 +44,37 @@ export const Profile = () => {
     return isValid;
   };
 
-  const handleSaveLinks = () => {
+  const handleSaveLinks = async () => {
     if (validateUrls()) {
-      setSavedSpotifyUrl(spotifyUrl);
-      setSavedAppleMusicUrl(appleMusicUrl);
-      setIsEditingLinks(false);
-      toast({
-        title: "Links saved successfully",
-        description: "Your streaming profile links have been updated.",
-      });
+      try {
+        const { data, error } = await supabase.functions.invoke('update-artist-profile', {
+          body: {
+            spotify_url: spotifyUrl || null,
+            apple_music_url: appleMusicUrl || null,
+          }
+        });
+
+        if (error) throw error;
+
+        setIsEditingLinks(false);
+        toast({
+          title: "Links saved successfully",
+          description: "Your streaming profile links have been updated.",
+        });
+      } catch (error: any) {
+        console.error('Error saving links:', error);
+        toast({
+          title: "Failed to save links",
+          description: error.message || "Please try again.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
   const handleEditLinks = () => {
-    setSpotifyUrl(savedSpotifyUrl);
-    setAppleMusicUrl(savedAppleMusicUrl);
+    setSpotifyUrl(profile?.spotify_url || '');
+    setAppleMusicUrl(profile?.apple_music_url || '');
     setIsEditingLinks(true);
     setErrors({ spotify: '', appleMusic: '' });
   };
@@ -159,7 +174,7 @@ export const Profile = () => {
                 <Music className="h-5 w-5 text-primary" />
                 Streaming Links
               </div>
-              {!isEditingLinks && (savedSpotifyUrl || savedAppleMusicUrl) && (
+              {!isEditingLinks && (profile?.spotify_url || profile?.apple_music_url) && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -172,7 +187,7 @@ export const Profile = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {!isEditingLinks && !savedSpotifyUrl && !savedAppleMusicUrl ? (
+            {!isEditingLinks && !profile?.spotify_url && !profile?.apple_music_url ? (
               <div className="text-center py-4">
                 <p className="text-muted-foreground mb-4">Connect your streaming profiles</p>
                 <Button onClick={handleEditLinks} variant="outline">
@@ -234,29 +249,29 @@ export const Profile = () => {
               </>
             ) : (
               <div className="space-y-3">
-                {savedSpotifyUrl && (
+                {profile?.spotify_url && (
                   <div className="p-3 bg-secondary/20 rounded-[12px] border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Spotify</p>
                     <a 
-                      href={savedSpotifyUrl} 
+                      href={profile.spotify_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline break-all"
                     >
-                      {savedSpotifyUrl}
+                      {profile.spotify_url}
                     </a>
                   </div>
                 )}
-                {savedAppleMusicUrl && (
+                {profile?.apple_music_url && (
                   <div className="p-3 bg-secondary/20 rounded-[12px] border border-border">
                     <p className="text-xs text-muted-foreground mb-1">Apple Music</p>
                     <a 
-                      href={savedAppleMusicUrl} 
+                      href={profile.apple_music_url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-sm text-primary hover:underline break-all"
                     >
-                      {savedAppleMusicUrl}
+                      {profile.apple_music_url}
                     </a>
                   </div>
                 )}
