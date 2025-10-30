@@ -1,4 +1,4 @@
-import { Users, Clock, DollarSign, TrendingUp, ArrowLeft } from 'lucide-react';
+import { Users, Clock, DollarSign, TrendingUp, ArrowLeft, Upload, Play } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,11 +12,13 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
+import { useRecentActivity } from '@/hooks/useRecentActivity';
 import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const LabelDashboard = () => {
   const { currentUser, selectedArtist, loading } = useUserType();
   const { getStatsAsItems } = useStats();
+  const { activities } = useRecentActivity();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -34,23 +36,6 @@ export const LabelDashboard = () => {
       </PageContainer>
     );
   }
-
-  const recentActivity = [
-    {
-      title: "Artist payout processed",
-      description: "Monthly payouts sent to 3 artists",
-      value: "₦2,450",
-      time: "1h ago",
-      type: "success"
-    },
-    {
-      title: "New release uploaded",
-      description: "Luna Sol uploaded new single",
-      value: "Live",
-      time: "3h ago",
-      type: "primary"
-    }
-  ];
 
   const stats = getStatsAsItems();
 
@@ -140,22 +125,34 @@ export const LabelDashboard = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {recentActivity.map((activity, index) => (
-              <div key={index} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                  <DollarSign className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-card-foreground truncate">{activity.title}</p>
-                    <span className={`text-sm font-bold ${activity.type === 'success' ? 'text-success' : 'text-primary'}`}>
-                      {activity.value}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{activity.description}</p>
-                </div>
+            {activities.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                No recent activity. Your artists' releases and earnings will appear here.
               </div>
-            ))}
+            ) : (
+              activities.map((activity) => (
+                <div key={activity.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    {activity.icon === 'dollar' && <DollarSign className="h-5 w-5 text-primary" />}
+                    {activity.icon === 'upload' && <Upload className="h-5 w-5 text-primary" />}
+                    {activity.icon === 'play' && <Play className="h-5 w-5 text-primary" />}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-card-foreground truncate">{activity.title}</p>
+                      <span className={`text-sm font-bold ${
+                        activity.type === 'success' ? 'text-success' : 
+                        activity.type === 'primary' ? 'text-primary' : 
+                        'text-card-foreground'
+                      }`}>
+                        {activity.value}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{activity.description}</p>
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 

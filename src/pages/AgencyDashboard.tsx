@@ -7,11 +7,13 @@ import { ModernStatCard } from '@/components/modern/ModernStatCard';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
+import { useCampaigns } from '@/hooks/useCampaigns';
 import { useEffect } from 'react';
 import { AnalyticsCarousel } from '@/components/analytics/AnalyticsCarousel';
 
 export const AgencyDashboard = () => {
   const { currentUser, loading } = useUserType();
+  const { campaigns, stats: campaignStats, loading: campaignsLoading } = useCampaigns();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -29,35 +31,6 @@ export const AgencyDashboard = () => {
       </PageContainer>
     );
   }
-  const activeCampaigns = [
-    {
-      id: 1,
-      artist: 'Luna Sol',
-      campaign: 'TikTok Viral Push',
-      status: 'Active',
-      reach: '25.3K',
-      budget: '₦299',
-      remaining: '5 days'
-    },
-    {
-      id: 2,
-      artist: 'The Echoes',
-      campaign: 'Instagram Stories',
-      status: 'Active', 
-      reach: '12.1K',
-      budget: '₦149',
-      remaining: '12 days'
-    },
-    {
-      id: 3,
-      artist: 'Midnight Drive',
-      campaign: 'YouTube Pre-roll',
-      status: 'Completed',
-      reach: '45.7K',
-      budget: '₦599',
-      remaining: 'Complete'
-    }
-  ];
 
   return (
     <PageContainer>
@@ -127,32 +100,40 @@ export const AgencyDashboard = () => {
             <CardTitle className="text-lg font-bold text-card-foreground">Active Campaigns</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {activeCampaigns.map((campaign) => (
-              <div key={campaign.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
-                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                  <Target className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between mb-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-semibold text-card-foreground">{campaign.artist}</h3>
-                      <Badge 
-                        variant={campaign.status === 'Active' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {campaign.status}
-                      </Badge>
-                    </div>
-                    <span className="text-sm font-bold text-success">{campaign.reach}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{campaign.campaign}</p>
-                  <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
-                    <span className="text-xs text-muted-foreground">Budget: {campaign.budget}</span>
-                    <span className="text-xs font-medium text-card-foreground">{campaign.remaining}</span>
-                  </div>
-                </div>
+            {campaignsLoading ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">Loading campaigns...</div>
+            ) : campaigns.filter(c => c.status === 'Active').length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                No active campaigns. Start a new campaign to promote your artists.
               </div>
-            ))}
+            ) : (
+              campaigns.filter(c => c.status === 'Active').map((campaign) => (
+                <div key={campaign.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Target className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-card-foreground">{campaign.artist}</h3>
+                        <Badge 
+                          variant={campaign.status === 'Active' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {campaign.status}
+                        </Badge>
+                      </div>
+                      <span className="text-sm font-bold text-success">{campaign.reach}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{campaign.name}</p>
+                    <div className="flex items-center justify-between mt-2 pt-2 border-t border-border">
+                      <span className="text-xs text-muted-foreground">Budget: {campaign.budget}</span>
+                      <span className="text-xs font-medium text-card-foreground">{campaign.platform}</span>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 

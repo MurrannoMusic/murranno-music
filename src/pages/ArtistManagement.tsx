@@ -9,28 +9,15 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { ArtistCard } from '@/components/cards/ArtistCard';
 import { AddArtistForm } from '@/components/forms/AddArtistForm';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { useArtists } from '@/hooks/useArtists';
 
 export const ArtistManagement = () => {
-  const [artists, setArtists] = useState([
-    { id: 'a1', name: 'Luna Sol', stageName: 'Luna Sol', status: 'Active', releases: 8, streams: '12.5K', revenue: '₦342' },
-    { id: 'a2', name: 'The Echoes', stageName: 'The Echoes', status: 'Active', releases: 6, streams: '8.9K', revenue: '₦234' },
-    { id: 'a3', name: 'Midnight Drive', stageName: 'Midnight Drive', status: 'Active', releases: 4, streams: '6.2K', revenue: '₦178' }
-  ]);
-
+  const { artists, loading, refetch } = useArtists();
   const [showAddDialog, setShowAddDialog] = useState(false);
 
-  const handleAddArtist = (newArtist: { name: string; stageName: string; email?: string }) => {
-    const artist = {
-      id: `a${Date.now()}`,
-      name: newArtist.name,
-      stageName: newArtist.stageName,
-      status: 'Active',
-      releases: 0,
-      streams: '0',
-      revenue: '₦0'
-    };
-    setArtists([...artists, artist]);
+  const handleAddArtist = () => {
     setShowAddDialog(false);
+    refetch();
   };
 
   const headerActions = (
@@ -85,11 +72,15 @@ export const ArtistManagement = () => {
                 <p className="text-xs text-muted-foreground">Artists</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-card-foreground">18</p>
+                <p className="text-xl font-bold text-card-foreground">
+                  {artists.reduce((sum, a) => sum + (a.releases || 0), 0)}
+                </p>
                 <p className="text-xs text-muted-foreground">Total Releases</p>
               </div>
               <div>
-                <p className="text-xl font-bold text-card-foreground">₦754</p>
+                <p className="text-xl font-bold text-card-foreground">
+                  ₦{artists.reduce((sum, a) => sum + parseFloat(a.revenue || '0'), 0).toLocaleString()}
+                </p>
                 <p className="text-xs text-muted-foreground">Combined Revenue</p>
               </div>
             </div>
@@ -102,20 +93,28 @@ export const ArtistManagement = () => {
             <CardTitle className="text-lg font-bold text-card-foreground">Your Artists</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {artists.map((artist) => (
-              <div key={artist.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
-                <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                  <Users className="h-5 w-5 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-semibold text-card-foreground truncate">{artist.stageName}</p>
-                    <span className="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-semibold">{artist.status}</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">{artist.releases} tracks • {artist.streams} streams</p>
-                </div>
+            {loading ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">Loading artists...</div>
+            ) : artists.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground text-sm">
+                No artists yet. Add your first artist to get started.
               </div>
-            ))}
+            ) : (
+              artists.map((artist) => (
+                <div key={artist.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
+                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Users className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-semibold text-card-foreground truncate">{artist.stage_name}</p>
+                      <span className="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-semibold">{artist.status}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">{artist.releases} releases • {artist.streams} streams</p>
+                  </div>
+                </div>
+              ))
+            )}
           </CardContent>
         </Card>
 
