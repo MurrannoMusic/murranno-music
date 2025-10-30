@@ -15,8 +15,8 @@ import { format } from 'date-fns';
 export default function AdminUsers() {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
-  const [tierFilter, setTierFilter] = useState('');
-  const [statusFilter, setStatusFilter] = useState('');
+  const [tierFilter, setTierFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -26,8 +26,8 @@ export default function AdminUsers() {
         page: page.toString(),
         limit: '20',
         ...(search && { search }),
-        ...(tierFilter && { tier: tierFilter }),
-        ...(statusFilter && { status: statusFilter }),
+        ...(tierFilter && tierFilter !== 'all' && { tier: tierFilter }),
+        ...(statusFilter && statusFilter !== 'all' && { status: statusFilter }),
       });
 
       const { data, error } = await supabase.functions.invoke(
@@ -83,7 +83,7 @@ export default function AdminUsers() {
                   <SelectValue placeholder="Filter by tier" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Tiers</SelectItem>
+                  <SelectItem value="all">All Tiers</SelectItem>
                   <SelectItem value="artist">Artist</SelectItem>
                   <SelectItem value="label">Label</SelectItem>
                   <SelectItem value="agency">Agency</SelectItem>
@@ -95,7 +95,7 @@ export default function AdminUsers() {
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">All Statuses</SelectItem>
+                  <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="active">Active</SelectItem>
                   <SelectItem value="trial">Trial</SelectItem>
                   <SelectItem value="expired">Expired</SelectItem>

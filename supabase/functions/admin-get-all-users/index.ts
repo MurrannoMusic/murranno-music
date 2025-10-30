@@ -46,7 +46,7 @@ serve(async (req) => {
 
     const offset = (page - 1) * limit;
 
-    // Build query
+    // Build query - fetch profiles first, then join related data
     let query = supabase
       .from('profiles')
       .select(`
@@ -54,35 +54,53 @@ serve(async (req) => {
         email,
         full_name,
         created_at,
-        updated_at,
-        user_roles!inner (
-          tier
-        ),
-        subscriptions!inner (
-          status,
-          tier,
-          trial_ends_at,
-          current_period_end
-        )
+        updated_at
       `, { count: 'exact' });
 
     if (search) {
       query = query.or(`email.ilike.%${search}%,full_name.ilike.%${search}%`);
     }
 
-    if (tierFilter) {
-      query = query.eq('user_roles.tier', tierFilter);
-    }
-
-    if (statusFilter) {
-      query = query.eq('subscriptions.status', statusFilter);
-    }
-
-    const { data: users, error, count } = await query
+    const { data: profiles, error: profilesError, count } = await query
       .range(offset, offset + limit - 1)
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (profilesError) throw profilesError;
+
+    // Fetch user roles and subscriptions separately for each user
+    const userIds = profiles?.map(p => p.id) || [];
+    
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('*')
+      .in('user_id', userIds);
+
+    const { data: subscriptions } = await supabase
+      .from('subscriptions')
+      .select('*')
+      .in('user_id', userIds);
+
+    // Combine the data
+    const users = profiles?.map(profile => ({
+      ...profile,
+      user_roles: roles?.filter(r => r.user_id === profile.id) || [],
+      subscriptions: subscriptions?.filter(s => s.user_id === profile.id) || [],
+    })) || [];
+
+    // Apply additional filters
+    let filteredUsers = users;
+    
+    if (tierFilter) {
+      filteredUsers = filteredUsers.filter(u => 
+        u.user_roles.some(r => r.tier === tierFilter)
+      );
+    }
+
+    if (statusFilter) {
+      filteredUsers = filteredUsers.filter(u => 
+        u.subscriptions.some(s => s.status === statusFilter)
+      );
+    }
 
     // Log admin action
     await supabase.from('admin_audit_logs').insert({
@@ -94,11 +112,11 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({
       success: true,
-      users,
-      total: count,
+      users: filteredUsers,
+      total: filteredUsers.length,
       page,
       limit,
-      totalPages: Math.ceil((count || 0) / limit),
+      totalPages: Math.ceil(filteredUsers.length / limit),
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
