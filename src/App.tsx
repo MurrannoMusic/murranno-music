@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
+import { AdminRoute } from "./components/admin/AdminRoute";
 import GetStarted from "./pages/GetStarted";
 import { Splash } from "./pages/Splash";
 import { Welcome } from "./pages/Welcome";
@@ -34,6 +35,9 @@ import { Settings } from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import NewsDetail from "./pages/NewsDetail";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +78,9 @@ const App = () => (
               <Route path="/releases/:id" element={<ProtectedRoute><ReleaseDetail /></ProtectedRoute>} />
               <Route path="/news/:id" element={<ProtectedRoute><NewsDetail /></ProtectedRoute>} />
               <Route path="/subscription/plans" element={<ProtectedRoute><SubscriptionPlans /></ProtectedRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/users" element={<AdminRoute><AdminUsers /></AdminRoute>} />
+              <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </AuthProvider>

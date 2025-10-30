@@ -14,3 +14,18 @@ verify_jwt = true
 
 [functions.paystack-get-banks]
 verify_jwt = true
+
+[functions.admin-get-all-users]
+verify_jwt = true
+
+[functions.admin-update-user-role]
+verify_jwt = true
+
+[functions.admin-get-platform-analytics]
+verify_jwt = true
+
+[functions.admin-moderate-release]
+verify_jwt = true
+
+[functions.admin-get-audit-logs]
+verify_jwt = true

@@ -3,7 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-type UserTier = 'artist' | 'label' | 'agency';
+type UserTier = 'artist' | 'label' | 'agency' | 'admin';
 
 interface Profile {
   id: string;

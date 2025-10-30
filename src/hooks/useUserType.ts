@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const useUserType = () => {
-  const [userType, setUserType] = useState<'artist' | 'label' | 'manager' | 'agency' | null>(null);
+  const [userType, setUserType] = useState<'artist' | 'label' | 'manager' | 'agency' | 'admin' | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
@@ -46,7 +46,7 @@ export const useUserType = () => {
     }
   };
 
-  const switchUserType = async (newType: 'artist' | 'label' | 'manager' | 'agency') => {
+  const switchUserType = async (newType: 'artist' | 'label' | 'manager' | 'agency' | 'admin') => {
     try {
       const { data, error } = await supabase.functions.invoke('update-subscription-tier', {
         body: { tier: newType }
