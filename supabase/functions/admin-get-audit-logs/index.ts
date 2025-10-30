@@ -44,16 +44,10 @@ serve(async (req) => {
 
     const offset = (page - 1) * limit;
 
-    // Build query
+    // Build query for audit logs
     let query = supabase
       .from('admin_audit_logs')
-      .select(`
-        *,
-        profiles!admin_audit_logs_admin_id_fkey (
-          email,
-          full_name
-        )
-      `, { count: 'exact' });
+      .select('*', { count: 'exact' });
 
     if (action) {
       query = query.eq('action', action);
@@ -65,9 +59,28 @@ serve(async (req) => {
 
     if (error) throw error;
 
+    // Get unique admin IDs
+    const adminIds = [...new Set(logs?.map(log => log.admin_id) || [])];
+
+    // Fetch admin profiles separately
+    const { data: profiles } = await supabase
+      .from('profiles')
+      .select('id, email, full_name')
+      .in('id', adminIds);
+
+    // Combine data
+    const logsWithProfiles = logs?.map(log => {
+      const profile = profiles?.find(p => p.id === log.admin_id);
+      return {
+        ...log,
+        admin_email: profile?.email,
+        admin_name: profile?.full_name,
+      };
+    }) || [];
+
     return new Response(JSON.stringify({
       success: true,
-      logs,
+      logs: logsWithProfiles,
       total: count,
       page,
       limit,
