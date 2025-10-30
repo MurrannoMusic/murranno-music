@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { PushNotificationProvider } from "./components/app/PushNotificationProvider";
+import { NetworkStatus } from "./components/app/NetworkStatus";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
@@ -55,6 +56,7 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
+        <NetworkStatus />
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <AuthProvider>
             <PushNotificationProvider>
