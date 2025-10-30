@@ -397,6 +397,63 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_settings: {
+        Row: {
+          auto_approve_uploads: boolean
+          content_moderation_enabled: boolean
+          created_at: string
+          email_notifications_enabled: boolean
+          id: string
+          max_file_size_mb: number
+          max_uploads_per_month: number
+          minimum_payout_amount: number
+          payment_processor: string
+          payout_schedule: string
+          platform_fee_percentage: number
+          platform_name: string
+          restricted_words: string[] | null
+          sms_notifications_enabled: boolean
+          support_email: string
+          updated_at: string
+        }
+        Insert: {
+          auto_approve_uploads?: boolean
+          content_moderation_enabled?: boolean
+          created_at?: string
+          email_notifications_enabled?: boolean
+          id?: string
+          max_file_size_mb?: number
+          max_uploads_per_month?: number
+          minimum_payout_amount?: number
+          payment_processor?: string
+          payout_schedule?: string
+          platform_fee_percentage?: number
+          platform_name?: string
+          restricted_words?: string[] | null
+          sms_notifications_enabled?: boolean
+          support_email?: string
+          updated_at?: string
+        }
+        Update: {
+          auto_approve_uploads?: boolean
+          content_moderation_enabled?: boolean
+          created_at?: string
+          email_notifications_enabled?: boolean
+          id?: string
+          max_file_size_mb?: number
+          max_uploads_per_month?: number
+          minimum_payout_amount?: number
+          payment_processor?: string
+          payout_schedule?: string
+          platform_fee_percentage?: number
+          platform_name?: string
+          restricted_words?: string[] | null
+          sms_notifications_enabled?: boolean
+          support_email?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string | null

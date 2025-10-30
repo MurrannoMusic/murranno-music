@@ -3,6 +3,12 @@ project_id = "nqfltvbzqxdxsobhedci"
 [functions.get-subscription-plans]
 verify_jwt = false
 
+[functions.get-platform-settings]
+verify_jwt = true
+
+[functions.update-platform-settings]
+verify_jwt = true
+
 [functions.admin-promote-user]
 verify_jwt = false
 

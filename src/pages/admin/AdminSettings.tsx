@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AdminLayout } from '@/components/admin/AdminLayout';
@@ -22,35 +22,79 @@ import {
 } from 'lucide-react';
 
 interface PlatformSettings {
-  platform_name: string;
-  support_email: string;
-  max_upload_size_mb: number;
-  enable_auto_approve: boolean;
-  maintenance_mode: boolean;
-  default_currency: string;
-  commission_rate: number;
-  minimum_payout: number;
+  platformName: string;
+  supportEmail: string;
+  autoApproveUploads: boolean;
+  contentModerationEnabled: boolean;
+  restrictedWords: string[];
+  maxUploadsPerMonth: number;
+  maxFileSize: number;
+  paymentProcessor: string;
+  minimumPayout: number;
+  payoutSchedule: string;
+  platformFee: number;
+  emailNotifications: boolean;
+  smsNotifications: boolean;
 }
 
 export default function AdminSettings() {
   const queryClient = useQueryClient();
   const [settings, setSettings] = useState<PlatformSettings>({
-    platform_name: 'Murranno Music',
-    support_email: 'support@murranno.com',
-    max_upload_size_mb: 200,
-    enable_auto_approve: false,
-    maintenance_mode: false,
-    default_currency: 'NGN',
-    commission_rate: 15,
-    minimum_payout: 5000,
+    platformName: 'Murranno Music',
+    supportEmail: 'support@murranno.com',
+    autoApproveUploads: false,
+    contentModerationEnabled: true,
+    restrictedWords: [],
+    maxUploadsPerMonth: 10,
+    maxFileSize: 200,
+    paymentProcessor: 'paystack',
+    minimumPayout: 5000,
+    payoutSchedule: 'monthly',
+    platformFee: 15,
+    emailNotifications: true,
+    smsNotifications: false,
   });
+
+  // Fetch current settings
+  const { data: settingsData, isLoading } = useQuery({
+    queryKey: ['platform-settings'],
+    queryFn: async () => {
+      const { data, error } = await supabase.functions.invoke('get-platform-settings');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Failed to fetch settings');
+      return data.settings;
+    },
+  });
+
+  // Update local state when data is fetched
+  useEffect(() => {
+    if (settingsData) {
+      setSettings({
+        platformName: settingsData.platform_name,
+        supportEmail: settingsData.support_email,
+        autoApproveUploads: settingsData.auto_approve_uploads,
+        contentModerationEnabled: settingsData.content_moderation_enabled,
+        restrictedWords: settingsData.restricted_words || [],
+        maxUploadsPerMonth: settingsData.max_uploads_per_month,
+        maxFileSize: settingsData.max_file_size_mb,
+        paymentProcessor: settingsData.payment_processor,
+        minimumPayout: Number(settingsData.minimum_payout_amount),
+        payoutSchedule: settingsData.payout_schedule,
+        platformFee: Number(settingsData.platform_fee_percentage),
+        emailNotifications: settingsData.email_notifications_enabled,
+        smsNotifications: settingsData.sms_notifications_enabled,
+      });
+    }
+  }, [settingsData]);
 
   const saveSettings = useMutation({
     mutationFn: async (newSettings: PlatformSettings) => {
-      // In a real app, this would save to a settings table
-      console.log('Saving settings:', newSettings);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return newSettings;
+      const { data, error } = await supabase.functions.invoke('update-platform-settings', {
+        body: { settings: newSettings }
+      });
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Failed to save settings');
+      return data.settings;
     },
     onSuccess: () => {
       toast.success('Settings saved successfully');
@@ -71,6 +115,16 @@ export default function AdminSettings() {
   ) => {
     setSettings(prev => ({ ...prev, [key]: value }));
   };
+
+  if (isLoading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-96">
+          <p className="text-muted-foreground">Loading settings...</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
@@ -122,8 +176,8 @@ export default function AdminSettings() {
                   <Label htmlFor="platform-name">Platform Name</Label>
                   <Input
                     id="platform-name"
-                    value={settings.platform_name}
-                    onChange={(e) => updateSetting('platform_name', e.target.value)}
+                    value={settings.platformName}
+                    onChange={(e) => updateSetting('platformName', e.target.value)}
                     placeholder="Enter platform name"
                   />
                 </div>
@@ -133,8 +187,8 @@ export default function AdminSettings() {
                   <Input
                     id="support-email"
                     type="email"
-                    value={settings.support_email}
-                    onChange={(e) => updateSetting('support_email', e.target.value)}
+                    value={settings.supportEmail}
+                    onChange={(e) => updateSetting('supportEmail', e.target.value)}
                     placeholder="support@example.com"
                   />
                 </div>
@@ -144,26 +198,25 @@ export default function AdminSettings() {
                   <Input
                     id="max-upload"
                     type="number"
-                    value={settings.max_upload_size_mb}
-                    onChange={(e) => updateSetting('max_upload_size_mb', parseInt(e.target.value))}
+                    value={settings.maxFileSize}
+                    onChange={(e) => updateSetting('maxFileSize', parseInt(e.target.value))}
                   />
                   <p className="text-sm text-muted-foreground">
                     Maximum file size for audio uploads
                   </p>
                 </div>
 
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="maintenance">Maintenance Mode</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Enable to temporarily disable public access
-                    </p>
-                  </div>
-                  <Switch
-                    id="maintenance"
-                    checked={settings.maintenance_mode}
-                    onCheckedChange={(checked) => updateSetting('maintenance_mode', checked)}
+                <div className="space-y-2">
+                  <Label htmlFor="max-uploads">Max Uploads per Month</Label>
+                  <Input
+                    id="max-uploads"
+                    type="number"
+                    value={settings.maxUploadsPerMonth}
+                    onChange={(e) => updateSetting('maxUploadsPerMonth', parseInt(e.target.value))}
                   />
+                  <p className="text-sm text-muted-foreground">
+                    Maximum number of uploads allowed per artist per month
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -190,51 +243,38 @@ export default function AdminSettings() {
                   </div>
                   <Switch
                     id="auto-approve"
-                    checked={settings.enable_auto_approve}
-                    onCheckedChange={(checked) => updateSetting('enable_auto_approve', checked)}
+                    checked={settings.autoApproveUploads}
+                    onCheckedChange={(checked) => updateSetting('autoApproveUploads', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="moderation">Content Moderation</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Enable automated content moderation checks
+                    </p>
+                  </div>
+                  <Switch
+                    id="moderation"
+                    checked={settings.contentModerationEnabled}
+                    onCheckedChange={(checked) => updateSetting('contentModerationEnabled', checked)}
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Restricted Words</Label>
+                  <Label htmlFor="restricted-words">Restricted Words</Label>
                   <Textarea
+                    id="restricted-words"
                     placeholder="Enter restricted words (one per line)"
                     rows={5}
                     className="resize-none"
+                    value={settings.restrictedWords.join('\n')}
+                    onChange={(e) => updateSetting('restrictedWords', e.target.value.split('\n').filter(Boolean))}
                   />
                   <p className="text-sm text-muted-foreground">
                     Content containing these words will be flagged for review
                   </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Rate Limiting</CardTitle>
-                <CardDescription>
-                  Configure API and upload rate limits
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="api-limit">API Requests per Hour</Label>
-                  <Input
-                    id="api-limit"
-                    type="number"
-                    defaultValue="1000"
-                    placeholder="1000"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="upload-limit">Uploads per Day</Label>
-                  <Input
-                    id="upload-limit"
-                    type="number"
-                    defaultValue="10"
-                    placeholder="10"
-                  />
                 </div>
               </CardContent>
             </Card>
@@ -253,32 +293,31 @@ export default function AdminSettings() {
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="currency">Default Currency</Label>
+                  <Label htmlFor="gateway">Payment Gateway</Label>
                   <Select 
-                    value={settings.default_currency}
-                    onValueChange={(value) => updateSetting('default_currency', value)}
+                    value={settings.paymentProcessor}
+                    onValueChange={(value) => updateSetting('paymentProcessor', value)}
                   >
-                    <SelectTrigger id="currency">
+                    <SelectTrigger id="gateway">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="NGN">NGN - Nigerian Naira</SelectItem>
-                      <SelectItem value="USD">USD - US Dollar</SelectItem>
-                      <SelectItem value="EUR">EUR - Euro</SelectItem>
-                      <SelectItem value="GBP">GBP - British Pound</SelectItem>
+                      <SelectItem value="paystack">Paystack</SelectItem>
+                      <SelectItem value="stripe">Stripe</SelectItem>
+                      <SelectItem value="flutterwave">Flutterwave</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="commission">Platform Commission (%)</Label>
+                  <Label htmlFor="commission">Platform Fee (%)</Label>
                   <Input
                     id="commission"
                     type="number"
                     min="0"
                     max="100"
-                    value={settings.commission_rate}
-                    onChange={(e) => updateSetting('commission_rate', parseFloat(e.target.value))}
+                    value={settings.platformFee}
+                    onChange={(e) => updateSetting('platformFee', parseFloat(e.target.value))}
                   />
                   <p className="text-sm text-muted-foreground">
                     Percentage taken from artist earnings
@@ -290,8 +329,8 @@ export default function AdminSettings() {
                   <Input
                     id="min-payout"
                     type="number"
-                    value={settings.minimum_payout}
-                    onChange={(e) => updateSetting('minimum_payout', parseFloat(e.target.value))}
+                    value={settings.minimumPayout}
+                    onChange={(e) => updateSetting('minimumPayout', parseFloat(e.target.value))}
                   />
                   <p className="text-sm text-muted-foreground">
                     Minimum balance required for withdrawal
@@ -300,7 +339,10 @@ export default function AdminSettings() {
 
                 <div className="space-y-2">
                   <Label htmlFor="payout-schedule">Payout Schedule</Label>
-                  <Select defaultValue="monthly">
+                  <Select 
+                    value={settings.payoutSchedule}
+                    onValueChange={(value) => updateSetting('payoutSchedule', value)}
+                  >
                     <SelectTrigger id="payout-schedule">
                       <SelectValue />
                     </SelectTrigger>
@@ -313,38 +355,6 @@ export default function AdminSettings() {
                 </div>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Payment Gateway</CardTitle>
-                <CardDescription>
-                  Configure payment processor settings
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="gateway">Payment Gateway</Label>
-                  <Select defaultValue="paystack">
-                    <SelectTrigger id="gateway">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="paystack">Paystack</SelectItem>
-                      <SelectItem value="stripe">Stripe</SelectItem>
-                      <SelectItem value="flutterwave">Flutterwave</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="p-4 bg-muted/30 rounded-lg space-y-2">
-                  <p className="text-sm font-medium">Payment Gateway Status</p>
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                    <span className="text-sm text-muted-foreground">Connected</span>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
           </TabsContent>
 
           <TabsContent value="notifications" className="space-y-4">
@@ -352,78 +362,40 @@ export default function AdminSettings() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Bell className="h-5 w-5" />
-                  Email Notifications
+                  Notification Settings
                 </CardTitle>
                 <CardDescription>
-                  Configure when to send email notifications
+                  Configure notification preferences
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between rounded-lg border p-4">
                   <div className="space-y-0.5">
-                    <Label>New User Registrations</Label>
+                    <Label htmlFor="email-notif">Email Notifications</Label>
                     <p className="text-sm text-muted-foreground">
-                      Notify admins when new users sign up
+                      Send email notifications for important events
                     </p>
                   </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label>New Release Submissions</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Notify admins when releases are submitted
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label>Payout Requests</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Notify admins when users request payouts
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-
-                <div className="flex items-center justify-between rounded-lg border p-4">
-                  <div className="space-y-0.5">
-                    <Label>Content Reports</Label>
-                    <p className="text-sm text-muted-foreground">
-                      Notify admins when content is reported
-                    </p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Email Templates</CardTitle>
-                <CardDescription>
-                  Customize email notification templates
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="welcome-template">Welcome Email</Label>
-                  <Textarea
-                    id="welcome-template"
-                    placeholder="Enter welcome email template..."
-                    rows={4}
-                    className="resize-none"
-                    defaultValue="Welcome to Murranno Music! We're excited to have you join our platform..."
+                  <Switch
+                    id="email-notif"
+                    checked={settings.emailNotifications}
+                    onCheckedChange={(checked) => updateSetting('emailNotifications', checked)}
                   />
                 </div>
 
-                <Button variant="outline" className="w-full">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Send Test Email
-                </Button>
+                <div className="flex items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="sms-notif">SMS Notifications</Label>
+                    <p className="text-sm text-muted-foreground">
+                      Send SMS notifications for critical events
+                    </p>
+                  </div>
+                  <Switch
+                    id="sms-notif"
+                    checked={settings.smsNotifications}
+                    onCheckedChange={(checked) => updateSetting('smsNotifications', checked)}
+                  />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
