@@ -1,21 +1,32 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
-import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
+import { Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useHaptics } from '@/hooks/useHaptics';
 
 interface AudioPreviewPlayerProps {
   audioUrl: string;
+  trackTitle?: string;
+  artistName?: string;
+  onFullscreen?: () => void;
   className?: string;
 }
 
-export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerProps) => {
+export const AudioPreviewPlayer = ({ 
+  audioUrl, 
+  trackTitle,
+  artistName,
+  onFullscreen,
+  className 
+}: AudioPreviewPlayerProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+  const { buttonPress, success } = useHaptics();
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -23,7 +34,10 @@ export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerPr
 
     const handleTimeUpdate = () => setCurrentTime(audio.currentTime);
     const handleLoadedMetadata = () => setDuration(audio.duration);
-    const handleEnded = () => setIsPlaying(false);
+    const handleEnded = () => {
+      setIsPlaying(false);
+      success();
+    };
 
     audio.addEventListener('timeupdate', handleTimeUpdate);
     audio.addEventListener('loadedmetadata', handleLoadedMetadata);
@@ -37,6 +51,7 @@ export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerPr
   }, []);
 
   const togglePlay = () => {
+    buttonPress();
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -65,6 +80,7 @@ export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerPr
   };
 
   const toggleMute = () => {
+    buttonPress();
     const audio = audioRef.current;
     if (!audio) return;
     
@@ -87,12 +103,35 @@ export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerPr
     <div className={cn('space-y-3 p-4 bg-muted/30 rounded-lg', className)}>
       <audio ref={audioRef} src={audioUrl} />
       
+      {/* Track Info */}
+      {(trackTitle || artistName) && (
+        <div className="flex items-center justify-between">
+          <div className="flex-1 min-w-0">
+            <p className="font-semibold text-sm truncate">{trackTitle}</p>
+            <p className="text-xs text-muted-foreground truncate">{artistName}</p>
+          </div>
+          {onFullscreen && (
+            <Button
+              size="sm"
+              variant="ghost"
+              onClick={() => {
+                buttonPress();
+                onFullscreen();
+              }}
+              className="h-8 w-8 p-0 shrink-0 ml-2"
+            >
+              <Maximize2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
+      )}
+      
       <div className="flex items-center gap-3">
         <Button
           size="sm"
           variant="outline"
           onClick={togglePlay}
-          className="h-8 w-8 p-0"
+          className="h-8 w-8 p-0 shrink-0"
         >
           {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
         </Button>
@@ -105,13 +144,13 @@ export const AudioPreviewPlayer = ({ audioUrl, className }: AudioPreviewPlayerPr
             onValueChange={handleSeek}
             className="cursor-pointer"
           />
-          <div className="flex justify-between text-xs text-muted-foreground">
+          <div className="flex justify-between text-xs text-muted-foreground font-mono">
             <span>{formatTime(currentTime)}</span>
             <span>{formatTime(duration)}</span>
           </div>
         </div>
         
-        <div className="flex items-center gap-2 w-24">
+        <div className="flex items-center gap-2 w-24 shrink-0">
           <Button
             size="sm"
             variant="ghost"
