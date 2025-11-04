@@ -1,216 +1,171 @@
 import { useState } from 'react';
-import { ArrowLeft, Megaphone, Target, TrendingUp, Play } from 'lucide-react';
+import { ArrowLeft, Megaphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageContainer } from '@/components/layout/PageContainer';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { ServiceCard } from '@/components/promotions/ServiceCard';
+import { BundleCard } from '@/components/promotions/BundleCard';
+import { CategoryFilter } from '@/components/promotions/CategoryFilter';
 import { CampaignDialog } from '@/components/promotions/CampaignDialog';
-import { useCampaigns } from '@/hooks/useCampaigns';
-
-interface CampaignPackage {
-  id: string;
-  title: string;
-  description: string;
-  price: string;
-  reach: string;
-  duration: string;
-  features: string[];
-  popular?: boolean;
-}
-
-const campaignPackages: CampaignPackage[] = [
-  {
-    id: 'playlist',
-    title: 'Playlist Pitching',
-    description: 'Get your track featured on curated playlists',
-    price: '₦49',
-    reach: '10K-50K listeners',
-    duration: '2 weeks',
-    features: ['Spotify playlists', 'Apple Music playlists', 'Performance report'],
-  },
-  {
-    id: 'tiktok',
-    title: 'TikTok Influencer Boost',
-    description: 'Partner with TikTok creators for viral content',
-    price: '₦89',
-    reach: '50K-200K views',
-    duration: '1 week',
-    features: ['Micro-influencer partnerships', 'Hashtag campaigns', 'Video analytics'],
-    popular: true,
-  },
-  {
-    id: 'instagram',
-    title: 'Instagram Ad Package',
-    description: 'Targeted Instagram story and feed advertisements',
-    price: '₦69',
-    reach: '25K-100K users',
-    duration: '10 days',
-    features: ['Story ads', 'Feed promotion', 'Audience targeting'],
-  },
-  {
-    id: 'youtube',
-    title: 'YouTube Pre-Roll Ads',
-    description: 'Your music in front of YouTube viewers',
-    price: '₦129',
-    reach: '100K-500K views',
-    duration: '2 weeks',
-    features: ['Video pre-roll ads', 'Music discovery ads', 'Geographic targeting'],
-  },
-];
+import { usePromotionServices } from '@/hooks/usePromotionServices';
+import { usePromotionBundles } from '@/hooks/usePromotionBundles';
+import { PromotionService, PromotionBundle, PromotionCategory } from '@/types/promotion';
 
 export const Promotions = () => {
-  const [selectedPackage, setSelectedPackage] = useState<CampaignPackage | null>(null);
-  const { campaigns } = useCampaigns();
-  
-  const activeCampaigns = campaigns.filter(c => c.status !== 'Completed' && c.status !== 'Draft');
+  const [selectedCategory, setSelectedCategory] = useState<PromotionCategory | 'all'>('all');
+  const [selectedService, setSelectedService] = useState<PromotionService | null>(null);
+  const [selectedBundle, setSelectedBundle] = useState<PromotionBundle | null>(null);
+
+  const { services, loading: servicesLoading, categories } = usePromotionServices();
+  const { bundles, loading: bundlesLoading } = usePromotionBundles();
+
+  const filteredServices = selectedCategory === 'all' 
+    ? services 
+    : services.filter(s => s.category === selectedCategory);
+
+  const serviceCounts = {
+    all: services.length,
+    ...categories.reduce((acc, cat) => ({
+      ...acc,
+      [cat]: services.filter(s => s.category === cat).length
+    }), {})
+  };
+
+  const handleServiceSelect = (service: PromotionService) => {
+    setSelectedService(service);
+  };
+
+  const handleBundleSelect = (bundle: PromotionBundle) => {
+    setSelectedBundle(bundle);
+  };
 
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
+      {/* Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
           <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           
-          {/* User Type (Center) */}
           <div className="flex-1 text-center">
             <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
               PROMOTIONS
             </Badge>
           </div>
           
-          {/* Avatar Dropdown (Right) */}
           <AvatarDropdown />
         </div>
       </div>
 
-      <div className="mobile-container space-y-4 mt-4">
-
+      <div className="mobile-container space-y-6 mt-4">
         {/* Hero Section */}
         <Card className="gradient-primary text-white">
           <CardContent className="p-6 text-center">
             <Megaphone className="h-12 w-12 mx-auto mb-4" />
-            <h2 className="text-xl font-bold mb-2">Amplify Your Reach</h2>
-            <p className="text-white/80">
-              Run targeted campaigns to get your music discovered by the right audience
+            <h1 className="text-2xl font-bold mb-2">Full-Service Promotional Catalog</h1>
+            <p className="text-white/90">
+              Premium music promotion services and strategic bundles to amplify your reach
             </p>
           </CardContent>
         </Card>
 
-        {/* Campaign Packages */}
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold flex items-center text-card-foreground">
-            <Target className="h-5 w-5 mr-2 text-primary" />
-            Campaign Packages
-          </h3>
-          
-          {campaignPackages.map((pkg) => (
-            <Card key={pkg.id} className="bg-card border border-border rounded-[20px] shadow-soft">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <CardTitle className="text-lg text-card-foreground">{pkg.title}</CardTitle>
-                    {pkg.popular && (
-                      <Badge className="bg-primary text-primary-foreground mt-2">
-                        Most Popular
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-primary">{pkg.price}</p>
-                    <p className="text-sm text-muted-foreground">one-time</p>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <p className="text-muted-foreground mb-4">{pkg.description}</p>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Reach</p>
-                    <p className="font-semibold text-card-foreground">{pkg.reach}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground">Duration</p>
-                    <p className="font-semibold text-card-foreground">{pkg.duration}</p>
-                  </div>
-                </div>
+        {/* Tabs */}
+        <Tabs defaultValue="bundles" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="bundles">Promotional Junkets</TabsTrigger>
+            <TabsTrigger value="services">Individual Services</TabsTrigger>
+          </TabsList>
 
-                <div className="mb-4">
-                  <p className="text-sm text-muted-foreground mb-2">Features included:</p>
-                  <ul className="text-sm space-y-1">
-                    {pkg.features.map((feature, index) => (
-                      <li key={index} className="flex items-center text-card-foreground">
-                        <div className="w-1 h-1 bg-primary rounded-full mr-2" />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <button 
-                  onClick={() => setSelectedPackage(pkg)}
-                  className={`w-full font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] ${
-                    pkg.popular 
-                      ? 'bg-primary hover:bg-primary/90 text-primary-foreground' 
-                      : 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                  }`}
-                >
-                  Start Campaign
-                </button>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Active Campaigns */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="flex items-center text-card-foreground">
-              <Play className="h-5 w-5 mr-2 text-primary" />
-              Active Campaigns
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {activeCampaigns.length > 0 ? (
-                activeCampaigns.map(campaign => (
-                  <div key={campaign.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-[16px] border border-border">
-                    <div>
-                      <p className="font-medium text-card-foreground">{campaign.name}</p>
-                      <p className="text-sm text-muted-foreground">
-                        {campaign.endDate ? `Ends ${new Date(campaign.endDate).toLocaleDateString()}` : 'Ongoing'}
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-medium text-success">{campaign.status}</p>
-                      <p className="text-xs text-muted-foreground">₦{campaign.spent} spent</p>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center text-muted-foreground py-4">
-                  <TrendingUp className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                  <p>Start your first campaign to see results here</p>
-                </div>
-              )}
+          {/* Promotional Junkets Tab */}
+          <TabsContent value="bundles" className="space-y-4 mt-4">
+            <div className="text-center mb-4">
+              <h2 className="text-xl font-bold mb-2">Strategically Curated Bundles</h2>
+              <p className="text-muted-foreground text-sm">
+                Complete promotional packages designed for maximum impact
+              </p>
             </div>
-          </CardContent>
-        </Card>
+
+            {bundlesLoading ? (
+              <div className="grid gap-4">
+                {[1, 2, 3, 4].map(i => (
+                  <Card key={i} className="h-64 animate-pulse bg-muted" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-6">
+                {bundles.map((bundle, index) => (
+                  <BundleCard
+                    key={bundle.id}
+                    bundle={bundle}
+                    onSelect={handleBundleSelect}
+                    isRecommended={index === 1} // Recommend Growth Junket
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Individual Services Tab */}
+          <TabsContent value="services" className="space-y-4 mt-4">
+            <div className="mb-4">
+              <h2 className="text-xl font-bold mb-2">Individual Services</h2>
+              <p className="text-muted-foreground text-sm mb-4">
+                Build your own custom promotional strategy
+              </p>
+              
+              <CategoryFilter
+                categories={categories}
+                selectedCategory={selectedCategory}
+                onCategoryChange={setSelectedCategory}
+                serviceCounts={serviceCounts}
+              />
+            </div>
+
+            {servicesLoading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {[1, 2, 3, 4, 5, 6].map(i => (
+                  <Card key={i} className="h-80 animate-pulse bg-muted" />
+                ))}
+              </div>
+            ) : filteredServices.length === 0 ? (
+              <Card className="p-8 text-center">
+                <p className="text-muted-foreground">No services found in this category</p>
+              </Card>
+            ) : (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredServices.map((service) => (
+                  <ServiceCard
+                    key={service.id}
+                    service={service}
+                    onSelect={handleServiceSelect}
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
-      {/* Campaign Creation Dialog */}
-      {selectedPackage && (
+      {/* Campaign Creation Dialogs */}
+      {selectedService && (
         <CampaignDialog
-          open={!!selectedPackage}
-          onOpenChange={(open) => !open && setSelectedPackage(null)}
-          packageId={selectedPackage.id}
-          packageTitle={selectedPackage.title}
-          packagePrice={selectedPackage.price}
+          open={!!selectedService}
+          onOpenChange={(open) => !open && setSelectedService(null)}
+          service={selectedService}
+          onSuccess={() => setSelectedService(null)}
+        />
+      )}
+
+      {selectedBundle && (
+        <CampaignDialog
+          open={!!selectedBundle}
+          onOpenChange={(open) => !open && setSelectedBundle(null)}
+          bundle={selectedBundle}
+          onSuccess={() => setSelectedBundle(null)}
         />
       )}
     </PageContainer>

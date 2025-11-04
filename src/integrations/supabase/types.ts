@@ -116,6 +116,42 @@ export type Database = {
         }
         Relationships: []
       }
+      bundle_services: {
+        Row: {
+          bundle_id: string
+          created_at: string
+          id: string
+          service_id: string
+        }
+        Insert: {
+          bundle_id: string
+          created_at?: string
+          id?: string
+          service_id: string
+        }
+        Update: {
+          bundle_id?: string
+          created_at?: string
+          id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bundle_services_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_bundles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bundle_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaign_metrics: {
         Row: {
           campaign_id: string
@@ -166,15 +202,60 @@ export type Database = {
           },
         ]
       }
+      campaign_services: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          id: string
+          service_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          id?: string
+          service_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          id?: string
+          service_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_services_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       campaigns: {
         Row: {
           artist_id: string | null
           budget: number
+          bundle_id: string | null
+          category: string | null
           created_at: string
           end_date: string | null
           id: string
           name: string
           platform: string
+          promotion_type: string | null
           release_id: string | null
           spent: number
           start_date: string
@@ -186,11 +267,14 @@ export type Database = {
         Insert: {
           artist_id?: string | null
           budget: number
+          bundle_id?: string | null
+          category?: string | null
           created_at?: string
           end_date?: string | null
           id?: string
           name: string
           platform: string
+          promotion_type?: string | null
           release_id?: string | null
           spent?: number
           start_date: string
@@ -202,11 +286,14 @@ export type Database = {
         Update: {
           artist_id?: string | null
           budget?: number
+          bundle_id?: string | null
+          category?: string | null
           created_at?: string
           end_date?: string | null
           id?: string
           name?: string
           platform?: string
+          promotion_type?: string | null
           release_id?: string | null
           spent?: number
           start_date?: string
@@ -221,6 +308,13 @@ export type Database = {
             columns: ["artist_id"]
             isOneToOne: false
             referencedRelation: "artists"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaigns_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_bundles"
             referencedColumns: ["id"]
           },
           {
@@ -475,6 +569,87 @@ export type Database = {
           full_name?: string | null
           id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      promotion_bundles: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          slug: string
+          target_description: string | null
+          tier_level: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price: number
+          slug: string
+          target_description?: string | null
+          tier_level: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          slug?: string
+          target_description?: string | null
+          tier_level?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      promotion_services: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          duration: string | null
+          features: Json | null
+          id: string
+          is_active: boolean
+          name: string
+          price: number
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name: string
+          price: number
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          duration?: string | null
+          features?: Json | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          price?: number
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }

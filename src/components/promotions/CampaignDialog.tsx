@@ -4,28 +4,41 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useReleases } from '@/hooks/useReleases';
+import { PromotionService, PromotionBundle } from '@/types/promotion';
+import { Check } from 'lucide-react';
 
 interface CampaignDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  packageId: string;
-  packageTitle: string;
-  packagePrice: string;
+  service?: PromotionService;
+  bundle?: PromotionBundle;
+  onSuccess?: () => void;
 }
 
-export const CampaignDialog = ({ open, onOpenChange, packageId, packageTitle, packagePrice }: CampaignDialogProps) => {
+export const CampaignDialog = ({ open, onOpenChange, service, bundle, onSuccess }: CampaignDialogProps) => {
   const { toast } = useToast();
   const { releases } = useReleases();
   const [loading, setLoading] = useState(false);
+  
+  const price = service?.price || bundle?.price || 0;
+  const name = service?.name || bundle?.name || '';
+  
   const [formData, setFormData] = useState({
-    name: '',
+    campaignName: '',
     releaseId: '',
-    budget: packagePrice.replace('₦', ''),
-    platform: packageId,
   });
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-NG', {
+      style: 'currency',
+      currency: 'NGN',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,27 +53,48 @@ export const CampaignDialog = ({ open, onOpenChange, packageId, packageTitle, pa
 
     setLoading(true);
     try {
+      const campaignData = {
+        name: formData.campaignName || `${name} Campaign`,
+        type: bundle ? bundle.slug : service?.category || 'custom',
+        platform: bundle ? 'Multi-Platform' : service?.category || 'Multi-Platform',
+        release_id: formData.releaseId,
+        budget: price,
+        start_date: new Date().toISOString().split('T')[0],
+        status: 'Draft',
+        promotion_type: bundle ? 'bundle' : 'individual',
+        bundle_id: bundle?.id,
+        category: service?.category,
+      };
+
       const { data, error } = await supabase.functions.invoke('create-campaign', {
-        body: {
-          name: formData.name || `${packageTitle} Campaign`,
-          type: packageId,
-          platform: packageId,
-          release_id: formData.releaseId,
-          budget: parseFloat(formData.budget),
-          start_date: new Date().toISOString().split('T')[0],
-          status: 'Draft',
-        }
+        body: campaignData
       });
 
       if (error) throw error;
 
+      // If individual service, create campaign_service entry
+      if (service && data?.campaign?.id) {
+        const { error: serviceError } = await supabase
+          .from('campaign_services')
+          .insert({
+            campaign_id: data.campaign.id,
+            service_id: service.id,
+            status: 'pending'
+          });
+
+        if (serviceError) {
+          console.error('Error linking service:', serviceError);
+        }
+      }
+
       toast({
         title: "Campaign created",
-        description: "Your campaign has been created successfully. Proceed to payment to activate.",
+        description: "Your campaign has been created. Proceed to payment to activate.",
       });
 
       onOpenChange(false);
-      setFormData({ name: '', releaseId: '', budget: packagePrice.replace('₦', ''), platform: packageId });
+      onSuccess?.();
+      setFormData({ campaignName: '', releaseId: '' });
     } catch (error: any) {
       console.error('Error creating campaign:', error);
       toast({
@@ -75,64 +109,95 @@ export const CampaignDialog = ({ open, onOpenChange, packageId, packageTitle, pa
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card border-border">
+      <DialogContent className="bg-card border-border max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-card-foreground">Start {packageTitle}</DialogTitle>
+          <DialogTitle className="text-card-foreground">Create Campaign</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name" className="text-card-foreground">Campaign Name (Optional)</Label>
-            <Input
-              id="name"
-              placeholder={`${packageTitle} Campaign`}
-              value={formData.name}
-              onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-              className="bg-background border-border"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="release" className="text-card-foreground">Select Release *</Label>
-            <Select value={formData.releaseId} onValueChange={(value) => setFormData(prev => ({ ...prev, releaseId: value }))}>
-              <SelectTrigger className="bg-background border-border">
-                <SelectValue placeholder="Choose a release" />
-              </SelectTrigger>
-              <SelectContent>
-                {releases.length === 0 ? (
-                  <SelectItem value="none" disabled>No releases available</SelectItem>
-                ) : (
-                  releases.map(release => (
-                    <SelectItem key={release.id} value={release.id}>
-                      {release.title}
-                    </SelectItem>
-                  ))
+        <div className="space-y-4">
+          {/* Selected Package Info */}
+          <div className="p-4 rounded-lg bg-muted/50 space-y-2">
+            <div className="flex items-start justify-between gap-2">
+              <div className="flex-1">
+                <p className="font-semibold text-card-foreground">{name}</p>
+                {service && (
+                  <Badge variant="secondary" className="mt-1 text-xs">
+                    {service.category}
+                  </Badge>
                 )}
-              </SelectContent>
-            </Select>
+                {bundle && (
+                  <Badge variant="secondary" className="mt-1 text-xs">
+                    {bundle.includedServices?.length || 0} Services Included
+                  </Badge>
+                )}
+              </div>
+              <div className="text-right">
+                <p className="text-2xl font-bold text-primary">{formatPrice(price)}</p>
+              </div>
+            </div>
+
+            {bundle && bundle.includedServices && bundle.includedServices.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-sm font-medium mb-2">Included Services:</p>
+                <ul className="space-y-1 max-h-32 overflow-y-auto">
+                  {bundle.includedServices.slice(0, 5).map((s) => (
+                    <li key={s.id} className="flex items-start gap-2 text-xs">
+                      <Check className="h-3 w-3 text-primary mt-0.5 shrink-0" />
+                      <span className="text-muted-foreground">{s.name}</span>
+                    </li>
+                  ))}
+                  {bundle.includedServices.length > 5 && (
+                    <li className="text-xs text-muted-foreground">
+                      +{bundle.includedServices.length - 5} more services
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="budget" className="text-card-foreground">Budget (₦)</Label>
-            <Input
-              id="budget"
-              type="number"
-              value={formData.budget}
-              onChange={(e) => setFormData(prev => ({ ...prev, budget: e.target.value }))}
-              className="bg-background border-border"
-              min="1"
-            />
-          </div>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-card-foreground">Campaign Name (Optional)</Label>
+              <Input
+                id="name"
+                placeholder={`${name} Campaign`}
+                value={formData.campaignName}
+                onChange={(e) => setFormData(prev => ({ ...prev, campaignName: e.target.value }))}
+                className="bg-background border-border"
+              />
+            </div>
 
-          <div className="flex gap-2 pt-2">
-            <Button type="submit" className="flex-1" disabled={loading || releases.length === 0}>
-              {loading ? 'Creating...' : 'Create Campaign'}
-            </Button>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
-              Cancel
-            </Button>
-          </div>
-        </form>
+            <div className="space-y-2">
+              <Label htmlFor="release" className="text-card-foreground">Select Release *</Label>
+              <Select value={formData.releaseId} onValueChange={(value) => setFormData(prev => ({ ...prev, releaseId: value }))}>
+                <SelectTrigger className="bg-background border-border">
+                  <SelectValue placeholder="Choose a release to promote" />
+                </SelectTrigger>
+                <SelectContent>
+                  {releases.length === 0 ? (
+                    <SelectItem value="none" disabled>No releases available</SelectItem>
+                  ) : (
+                    releases.map(release => (
+                      <SelectItem key={release.id} value={release.id}>
+                        {release.title}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button type="submit" className="flex-1" disabled={loading || releases.length === 0}>
+                {loading ? 'Creating...' : 'Create Campaign'}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => onOpenChange(false)} className="flex-1">
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </div>
       </DialogContent>
     </Dialog>
   );

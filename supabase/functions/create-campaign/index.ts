@@ -36,13 +36,17 @@ serve(async (req) => {
       type,
       platform,
       budget,
-      startDate,
-      endDate,
-      artistId,
-      releaseId,
+      start_date,
+      end_date,
+      artist_id,
+      release_id,
+      status,
+      promotion_type,
+      bundle_id,
+      category,
     } = await req.json();
 
-    console.log('Creating campaign:', { name, type, platform, userId: user.id });
+    console.log('Creating campaign:', { name, type, platform, promotion_type, userId: user.id });
 
     const { data: campaign, error: campaignError } = await supabase
       .from('campaigns')
@@ -52,11 +56,14 @@ serve(async (req) => {
         type,
         platform,
         budget,
-        start_date: startDate,
-        end_date: endDate,
-        artist_id: artistId,
-        release_id: releaseId,
-        status: 'Draft',
+        start_date,
+        end_date,
+        artist_id,
+        release_id,
+        status: status || 'Draft',
+        promotion_type: promotion_type || 'bundle',
+        bundle_id,
+        category,
         spent: 0,
       })
       .select()
