@@ -10,16 +10,33 @@ import musicianBg from '@/assets/musician-background.jpg';
 
 export const Login = () => {
   const navigate = useNavigate();
-  const { signIn, user } = useAuth();
+  const { signIn, user, userRole } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const getPostLoginRoute = () => {
+    if (!userRole) return '/app/dashboard';
+    
+    switch (userRole.tier) {
+      case 'admin':
+        return '/admin';
+      case 'artist':
+        return '/app/artist-dashboard';
+      case 'label':
+        return '/app/label-dashboard';
+      case 'agency':
+        return '/app/agency-dashboard';
+      default:
+        return '/app/dashboard';
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(getPostLoginRoute());
     }
-  }, [user, navigate]);
+  }, [user, navigate, userRole]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +44,7 @@ export const Login = () => {
     
     try {
       await signIn(email, password);
-      navigate('/dashboard');
+      navigate(getPostLoginRoute());
     } catch (error) {
       console.error('Login error:', error);
     } finally {

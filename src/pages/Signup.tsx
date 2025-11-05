@@ -13,7 +13,7 @@ import { UserType } from '@/types/user';
 export const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { signUp, user } = useAuth();
+  const { signUp, user, userRole } = useAuth();
   const { switchUserType } = useUserType();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -22,11 +22,28 @@ export const Signup = () => {
   
   const preselectedTier = location.state?.tier as UserType | undefined;
 
+  const getPostLoginRoute = () => {
+    if (!userRole) return '/app/dashboard';
+    
+    switch (userRole.tier) {
+      case 'admin':
+        return '/admin';
+      case 'artist':
+        return '/app/artist-dashboard';
+      case 'label':
+        return '/app/label-dashboard';
+      case 'agency':
+        return '/app/agency-dashboard';
+      default:
+        return '/app/dashboard';
+    }
+  };
+
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(getPostLoginRoute());
     }
-  }, [user, navigate]);
+  }, [user, navigate, userRole]);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,13 +64,16 @@ export const Signup = () => {
         // Navigate to appropriate dashboard
         switch(preselectedTier) {
           case 'artist':
-            navigate('/artist-dashboard');
+            navigate('/app/artist-dashboard');
             break;
           case 'label':
-            navigate('/label-dashboard');
+            navigate('/app/label-dashboard');
             break;
           case 'agency':
-            navigate('/agency-dashboard');
+            navigate('/app/agency-dashboard');
+            break;
+          case 'admin':
+            navigate('/admin');
             break;
         }
       } else {
