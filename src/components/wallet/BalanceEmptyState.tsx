@@ -20,13 +20,13 @@ export const BalanceEmptyState = () => {
                 Start earning to see your balance here. Your wallet has been initialized with ₦0.00
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                <Link to="/upload">
+                <Link to="/app/upload">
                   <Button className="w-full sm:w-auto">
                     <Upload className="h-4 w-4 mr-2" />
                     Upload Music
                   </Button>
                 </Link>
-                <Link to="/promotions">
+                <Link to="/app/promotions">
                   <Button variant="outline" className="w-full sm:w-auto">
                     <TrendingUp className="h-4 w-4 mr-2" />
                     Run Campaign

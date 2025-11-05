@@ -19,7 +19,9 @@ export default function GetStarted() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      // Redirect to appropriate dashboard - this should be handled by AppLayout
+      // but we provide a fallback here
+      navigate('/app/dashboard');
     }
   }, [user, navigate]);
 

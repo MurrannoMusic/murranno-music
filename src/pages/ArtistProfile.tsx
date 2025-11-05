@@ -138,7 +138,7 @@ export const ArtistProfile = () => {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate('/settings')}
+              onClick={() => navigate('/app/settings')}
               className="hover:bg-secondary/30"
             >
               <Settings className="w-4 h-4" />

@@ -14,7 +14,7 @@ export const CampaignActions = ({ onExportToPDF }: CampaignActionsProps) => {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <Link to="/promotions" className="w-full">
+          <Link to="/app/promotions" className="w-full">
             <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs">
               Create Campaign
             </button>

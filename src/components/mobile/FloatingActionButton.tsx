@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 
 export const FloatingActionButton = () => {
   return (
-    <Link to="/upload">
+    <Link to="/app/upload">
       <Button 
         size="icon" 
         className="fab gradient-primary music-button shadow-glow hover:shadow-primary"

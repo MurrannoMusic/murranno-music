@@ -20,7 +20,7 @@ export const Dashboard = () => {
 
   useEffect(() => {
     if (!currentUser) {
-      navigate('/user-type-selection', { replace: true });
+      navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, navigate]);
 

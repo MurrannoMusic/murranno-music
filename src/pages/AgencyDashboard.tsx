@@ -18,7 +18,7 @@ export const AgencyDashboard = () => {
 
   useEffect(() => {
     if (!loading && !currentUser) {
-      navigate('/user-type-selection', { replace: true });
+      navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, loading, navigate]);
 

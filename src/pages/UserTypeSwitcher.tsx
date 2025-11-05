@@ -48,13 +48,13 @@ export const UserTypeSwitcher = () => {
   const getRedirectPath = (type: UserType) => {
     switch (type) {
       case 'artist':
-        return '/artist-dashboard';
+        return '/app/artist-dashboard';
       case 'label':
-        return '/label-dashboard';
+        return '/app/label-dashboard';
       case 'agency':
-        return '/agency-dashboard';
+        return '/app/agency-dashboard';
       default:
-        return '/dashboard';
+        return '/app/dashboard';
     }
   };
 

@@ -41,7 +41,7 @@ const ReleaseDetail = () => {
   if (loading) {
     return (
       <PageContainer>
-        <PageHeader title="Loading..." backTo="/releases" />
+        <PageHeader title="Loading..." backTo="/app/releases" />
         <div className="mobile-container space-y-4">
           <Skeleton className="h-64 w-full" />
           <Skeleton className="h-32 w-full" />
@@ -54,10 +54,10 @@ const ReleaseDetail = () => {
   if (!release) {
     return (
       <PageContainer>
-        <PageHeader title="Release Not Found" backTo="/releases" />
+        <PageHeader title="Release Not Found" backTo="/app/releases" />
         <div className="mobile-container py-12 text-center">
           <p className="text-muted-foreground">This release could not be found.</p>
-          <Button onClick={() => navigate('/releases')} className="mt-4">
+          <Button onClick={() => navigate('/app/releases')} className="mt-4">
             Back to Releases
           </Button>
         </div>
@@ -105,7 +105,7 @@ const ReleaseDetail = () => {
 
   return (
     <PageContainer>
-      <PageHeader title="Release Details" backTo="/releases" />
+      <PageHeader title="Release Details" backTo="/app/releases" />
 
       <div className="pb-20">
         {/* Hero Section with Blurred Background */}

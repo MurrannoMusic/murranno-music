@@ -46,13 +46,13 @@ export const UserTypeSelection = () => {
       // Navigate after successful switch
       switch(type) {
         case 'artist':
-          navigate('/artist-dashboard');
+          navigate('/app/artist-dashboard');
           break;
         case 'label':
-          navigate('/label-dashboard');
+          navigate('/app/label-dashboard');
           break;
         case 'agency':
-          navigate('/agency-dashboard');
+          navigate('/app/agency-dashboard');
           break;
       }
     } catch (error) {

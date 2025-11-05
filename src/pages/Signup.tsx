@@ -78,7 +78,7 @@ export const Signup = () => {
         }
       } else {
         // No preselected tier, go to user type selection
-        navigate('/user-type-selection');
+        navigate('/app/user-type-selection');
       }
     } catch (error) {
       console.error('Signup error:', error);

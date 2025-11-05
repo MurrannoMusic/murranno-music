@@ -22,12 +22,12 @@ export default function SubscriptionPlans() {
   const getDashboardPath = () => {
     switch (currentTier) {
       case 'label':
-        return '/label-dashboard';
+        return '/app/label-dashboard';
       case 'agency':
-        return '/agency-dashboard';
+        return '/app/agency-dashboard';
       case 'artist':
       default:
-        return '/artist-dashboard';
+        return '/app/artist-dashboard';
     }
   };
   const isTrialEnded = subscription?.status === 'trial' && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
@@ -138,7 +138,7 @@ export default function SubscriptionPlans() {
           </Button>
           <Button
             variant="outline"
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/app/settings')}
           >
             Settings
           </Button>

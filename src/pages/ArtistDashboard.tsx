@@ -27,7 +27,7 @@ export const ArtistDashboard = () => {
 
   useEffect(() => {
     if (!loading && !currentUser) {
-      navigate('/user-type-selection', { replace: true });
+      navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, loading, navigate]);
 
