@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 import { AdminSidebar } from './AdminSidebar';
+import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 
 interface AdminLayoutProps {
   children: ReactNode;
@@ -16,10 +17,11 @@ export const AdminLayout = ({ children }: AdminLayoutProps) => {
             <SidebarTrigger className="mr-4" />
             <div className="flex items-center justify-between flex-1">
               <h1 className="text-lg font-semibold text-foreground">Admin Control Panel</h1>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <span className="px-3 py-1.5 bg-primary/15 text-primary text-xs font-semibold rounded-full">
                   Super Admin
                 </span>
+                <AvatarDropdown />
               </div>
             </div>
           </header>
