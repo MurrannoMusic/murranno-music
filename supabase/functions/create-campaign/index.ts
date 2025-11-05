@@ -44,6 +44,7 @@ serve(async (req) => {
       promotion_type,
       bundle_id,
       category,
+      service_ids,
     } = await req.json();
 
     console.log('Creating campaign:', { name, type, platform, promotion_type, userId: user.id });

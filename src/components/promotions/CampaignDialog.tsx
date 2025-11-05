@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useReleases } from '@/hooks/useReleases';
+import { useCart } from '@/hooks/useCart';
 import { PromotionService, PromotionBundle } from '@/types/promotion';
 import { Check } from 'lucide-react';
 
@@ -16,16 +17,20 @@ interface CampaignDialogProps {
   onOpenChange: (open: boolean) => void;
   service?: PromotionService;
   bundle?: PromotionBundle;
+  services?: PromotionService[];
   onSuccess?: () => void;
 }
 
-export const CampaignDialog = ({ open, onOpenChange, service, bundle, onSuccess }: CampaignDialogProps) => {
+export const CampaignDialog = ({ open, onOpenChange, service, bundle, services, onSuccess }: CampaignDialogProps) => {
   const { toast } = useToast();
   const { releases } = useReleases();
+  const { clearCart } = useCart();
   const [loading, setLoading] = useState(false);
   
-  const price = service?.price || bundle?.price || 0;
-  const name = service?.name || bundle?.name || '';
+  const isCartMode = services && services.length > 0;
+  const totalCartPrice = services?.reduce((sum, s) => sum + s.price, 0) || 0;
+  const price = isCartMode ? totalCartPrice : (service?.price || bundle?.price || 0);
+  const name = isCartMode ? `${services.length} Services` : (service?.name || bundle?.name || '');
   
   const [formData, setFormData] = useState({
     campaignName: '',
@@ -72,19 +77,30 @@ export const CampaignDialog = ({ open, onOpenChange, service, bundle, onSuccess 
 
       if (error) throw error;
 
-      // If individual service, create campaign_service entry
-      if (service && data?.campaign?.id) {
-        const { error: serviceError } = await supabase
-          .from('campaign_services')
-          .insert({
-            campaign_id: data.campaign.id,
-            service_id: service.id,
-            status: 'pending'
-          });
+      // Link services to campaign
+      if (data?.campaign?.id) {
+        const servicesToLink = services || (service ? [service] : []);
+        
+        if (servicesToLink.length > 0) {
+          const { error: serviceError } = await supabase
+            .from('campaign_services')
+            .insert(
+              servicesToLink.map(s => ({
+                campaign_id: data.campaign.id,
+                service_id: s.id,
+                status: 'pending'
+              }))
+            );
 
-        if (serviceError) {
-          console.error('Error linking service:', serviceError);
+          if (serviceError) {
+            console.error('Error linking services:', serviceError);
+          }
         }
+      }
+
+      // Clear cart if creating from cart
+      if (isCartMode) {
+        clearCart();
       }
 
       toast({
@@ -130,6 +146,11 @@ export const CampaignDialog = ({ open, onOpenChange, service, bundle, onSuccess 
                     {bundle.includedServices?.length || 0} Services Included
                   </Badge>
                 )}
+                {isCartMode && (
+                  <Badge variant="secondary" className="mt-1 text-xs">
+                    {services.length} Services Selected
+                  </Badge>
+                )}
               </div>
               <div className="text-right">
                 <p className="text-2xl font-bold text-primary">{formatPrice(price)}</p>
@@ -151,6 +172,20 @@ export const CampaignDialog = ({ open, onOpenChange, service, bundle, onSuccess 
                       +{bundle.includedServices.length - 5} more services
                     </li>
                   )}
+                </ul>
+              </div>
+            )}
+
+            {isCartMode && services && (
+              <div className="mt-3 pt-3 border-t border-border">
+                <p className="text-sm font-medium mb-2">Selected Services:</p>
+                <ul className="space-y-1 max-h-32 overflow-y-auto">
+                  {services.map((s) => (
+                    <li key={s.id} className="flex items-start gap-2 text-xs">
+                      <Check className="h-3 w-3 text-primary mt-0.5 shrink-0" />
+                      <span className="text-muted-foreground">{s.name}</span>
+                    </li>
+                  ))}
                 </ul>
               </div>
             )}

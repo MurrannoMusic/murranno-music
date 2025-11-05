@@ -10,17 +10,24 @@ import { ServiceCard } from '@/components/promotions/ServiceCard';
 import { BundleCard } from '@/components/promotions/BundleCard';
 import { CategoryFilter } from '@/components/promotions/CategoryFilter';
 import { CampaignDialog } from '@/components/promotions/CampaignDialog';
+import { CartButton } from '@/components/promotions/CartButton';
+import { CartDrawer } from '@/components/promotions/CartDrawer';
 import { usePromotionServices } from '@/hooks/usePromotionServices';
 import { usePromotionBundles } from '@/hooks/usePromotionBundles';
+import { CartProvider } from '@/contexts/CartContext';
+import { useCart } from '@/hooks/useCart';
 import { PromotionService, PromotionBundle, PromotionCategory } from '@/types/promotion';
 
-export const Promotions = () => {
+const PromotionsContent = () => {
   const [selectedCategory, setSelectedCategory] = useState<PromotionCategory | 'all'>('all');
   const [selectedService, setSelectedService] = useState<PromotionService | null>(null);
   const [selectedBundle, setSelectedBundle] = useState<PromotionBundle | null>(null);
+  const [cartOpen, setCartOpen] = useState(false);
+  const [cartCampaignDialogOpen, setCartCampaignDialogOpen] = useState(false);
 
   const { services, loading: servicesLoading, categories } = usePromotionServices();
   const { bundles, loading: bundlesLoading } = usePromotionBundles();
+  const { items: cartItems } = useCart();
 
   const filteredServices = selectedCategory === 'all' 
     ? services 
@@ -42,8 +49,20 @@ export const Promotions = () => {
     setSelectedBundle(bundle);
   };
 
+  const handleCartCreateCampaign = () => {
+    setCartCampaignDialogOpen(true);
+  };
+
   return (
-    <PageContainer>
+    <>
+      <CartButton onClick={() => setCartOpen(true)} />
+      <CartDrawer 
+        open={cartOpen} 
+        onOpenChange={setCartOpen}
+        onCreateCampaign={handleCartCreateCampaign}
+      />
+      
+      <PageContainer>
       {/* Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
@@ -168,6 +187,26 @@ export const Promotions = () => {
           onSuccess={() => setSelectedBundle(null)}
         />
       )}
+
+      {cartCampaignDialogOpen && (
+        <CampaignDialog
+          open={cartCampaignDialogOpen}
+          onOpenChange={setCartCampaignDialogOpen}
+          services={cartItems.map(item => item.service)}
+          onSuccess={() => {
+            setCartCampaignDialogOpen(false);
+          }}
+        />
+      )}
     </PageContainer>
+    </>
+  );
+};
+
+export const Promotions = () => {
+  return (
+    <CartProvider>
+      <PromotionsContent />
+    </CartProvider>
   );
 };

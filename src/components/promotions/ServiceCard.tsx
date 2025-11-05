@@ -2,7 +2,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PromotionService } from '@/types/promotion';
-import { Check } from 'lucide-react';
+import { Check, ShoppingCart, Zap } from 'lucide-react';
+import { useCart } from '@/hooks/useCart';
 
 interface ServiceCardProps {
   service: PromotionService;
@@ -10,6 +11,9 @@ interface ServiceCardProps {
 }
 
 export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
+  const { addToCart, removeFromCart, isInCart } = useCart();
+  const inCart = isInCart(service.id);
+
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
@@ -54,9 +58,33 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
         )}
       </CardContent>
 
-      <CardFooter>
-        <Button onClick={() => onSelect(service)} className="w-full">
-          Select Service
+      <CardFooter className="flex gap-2">
+        {inCart ? (
+          <Button 
+            onClick={() => removeFromCart(service.id)} 
+            variant="outline"
+            className="flex-1"
+          >
+            <Check className="h-4 w-4 mr-2" />
+            In Cart
+          </Button>
+        ) : (
+          <Button 
+            onClick={() => addToCart(service)} 
+            variant="secondary"
+            className="flex-1"
+          >
+            <ShoppingCart className="h-4 w-4 mr-2" />
+            Add to Cart
+          </Button>
+        )}
+        <Button 
+          onClick={() => onSelect(service)} 
+          variant="default"
+          className="flex-1"
+        >
+          <Zap className="h-4 w-4 mr-2" />
+          Buy Now
         </Button>
       </CardFooter>
     </Card>
