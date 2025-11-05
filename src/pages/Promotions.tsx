@@ -53,6 +53,11 @@ const PromotionsContent = () => {
     setCartCampaignDialogOpen(true);
   };
 
+  const handleSelectBundleFromCart = (bundle: PromotionBundle) => {
+    setCartOpen(false);
+    setSelectedBundle(bundle);
+  };
+
   return (
     <>
       <CartButton onClick={() => setCartOpen(true)} />
@@ -60,6 +65,7 @@ const PromotionsContent = () => {
         open={cartOpen} 
         onOpenChange={setCartOpen}
         onCreateCampaign={handleCartCreateCampaign}
+        onSelectBundle={handleSelectBundleFromCart}
       />
       
       <PageContainer>

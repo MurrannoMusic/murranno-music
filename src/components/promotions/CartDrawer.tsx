@@ -9,21 +9,33 @@ import {
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/hooks/useCart';
+import { usePromotionBundles } from '@/hooks/usePromotionBundles';
 import { CartItem } from './CartItem';
 import { PriceSummary } from './PriceSummary';
+import { BundleRecommendations } from './BundleRecommendations';
+import { PromotionBundle } from '@/types/promotion';
 
 interface CartDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onCreateCampaign: () => void;
+  onSelectBundle: (bundle: PromotionBundle) => void;
 }
 
-export const CartDrawer = ({ open, onOpenChange, onCreateCampaign }: CartDrawerProps) => {
+export const CartDrawer = ({ open, onOpenChange, onCreateCampaign, onSelectBundle }: CartDrawerProps) => {
   const { items, itemCount, totalPrice, removeFromCart, clearCart } = useCart();
+  const { bundles } = usePromotionBundles();
 
   const handleCreateCampaign = () => {
     onCreateCampaign();
+    onOpenChange(false);
+  };
+
+  const handleSelectBundle = (bundle: PromotionBundle) => {
+    clearCart();
+    onSelectBundle(bundle);
     onOpenChange(false);
   };
 
@@ -76,6 +88,15 @@ export const CartDrawer = ({ open, onOpenChange, onCreateCampaign }: CartDrawerP
                   />
                 ))}
               </div>
+
+              <Separator className="my-4" />
+
+              <BundleRecommendations
+                cartServices={items.map(item => item.service)}
+                cartTotal={totalPrice}
+                bundles={bundles}
+                onSelectBundle={handleSelectBundle}
+              />
             </ScrollArea>
 
             <SheetFooter className="flex-col space-y-4">
