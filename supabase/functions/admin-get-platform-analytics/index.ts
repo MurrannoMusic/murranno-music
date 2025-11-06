@@ -28,13 +28,25 @@ serve(async (req) => {
     }
 
     // Check admin role
-    const { data: isAdmin } = await supabase.rpc('has_admin_role', { _user_id: user.id });
+    const { data: isAdmin, error: roleError } = await supabase.rpc('has_admin_role', { _user_id: user.id });
+    
+    if (roleError) {
+      console.error('Error checking admin role:', roleError);
+      return new Response(JSON.stringify({ success: false, error: 'Failed to verify admin access', details: roleError.message }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+    
     if (!isAdmin) {
+      console.log('User is not admin:', user.id);
       return new Response(JSON.stringify({ success: false, error: 'Admin access required' }), {
         status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
+    
+    console.log('Admin access granted for user:', user.id);
 
     // Get total users count
     const { count: totalUsers } = await supabase
