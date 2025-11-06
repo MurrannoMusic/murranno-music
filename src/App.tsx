@@ -10,6 +10,7 @@ import { NetworkStatus } from "./components/app/NetworkStatus";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
+import { DashboardRedirect } from "./components/auth/DashboardRedirect";
 import { AppLayout } from "./layouts/AppLayout";
 import GetStarted from "./pages/GetStarted";
 import { Splash } from "./pages/Splash";
@@ -71,6 +72,7 @@ const App = () => (
               <Route path="/signup" element={<MobileOnlyRoute><Signup /></MobileOnlyRoute>} />
               
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />
