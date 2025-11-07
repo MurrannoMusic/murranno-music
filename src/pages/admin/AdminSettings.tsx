@@ -18,7 +18,8 @@ import {
   CreditCard, 
   Bell,
   Globe,
-  Save
+  Save,
+  Database
 } from 'lucide-react';
 
 interface PlatformSettings {
@@ -105,8 +106,29 @@ export default function AdminSettings() {
     },
   });
 
+  const seedServices = useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabase.functions.invoke('seed-promotion-services');
+      if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Failed to seed services');
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success(data.message || 'Promotional services seeded successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.message || 'Failed to seed promotional services');
+    },
+  });
+
   const handleSave = () => {
     saveSettings.mutate(settings);
+  };
+
+  const handleSeedServices = () => {
+    if (confirm('This will seed promotional services and bundles. Continue?')) {
+      seedServices.mutate();
+    }
   };
 
   const updateSetting = <K extends keyof PlatformSettings>(
@@ -157,6 +179,10 @@ export default function AdminSettings() {
             <TabsTrigger value="notifications" className="gap-2">
               <Bell className="h-4 w-4" />
               Notifications
+            </TabsTrigger>
+            <TabsTrigger value="data" className="gap-2">
+              <Database className="h-4 w-4" />
+              Data Management
             </TabsTrigger>
           </TabsList>
 
@@ -395,6 +421,39 @@ export default function AdminSettings() {
                     checked={settings.smsNotifications}
                     onCheckedChange={(checked) => updateSetting('smsNotifications', checked)}
                   />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="data" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Database className="h-5 w-5" />
+                  Promotional Services Data
+                </CardTitle>
+                <CardDescription>
+                  Manage promotional services and bundle data
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="rounded-lg border p-4 space-y-4">
+                  <div>
+                    <h4 className="font-medium mb-2">Seed Promotional Services</h4>
+                    <p className="text-sm text-muted-foreground mb-4">
+                      This will populate the database with 27 promotional services across 7 categories and 4 promotional bundles (Starter, Growth, Momentum, and Supernova Junkets).
+                    </p>
+                    <Button
+                      onClick={handleSeedServices}
+                      disabled={seedServices.isPending}
+                      variant="outline"
+                      className="gap-2"
+                    >
+                      <Database className="h-4 w-4" />
+                      {seedServices.isPending ? 'Seeding...' : 'Seed Services & Bundles'}
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
