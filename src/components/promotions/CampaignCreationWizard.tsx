@@ -221,20 +221,21 @@ export const CampaignCreationWizard = ({
         if (linkError) throw linkError;
       }
 
-      toast.success('Campaign created successfully! Proceed to payment.');
-      onOpenChange(false);
-      onSuccess?.();
+      toast.success('Campaign created! Redirecting to payment...');
 
-      // Reset form
-      setFormData({
-        campaignName: '',
-        releaseId: '',
-        assets: [],
-        targetAudience: {},
-        campaignBrief: '',
-        socialLinks: {},
-      });
-      setCurrentStep(1);
+      // Initialize payment
+      const { data: paymentData, error: paymentError } = await supabase.functions.invoke(
+        'paystack-initialize-campaign-payment',
+        {
+          body: { campaign_id: campaignId },
+        }
+      );
+
+      if (paymentError) throw paymentError;
+
+      // Redirect to Paystack payment page
+      window.location.href = paymentData.authorization_url;
+
     } catch (error: any) {
       console.error('Create campaign error:', error);
       toast.error(error.message || 'Failed to create campaign');

@@ -49,6 +49,7 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
 import AudioDemo from "./pages/AudioDemo";
+import CampaignPaymentSuccess from "./pages/CampaignPaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,7 @@ const App = () => (
                 <Route path="news/:id" element={<NewsDetail />} />
                 <Route path="subscription/plans" element={<SubscriptionPlans />} />
                 <Route path="audio-demo" element={<AudioDemo />} />
+                <Route path="campaign-payment-success" element={<CampaignPaymentSuccess />} />
               </Route>
 
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
