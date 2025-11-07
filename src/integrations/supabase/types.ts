@@ -246,58 +246,85 @@ export type Database = {
       }
       campaigns: {
         Row: {
+          admin_notes: string | null
           artist_id: string | null
           budget: number
           bundle_id: string | null
+          campaign_assets: Json | null
+          campaign_brief: string | null
           category: string | null
           created_at: string
           end_date: string | null
           id: string
           name: string
+          payment_amount: number | null
+          payment_reference: string | null
+          payment_status: Database["public"]["Enums"]["payment_status"] | null
           platform: string
           promotion_type: string | null
+          rejection_reason: string | null
           release_id: string | null
+          social_links: Json | null
           spent: number
           start_date: string
           status: string
+          target_audience: Json | null
           type: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          admin_notes?: string | null
           artist_id?: string | null
           budget: number
           bundle_id?: string | null
+          campaign_assets?: Json | null
+          campaign_brief?: string | null
           category?: string | null
           created_at?: string
           end_date?: string | null
           id?: string
           name: string
+          payment_amount?: number | null
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
           platform: string
           promotion_type?: string | null
+          rejection_reason?: string | null
           release_id?: string | null
+          social_links?: Json | null
           spent?: number
           start_date: string
           status?: string
+          target_audience?: Json | null
           type: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          admin_notes?: string | null
           artist_id?: string | null
           budget?: number
           bundle_id?: string | null
+          campaign_assets?: Json | null
+          campaign_brief?: string | null
           category?: string | null
           created_at?: string
           end_date?: string | null
           id?: string
           name?: string
+          payment_amount?: number | null
+          payment_reference?: string | null
+          payment_status?: Database["public"]["Enums"]["payment_status"] | null
           platform?: string
           promotion_type?: string | null
+          rejection_reason?: string | null
           release_id?: string | null
+          social_links?: Json | null
           spent?: number
           start_date?: string
           status?: string
+          target_audience?: Json | null
           type?: string
           updated_at?: string
           user_id?: string
@@ -1015,6 +1042,7 @@ export type Database = {
       has_admin_role: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
+      payment_status: "pending" | "paid" | "failed" | "refunded"
       user_tier: "artist" | "label" | "agency" | "admin"
     }
     CompositeTypes: {
@@ -1143,6 +1171,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      payment_status: ["pending", "paid", "failed", "refunded"],
       user_tier: ["artist", "label", "agency", "admin"],
     },
   },

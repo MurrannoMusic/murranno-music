@@ -9,7 +9,7 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { ServiceCard } from '@/components/promotions/ServiceCard';
 import { BundleCard } from '@/components/promotions/BundleCard';
 import { CategoryFilter } from '@/components/promotions/CategoryFilter';
-import { CampaignDialog } from '@/components/promotions/CampaignDialog';
+import { CampaignCreationWizard } from '@/components/promotions/CampaignCreationWizard';
 import { CartButton } from '@/components/promotions/CartButton';
 import { CartDrawer } from '@/components/promotions/CartDrawer';
 import { usePromotionServices } from '@/hooks/usePromotionServices';
@@ -175,9 +175,9 @@ const PromotionsContent = () => {
         </Tabs>
       </div>
 
-      {/* Campaign Creation Dialogs */}
+      {/* Campaign Creation Wizard */}
       {selectedService && (
-        <CampaignDialog
+        <CampaignCreationWizard
           open={!!selectedService}
           onOpenChange={(open) => !open && setSelectedService(null)}
           service={selectedService}
@@ -186,7 +186,7 @@ const PromotionsContent = () => {
       )}
 
       {selectedBundle && (
-        <CampaignDialog
+        <CampaignCreationWizard
           open={!!selectedBundle}
           onOpenChange={(open) => !open && setSelectedBundle(null)}
           bundle={selectedBundle}
@@ -195,7 +195,7 @@ const PromotionsContent = () => {
       )}
 
       {cartCampaignDialogOpen && (
-        <CampaignDialog
+        <CampaignCreationWizard
           open={cartCampaignDialogOpen}
           onOpenChange={setCartCampaignDialogOpen}
           services={cartItems.map(item => item.service)}
