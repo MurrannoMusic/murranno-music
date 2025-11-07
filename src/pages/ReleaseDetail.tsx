@@ -86,7 +86,7 @@ const ReleaseDetail = () => {
   };
 
   const handleFilterInAnalytics = () => {
-    navigate(`/analytics?release=${release.id}`);
+    navigate(`/app/analytics?release=${release.id}`);
   };
 
 

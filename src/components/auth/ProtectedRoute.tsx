@@ -33,7 +33,7 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
           : null;
         
         if (!periodEnd || periodEnd < now) {
-          navigate('/subscription/plans');
+          navigate('/app/subscription/plans');
           return;
         }
       }
@@ -41,16 +41,16 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
       if (subscription?.status === 'trial' && subscription.trial_ends_at) {
         const trialEnd = new Date(subscription.trial_ends_at);
         if (trialEnd < new Date()) {
-          navigate('/subscription/plans');
+          navigate('/app/subscription/plans');
           return;
         }
       }
 
       if (requiredTier && userRole?.tier !== requiredTier) {
         const dashboardMap = {
-          artist: '/artist-dashboard',
-          label: '/label-dashboard',
-          agency: '/agency-dashboard',
+          artist: '/app/artist-dashboard',
+          label: '/app/label-dashboard',
+          agency: '/app/agency-dashboard',
         };
         navigate(dashboardMap[userRole?.tier || 'artist']);
       }

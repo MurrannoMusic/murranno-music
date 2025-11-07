@@ -21,7 +21,7 @@ const Releases = () => {
       <PageHeader 
         title="Music" 
         subtitle="Your Releases"
-        backTo="/artist-dashboard"
+        backTo="/app/artist-dashboard"
         actions={<AvatarDropdown />}
       />
 
@@ -97,7 +97,7 @@ const Releases = () => {
             {releases.map((release) => (
               <Link
                 key={release.id}
-                to={`/releases/${release.id}`}
+                to={`/app/releases/${release.id}`}
                 className="group"
               >
                 <div className="bg-card border border-border rounded-[20px] shadow-soft overflow-hidden transition-smooth hover:shadow-primary hover:scale-[1.02]">

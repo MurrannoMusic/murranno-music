@@ -220,15 +220,15 @@ export const Dashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              {(isArtist || isLabel) && (
-                <Link to="/upload">
+            {(isArtist || isLabel) && (
+                <Link to="/app/upload">
                   <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                     Upload Track
                   </button>
                 </Link>
               )}
               
-              <Link to="/promotions">
+              <Link to="/app/promotions">
                 <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                   {isAgency ? 'Create Campaign' : 'Start Campaign'}
                 </button>
@@ -236,13 +236,13 @@ export const Dashboard = () => {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              <Link to={isLabel ? "/label-analytics" : isAgency ? "/agency-dashboard" : "/analytics"}>
+              <Link to={isLabel ? "/app/label-analytics" : isAgency ? "/app/agency-dashboard" : "/app/analytics"}>
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   View Analytics
                 </button>
               </Link>
               
-              <Link to={isLabel ? "/payout-manager" : "/earnings"}>
+              <Link to={isLabel ? "/app/payout-manager" : "/app/earnings"}>
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   {isLabel ? 'Manage Payouts' : isAgency ? 'Campaign Results' : 'Check Earnings'}
                 </button>
@@ -250,14 +250,14 @@ export const Dashboard = () => {
             </div>
 
             {isLabel && (
-              <Link to="/artist-management">
+              <Link to="/app/artist-management">
                 <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                   Manage Artists
                 </button>
               </Link>
             )}
             {isAgency && (
-              <Link to="/campaign-manager">
+              <Link to="/app/campaign-manager">
                 <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                   Track Campaigns
                 </button>

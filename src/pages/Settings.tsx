@@ -35,7 +35,7 @@ export const Settings = () => {
     <PageContainer>
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           
@@ -149,7 +149,7 @@ export const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <Link to="/profile">
+            <Link to="/app/profile">
               <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
                 <User className="h-5 w-5 text-primary" />
                 <span className="text-card-foreground font-medium">Edit Profile</span>
@@ -177,7 +177,7 @@ export const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Link to="/subscription/plans">
+            <Link to="/app/subscription/plans">
               <button className="w-full flex items-center justify-between p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all">
                 <span className="text-card-foreground font-medium">Manage Subscription</span>
                 <Badge variant="secondary">Active</Badge>

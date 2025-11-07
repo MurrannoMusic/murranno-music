@@ -163,13 +163,13 @@ export const LabelDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <Link to="/upload">
+              <Link to="/app/upload">
                 <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                   Upload Track
                 </button>
               </Link>
               
-              <Link to="/promotions">
+              <Link to="/app/promotions">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Start Campaign
                 </button>
@@ -177,20 +177,20 @@ export const LabelDashboard = () => {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              <Link to="/label-analytics">
+              <Link to="/app/label-analytics">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   View Analytics
                 </button>
               </Link>
               
-              <Link to="/payout-manager">
+              <Link to="/app/payout-manager">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Manage Payouts
                 </button>
               </Link>
             </div>
 
-            <Link to="/artist-management">
+            <Link to="/app/artist-management">
               <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                 Manage Artists
               </button>

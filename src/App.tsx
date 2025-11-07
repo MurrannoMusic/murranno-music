@@ -105,6 +105,26 @@ const App = () => (
               <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
               <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
+              
+              {/* Legacy route redirects */}
+              <Route path="/artist-dashboard" element={<Navigate to="/app/artist-dashboard" replace />} />
+              <Route path="/label-dashboard" element={<Navigate to="/app/label-dashboard" replace />} />
+              <Route path="/agency-dashboard" element={<Navigate to="/app/agency-dashboard" replace />} />
+              <Route path="/upload" element={<Navigate to="/app/upload" replace />} />
+              <Route path="/promotions" element={<Navigate to="/app/promotions" replace />} />
+              <Route path="/earnings" element={<Navigate to="/app/earnings" replace />} />
+              <Route path="/analytics" element={<Navigate to="/app/analytics" replace />} />
+              <Route path="/label-analytics" element={<Navigate to="/app/label-analytics" replace />} />
+              <Route path="/artist-management" element={<Navigate to="/app/artist-management" replace />} />
+              <Route path="/campaign-manager" element={<Navigate to="/app/campaign-manager" replace />} />
+              <Route path="/payout-manager" element={<Navigate to="/app/payout-manager" replace />} />
+              <Route path="/results" element={<Navigate to="/app/results" replace />} />
+              <Route path="/profile" element={<Navigate to="/app/profile" replace />} />
+              <Route path="/settings" element={<Navigate to="/app/settings" replace />} />
+              <Route path="/releases" element={<Navigate to="/app/releases" replace />} />
+              <Route path="/releases/:id" element={<Navigate to="/app/releases/:id" replace />} />
+              <Route path="/subscription/plans" element={<Navigate to="/app/subscription/plans" replace />} />
+              
               <Route path="*" element={<NotFound />} />
               </Routes>
             </PushNotificationProvider>

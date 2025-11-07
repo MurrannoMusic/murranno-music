@@ -103,7 +103,7 @@ export const Profile = () => {
       <PageContainer>
         <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
           <div className="flex items-center justify-between">
-            <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+            <Link to="/app" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
               <ArrowLeft className="h-5 w-5" />
             </Link>
             <div className="flex-1 text-center">
@@ -116,7 +116,7 @@ export const Profile = () => {
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-6 text-center space-y-2">
               <p className="text-muted-foreground">No profile loaded.</p>
-              <Link to="/user-type-selection" className="text-primary hover:underline">Select user type</Link>
+              <Link to="/app/user-type-selection" className="text-primary hover:underline">Select user type</Link>
             </CardContent>
           </Card>
         </div>
@@ -128,7 +128,7 @@ export const Profile = () => {
     <PageContainer>
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          <Link to="/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
+          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
             <ArrowLeft className="h-5 w-5" />
           </Link>
           

@@ -144,13 +144,13 @@ export const AgencyDashboard = () => {
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
-              <Link to="/promotions">
+              <Link to="/app/promotions">
                 <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98]">
                   Create Campaign
                 </button>
               </Link>
               
-              <Link to="/campaign-manager">
+              <Link to="/app/campaign-manager">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Manage Campaigns
                 </button>
@@ -158,7 +158,7 @@ export const AgencyDashboard = () => {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              <Link to="/results">
+              <Link to="/app/results">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   View Results
                 </button>
