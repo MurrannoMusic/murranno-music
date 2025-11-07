@@ -44,3 +44,9 @@ verify_jwt = true
 
 [functions.paystack-campaign-payment-webhook]
 verify_jwt = false
+
+[functions.admin-get-all-campaigns]
+verify_jwt = true
+
+[functions.admin-update-campaign-status]
+verify_jwt = true

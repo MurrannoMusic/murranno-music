@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Music2 } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -18,6 +18,7 @@ const menuItems = [
   { title: 'Dashboard', url: '/admin', icon: LayoutDashboard },
   { title: 'Users', url: '/admin/users', icon: Users },
   { title: 'Content', url: '/admin/content', icon: FileCheck },
+  { title: 'Campaigns', url: '/admin/campaigns', icon: Megaphone },
   { title: 'Financials', url: '/admin/financials', icon: DollarSign },
   { title: 'Analytics', url: '/admin/analytics', icon: BarChart3 },
   { title: 'Audit Logs', url: '/admin/audit-logs', icon: FileText },
