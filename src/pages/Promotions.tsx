@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ArrowLeft, Megaphone } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { PageContainer } from '@/components/layout/PageContainer';
@@ -19,6 +20,7 @@ import { useCart } from '@/hooks/useCart';
 import { PromotionService, PromotionBundle, PromotionCategory } from '@/types/promotion';
 
 const PromotionsContent = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<PromotionCategory | 'all'>('all');
   const [selectedService, setSelectedService] = useState<PromotionService | null>(null);
   const [selectedBundle, setSelectedBundle] = useState<PromotionBundle | null>(null);
@@ -89,12 +91,19 @@ const PromotionsContent = () => {
       <div className="mobile-container space-y-6 mt-4">
         {/* Hero Section */}
         <Card className="gradient-primary text-white">
-          <CardContent className="p-6 text-center">
+          <CardContent className="p-6 text-center space-y-4">
             <Megaphone className="h-12 w-12 mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-2">Full-Service Promotional Catalog</h1>
             <p className="text-white/90">
               Premium music promotion services and strategic bundles to amplify your reach
             </p>
+            <Button
+              variant="secondary"
+              onClick={() => navigate('/app/campaign-tracking')}
+              className="mt-4"
+            >
+              View My Campaigns
+            </Button>
           </CardContent>
         </Card>
 

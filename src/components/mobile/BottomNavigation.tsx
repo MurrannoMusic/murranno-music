@@ -45,7 +45,7 @@ export const BottomNavigation = () => {
     if (isAgency || inferredAgency) {
       return [
         { icon: Home, label: 'Home', path: '/app/agency-dashboard' },
-        { icon: Megaphone, label: 'Campaigns', path: '/app/campaign-manager' },
+        { icon: Megaphone, label: 'Campaigns', path: '/app/campaign-tracking' },
         { icon: Upload, label: 'Create', path: '/app/promotions' },
         { icon: BarChart3, label: 'Results', path: '/app/results' },
       ];

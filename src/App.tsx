@@ -50,6 +50,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
 import AudioDemo from "./pages/AudioDemo";
 import CampaignPaymentSuccess from "./pages/CampaignPaymentSuccess";
+import CampaignTracking from "./pages/CampaignTracking";
 
 const queryClient = new QueryClient();
 
@@ -98,6 +99,7 @@ const App = () => (
                 <Route path="subscription/plans" element={<SubscriptionPlans />} />
                 <Route path="audio-demo" element={<AudioDemo />} />
                 <Route path="campaign-payment-success" element={<CampaignPaymentSuccess />} />
+                <Route path="campaign-tracking" element={<CampaignTracking />} />
               </Route>
 
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
