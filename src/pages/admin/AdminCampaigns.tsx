@@ -8,10 +8,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { toast } from 'sonner';
-import { Search, Eye } from 'lucide-react';
+import { Search, Eye, TrendingUp } from 'lucide-react';
 import { format } from 'date-fns';
 import { CampaignReviewDialog } from '@/components/admin/CampaignReviewDialog';
+import { BulkActionsBar } from '@/components/admin/BulkActionsBar';
+import { CampaignPerformanceChart } from '@/components/admin/CampaignPerformanceChart';
 import { Campaign } from '@/types/campaign';
 
 export default function AdminCampaigns() {
@@ -20,6 +24,9 @@ export default function AdminCampaigns() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedCampaign, setSelectedCampaign] = useState<Campaign | null>(null);
   const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedCampaignIds, setSelectedCampaignIds] = useState<string[]>([]);
+  const [performanceDialogOpen, setPerformanceDialogOpen] = useState(false);
+  const [performanceData, setPerformanceData] = useState<any[]>([]);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -102,6 +109,48 @@ export default function AdminCampaigns() {
     });
   };
 
+  const toggleCampaignSelection = (campaignId: string) => {
+    setSelectedCampaignIds(prev =>
+      prev.includes(campaignId)
+        ? prev.filter(id => id !== campaignId)
+        : [...prev, campaignId]
+    );
+  };
+
+  const handleBulkAction = async (action: string, rejectionReason?: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-bulk-update-campaigns', {
+        body: { campaignIds: selectedCampaignIds, action, rejectionReason }
+      });
+
+      if (error) throw error;
+
+      toast.success(`Successfully ${action}ed ${data.updated || data.deleted} campaign(s)`);
+      setSelectedCampaignIds([]);
+      queryClient.invalidateQueries({ queryKey: ['admin-campaigns'] });
+    } catch (error: any) {
+      console.error('Bulk action error:', error);
+      toast.error(error.message || 'Failed to perform bulk action');
+    }
+  };
+
+  const handleShowPerformance = async (campaign: Campaign) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-campaign-performance', {
+        body: { campaignId: campaign.id }
+      });
+
+      if (error) throw error;
+
+      setPerformanceData(data.data || []);
+      setSelectedCampaign(campaign);
+      setPerformanceDialogOpen(true);
+    } catch (error: any) {
+      console.error('Performance fetch error:', error);
+      toast.error('Failed to load performance data');
+    }
+  };
+
   const getStatusBadgeVariant = (status: string) => {
     const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline'> = {
       'Draft': 'outline',
@@ -166,6 +215,18 @@ export default function AdminCampaigns() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={selectedCampaignIds.length === data?.campaigns?.length && data?.campaigns?.length > 0}
+                      onCheckedChange={(checked) => {
+                        if (checked) {
+                          setSelectedCampaignIds(data?.campaigns?.map((c: Campaign) => c.id) || []);
+                        } else {
+                          setSelectedCampaignIds([]);
+                        }
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Artist</TableHead>
                   <TableHead>Type</TableHead>
@@ -191,6 +252,12 @@ export default function AdminCampaigns() {
                 ) : (
                   data?.campaigns?.map((campaign: Campaign) => (
                     <TableRow key={campaign.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedCampaignIds.includes(campaign.id)}
+                          onCheckedChange={() => toggleCampaignSelection(campaign.id)}
+                        />
+                      </TableCell>
                       <TableCell className="font-medium">{campaign.name}</TableCell>
                       <TableCell>{campaign.artist}</TableCell>
                       <TableCell>
@@ -206,14 +273,24 @@ export default function AdminCampaigns() {
                         {format(new Date(campaign.startDate), 'MMM d, yyyy')}
                       </TableCell>
                       <TableCell>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleReviewCampaign(campaign)}
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          Review
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleReviewCampaign(campaign)}
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Review
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleShowPerformance(campaign)}
+                          >
+                            <TrendingUp className="h-4 w-4 mr-2" />
+                            Performance
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))

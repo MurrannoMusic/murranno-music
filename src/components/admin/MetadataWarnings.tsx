@@ -1,49 +1,89 @@
-import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Badge } from '@/components/ui/badge';
-
-interface Release {
-  id: string;
-  title: string;
-  cover_art_url: string | null;
-  genre: string | null;
-  upc_ean: string | null;
-  label: string | null;
-  copyright: string | null;
-  language: string | null;
-}
+import { AlertTriangle, CheckCircle } from 'lucide-react';
+import { Campaign } from '@/types/campaign';
 
 interface MetadataWarningsProps {
-  release: Release;
+  campaign: Campaign;
 }
 
-export const MetadataWarnings = ({ release }: MetadataWarningsProps) => {
+export const MetadataWarnings = ({ campaign }: MetadataWarningsProps) => {
   const warnings: string[] = [];
+  const checks: string[] = [];
 
-  if (!release.cover_art_url) warnings.push('Missing cover artwork');
-  if (!release.genre) warnings.push('No genre specified');
-  if (!release.upc_ean) warnings.push('Missing UPC/EAN code');
-  if (!release.label) warnings.push('No label information');
-  if (!release.copyright) warnings.push('Missing copyright information');
-  if (!release.language) warnings.push('Language not specified');
+  // Check for missing or incomplete data
+  if (!campaign.campaignAssets || campaign.campaignAssets.length === 0) {
+    warnings.push('No campaign assets uploaded');
+  } else {
+    checks.push(`${campaign.campaignAssets.length} asset(s) uploaded`);
+  }
 
-  if (warnings.length === 0) return null;
+  if (!campaign.campaignBrief || campaign.campaignBrief.trim().length < 50) {
+    warnings.push('Campaign brief is too short (minimum 50 characters)');
+  } else {
+    checks.push('Campaign brief provided');
+  }
+
+  if (!campaign.targetAudience || Object.keys(campaign.targetAudience).length === 0) {
+    warnings.push('No target audience defined');
+  } else {
+    checks.push('Target audience defined');
+  }
+
+  if (!campaign.socialLinks || Object.keys(campaign.socialLinks).length === 0) {
+    warnings.push('No social media links provided');
+  } else {
+    const linkCount = Object.values(campaign.socialLinks).filter(v => v).length;
+    checks.push(`${linkCount} social link(s) provided`);
+  }
+
+  if (parseFloat(campaign.budget) < 50000) {
+    warnings.push('Budget is below recommended minimum (₦50,000)');
+  }
+
+  const today = new Date();
+  const startDate = new Date(campaign.startDate);
+  if (startDate < today) {
+    warnings.push('Start date is in the past');
+  } else {
+    checks.push('Valid start date');
+  }
+
+  if (campaign.endDate) {
+    const endDate = new Date(campaign.endDate);
+    if (endDate <= startDate) {
+      warnings.push('End date must be after start date');
+    }
+  }
 
   return (
-    <Alert variant="destructive" className="bg-destructive/10 border-destructive/30">
-      <AlertCircle className="h-4 w-4" />
-      <AlertDescription>
-        <div className="space-y-2">
-          <p className="font-semibold">Metadata Issues Detected:</p>
-          <div className="flex flex-wrap gap-2">
-            {warnings.map((warning, index) => (
-              <Badge key={index} variant="outline" className="border-destructive/50 text-destructive">
-                {warning}
-              </Badge>
-            ))}
-          </div>
-        </div>
-      </AlertDescription>
-    </Alert>
+    <div className="space-y-3">
+      {warnings.length > 0 && (
+        <Alert variant="destructive">
+          <AlertTriangle className="h-4 w-4" />
+          <AlertDescription>
+            <div className="font-semibold mb-2">Campaign Issues:</div>
+            <ul className="list-disc list-inside space-y-1 text-sm">
+              {warnings.map((warning, index) => (
+                <li key={index}>{warning}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {checks.length > 0 && warnings.length === 0 && (
+        <Alert className="border-green-500 bg-green-50 dark:bg-green-950">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription>
+            <div className="font-semibold mb-2 text-green-600">All Checks Passed:</div>
+            <ul className="list-disc list-inside space-y-1 text-sm text-green-700 dark:text-green-300">
+              {checks.map((check, index) => (
+                <li key={index}>{check}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
+      )}
+    </div>
   );
 };

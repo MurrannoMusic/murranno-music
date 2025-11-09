@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MetadataWarnings } from './MetadataWarnings';
 import { 
   CheckCircle, 
   XCircle, 
@@ -138,6 +139,8 @@ export function CampaignReviewDialog({
             </Badge>
           </div>
         </DialogHeader>
+
+        <MetadataWarnings campaign={campaign} />
 
         <ScrollArea className="max-h-[60vh] pr-4">
           <div className="space-y-6">

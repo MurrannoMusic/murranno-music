@@ -50,3 +50,12 @@ verify_jwt = true
 
 [functions.admin-update-campaign-status]
 verify_jwt = true
+
+[functions.send-campaign-notification]
+verify_jwt = false
+
+[functions.admin-bulk-update-campaigns]
+verify_jwt = true
+
+[functions.get-campaign-performance]
+verify_jwt = true

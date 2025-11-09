@@ -309,7 +309,22 @@ export default function AdminContent() {
                             </DialogHeader>
                             {selectedRelease && (
                               <div className="space-y-4">
-                                <MetadataWarnings release={selectedRelease} />
+                                <MetadataWarnings campaign={{
+                                  ...selectedRelease,
+                                  campaignAssets: [],
+                                  campaignBrief: '',
+                                  targetAudience: {},
+                                  socialLinks: {},
+                                  budget: '0',
+                                  artist: '',
+                                  platform: '',
+                                  status: selectedRelease.status || 'Draft',
+                                  spent: '0',
+                                  reach: '0',
+                                  engagement: '0',
+                                  startDate: new Date().toISOString(),
+                                  type: 'TikTok'
+                                } as any} />
 
                                 <div className="flex gap-4">
                                   {selectedRelease.cover_art_url && (
@@ -409,10 +424,12 @@ export default function AdminContent() {
 
         <BulkActionsBar
           selectedCount={selectedReleases.size}
-          onApproveAll={handleBulkApprove}
-          onRejectAll={handleBulkReject}
-          onClear={() => setSelectedReleases(new Set())}
-          isLoading={moderateRelease.isPending}
+          onApprove={handleBulkApprove}
+          onReject={handleBulkReject}
+          onPause={() => {}}
+          onActivate={() => {}}
+          onDelete={() => {}}
+          onClearSelection={() => setSelectedReleases(new Set())}
         />
 
         <RejectionDialog
