@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone, Eye, User, Building2 } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -23,6 +23,12 @@ const menuItems = [
   { title: 'Analytics', url: '/admin/analytics', icon: BarChart3 },
   { title: 'Audit Logs', url: '/admin/audit-logs', icon: FileText },
   { title: 'Settings', url: '/admin/settings', icon: Settings },
+];
+
+const previewItems = [
+  { title: 'Artist View', url: '/admin/preview/artist', icon: User },
+  { title: 'Label View', url: '/admin/preview/label', icon: Building2 },
+  { title: 'Agency View', url: '/admin/preview/agency', icon: Megaphone },
 ];
 
 export function AdminSidebar() {
@@ -71,6 +77,44 @@ export function AdminSidebar() {
                         `}
                       >
                         <item.icon className={`h-5 w-5 ${isActive ? 'text-primary' : ''}`} />
+                        {!isCollapsed && <span className="text-sm">{item.title}</span>}
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <Separator className="my-4 mx-2" />
+
+        <SidebarGroup>
+          {!isCollapsed && (
+            <SidebarGroupLabel className="px-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-2">
+              <Eye className="h-3 w-3" />
+              Dashboard Previews
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent className="mt-2">
+            <SidebarMenu className="space-y-1">
+              {previewItems.map((item) => {
+                const isActive = location.pathname === item.url;
+                
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild tooltip={item.title}>
+                      <NavLink
+                        to={item.url}
+                        className={`
+                          flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200
+                          ${isActive 
+                            ? 'bg-accent/70 text-accent-foreground font-semibold shadow-sm' 
+                            : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground'
+                          }
+                        `}
+                      >
+                        <item.icon className={`h-5 w-5 ${isActive ? 'text-accent-foreground' : ''}`} />
                         {!isCollapsed && <span className="text-sm">{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>

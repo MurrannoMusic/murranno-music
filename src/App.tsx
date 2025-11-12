@@ -52,6 +52,7 @@ import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
 import AudioDemo from "./pages/AudioDemo";
 import CampaignPaymentSuccess from "./pages/CampaignPaymentSuccess";
 import CampaignTracking from "./pages/CampaignTracking";
+import { DashboardPreviewLayout } from "./components/admin/DashboardPreviewLayout";
 
 const queryClient = new QueryClient();
 
@@ -111,6 +112,11 @@ const App = () => (
               <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
               <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
               <Route path="/admin/audit-logs" element={<AdminRoute><AdminAuditLogs /></AdminRoute>} />
+              
+              {/* Admin preview routes - access all dashboard types */}
+              <Route path="/admin/preview/artist" element={<AdminRoute><DashboardPreviewLayout dashboardType="Artist"><ArtistDashboard /></DashboardPreviewLayout></AdminRoute>} />
+              <Route path="/admin/preview/label" element={<AdminRoute><DashboardPreviewLayout dashboardType="Label"><LabelDashboard /></DashboardPreviewLayout></AdminRoute>} />
+              <Route path="/admin/preview/agency" element={<AdminRoute><DashboardPreviewLayout dashboardType="Agency"><AgencyDashboard /></DashboardPreviewLayout></AdminRoute>} />
               
               {/* Legacy route redirects */}
               <Route path="/artist-dashboard" element={<Navigate to="/app/artist-dashboard" replace />} />
