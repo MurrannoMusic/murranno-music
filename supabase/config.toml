@@ -59,3 +59,6 @@ verify_jwt = true
 
 [functions.get-campaign-performance]
 verify_jwt = true
+
+[functions.seed-promotion-services]
+verify_jwt = true
