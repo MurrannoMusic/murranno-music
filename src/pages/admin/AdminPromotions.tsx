@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -11,10 +11,12 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { Plus, Edit, Trash2, Package, Tag } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, Tag, Upload, X } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { usePromotionServices } from '@/hooks/usePromotionServices';
 import { usePromotionBundles } from '@/hooks/usePromotionBundles';
+import { useCloudinaryUpload } from '@/hooks/useCloudinaryUpload';
+import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { PromotionCategory, PromotionService, PromotionBundle } from '@/types/promotion';
 
 interface ServiceFormData {
@@ -24,6 +26,7 @@ interface ServiceFormData {
   price: string;
   duration: string;
   features: string;
+  imageUrl: string;
 }
 
 interface BundleFormData {
@@ -34,12 +37,13 @@ interface BundleFormData {
   tierLevel: string;
   targetDescription: string;
   serviceIds: string[];
+  imageUrl: string;
 }
 
 export default function AdminPromotions() {
-  const queryClient = useQueryClient();
   const { services, loading: servicesLoading, categories, refetch: refetchServices } = usePromotionServices();
   const { bundles, loading: bundlesLoading, refetch: refetchBundles } = usePromotionBundles();
+  const { uploadImage, uploading, progress } = useCloudinaryUpload();
 
   const [serviceDialogOpen, setServiceDialogOpen] = useState(false);
   const [bundleDialogOpen, setBundleDialogOpen] = useState(false);
@@ -53,6 +57,7 @@ export default function AdminPromotions() {
     price: '',
     duration: '',
     features: '',
+    imageUrl: '',
   });
 
   const [bundleForm, setBundleForm] = useState<BundleFormData>({
@@ -63,7 +68,24 @@ export default function AdminPromotions() {
     tierLevel: '1',
     targetDescription: '',
     serviceIds: [],
+    imageUrl: '',
   });
+
+  const handleImageUpload = async (file: File, isBundle: boolean = false) => {
+    try {
+      const result = await uploadImage(file, isBundle ? 'promotions/bundles' : 'promotions/services');
+      
+      if (isBundle) {
+        setBundleForm(prev => ({ ...prev, imageUrl: result.publicId }));
+      } else {
+        setServiceForm(prev => ({ ...prev, imageUrl: result.publicId }));
+      }
+      
+      toast.success('Image uploaded successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload image');
+    }
+  };
 
   const createService = useMutation({
     mutationFn: async (data: ServiceFormData) => {
@@ -76,6 +98,7 @@ export default function AdminPromotions() {
           price: parseFloat(data.price),
           duration: data.duration,
           features: data.features.split('\n').filter(f => f.trim()),
+          image_url: data.imageUrl || null,
         })
         .select()
         .single();
@@ -105,6 +128,7 @@ export default function AdminPromotions() {
           price: parseFloat(data.price),
           duration: data.duration,
           features: data.features.split('\n').filter(f => f.trim()),
+          image_url: data.imageUrl || null,
         })
         .eq('id', id);
 
@@ -142,7 +166,6 @@ export default function AdminPromotions() {
 
   const createBundle = useMutation({
     mutationFn: async (data: BundleFormData) => {
-      // Create bundle
       const { data: bundle, error: bundleError } = await supabase
         .from('promotion_bundles')
         .insert({
@@ -152,13 +175,13 @@ export default function AdminPromotions() {
           price: parseFloat(data.price),
           tier_level: parseInt(data.tierLevel),
           target_description: data.targetDescription,
+          image_url: data.imageUrl || null,
         })
         .select()
         .single();
 
       if (bundleError) throw bundleError;
 
-      // Create bundle services relationships
       if (data.serviceIds.length > 0) {
         const { error: servicesError } = await supabase
           .from('bundle_services')
@@ -187,7 +210,6 @@ export default function AdminPromotions() {
 
   const updateBundle = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: BundleFormData }) => {
-      // Update bundle
       const { error: bundleError } = await supabase
         .from('promotion_bundles')
         .update({
@@ -197,12 +219,12 @@ export default function AdminPromotions() {
           price: parseFloat(data.price),
           tier_level: parseInt(data.tierLevel),
           target_description: data.targetDescription,
+          image_url: data.imageUrl || null,
         })
         .eq('id', id);
 
       if (bundleError) throw bundleError;
 
-      // Delete existing bundle services
       const { error: deleteError } = await supabase
         .from('bundle_services')
         .delete()
@@ -210,7 +232,6 @@ export default function AdminPromotions() {
 
       if (deleteError) throw deleteError;
 
-      // Create new bundle services
       if (data.serviceIds.length > 0) {
         const { error: servicesError } = await supabase
           .from('bundle_services')
@@ -262,6 +283,7 @@ export default function AdminPromotions() {
       price: '',
       duration: '',
       features: '',
+      imageUrl: '',
     });
   };
 
@@ -274,6 +296,7 @@ export default function AdminPromotions() {
       tierLevel: '1',
       targetDescription: '',
       serviceIds: [],
+      imageUrl: '',
     });
   };
 
@@ -286,7 +309,8 @@ export default function AdminPromotions() {
         description: service.description || '',
         price: service.price.toString(),
         duration: service.duration || '',
-        features: (service.features || []).join('\n'),
+        features: service.features?.join('\n') || '',
+        imageUrl: service.imageUrl || '',
       });
     } else {
       setEditingService(null);
@@ -306,6 +330,7 @@ export default function AdminPromotions() {
         tierLevel: bundle.tierLevel.toString(),
         targetDescription: bundle.targetDescription || '',
         serviceIds: bundle.includedServices?.map(s => s.id) || [],
+        imageUrl: bundle.imageUrl || '',
       });
     } else {
       setEditingBundle(null);
@@ -436,7 +461,7 @@ export default function AdminPromotions() {
                   <Package className="h-5 w-5" />
                   Promotion Bundles
                 </CardTitle>
-                <CardDescription>Manage service bundles and packages</CardDescription>
+                <CardDescription>Manage promotional packages</CardDescription>
               </div>
               <Button onClick={() => openBundleDialog()} className="gap-2">
                 <Plus className="h-4 w-4" />
@@ -465,14 +490,10 @@ export default function AdminPromotions() {
                     <TableRow key={bundle.id}>
                       <TableCell className="font-medium">{bundle.name}</TableCell>
                       <TableCell>
-                        <Badge>{bundle.tierLevel}</Badge>
+                        <Badge>Tier {bundle.tierLevel}</Badge>
                       </TableCell>
                       <TableCell>₦{bundle.price.toLocaleString()}</TableCell>
-                      <TableCell>
-                        <Badge variant="secondary">
-                          {bundle.includedServices?.length || 0} services
-                        </Badge>
-                      </TableCell>
+                      <TableCell>{bundle.includedServices?.length || 0}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
                           <Button
@@ -510,6 +531,48 @@ export default function AdminPromotions() {
             </DialogHeader>
 
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Service Image</Label>
+                {serviceForm.imageUrl ? (
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden border">
+                    <CloudinaryImage
+                      publicId={serviceForm.imageUrl}
+                      alt="Service preview"
+                      width={600}
+                      height={300}
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => setServiceForm({ ...serviceForm, imageUrl: '' })}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, false);
+                      }}
+                      disabled={uploading}
+                      className="max-w-xs mx-auto"
+                    />
+                    {uploading && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Uploading... {progress}%
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="service-name">Service Name</Label>
                 <Input
@@ -602,11 +665,53 @@ export default function AdminPromotions() {
             <DialogHeader>
               <DialogTitle>{editingBundle ? 'Edit Bundle' : 'Create Bundle'}</DialogTitle>
               <DialogDescription>
-                {editingBundle ? 'Update the bundle details below' : 'Create a new service bundle'}
+                {editingBundle ? 'Update the bundle details below' : 'Create a new promotional bundle'}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Bundle Image</Label>
+                {bundleForm.imageUrl ? (
+                  <div className="relative w-full h-48 rounded-lg overflow-hidden border">
+                    <CloudinaryImage
+                      publicId={bundleForm.imageUrl}
+                      alt="Bundle preview"
+                      width={800}
+                      height={400}
+                      className="w-full h-full object-cover"
+                    />
+                    <Button
+                      variant="destructive"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() => setBundleForm({ ...bundleForm, imageUrl: '' })}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed rounded-lg p-8 text-center">
+                    <Upload className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+                    <Input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handleImageUpload(file, true);
+                      }}
+                      disabled={uploading}
+                      className="max-w-xs mx-auto"
+                    />
+                    {uploading && (
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Uploading... {progress}%
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="bundle-name">Bundle Name</Label>
@@ -614,7 +719,7 @@ export default function AdminPromotions() {
                     id="bundle-name"
                     value={bundleForm.name}
                     onChange={(e) => setBundleForm({ ...bundleForm, name: e.target.value })}
-                    placeholder="e.g., Growth Package"
+                    placeholder="e.g., Starter Pack"
                   />
                 </div>
 
@@ -624,7 +729,7 @@ export default function AdminPromotions() {
                     id="bundle-slug"
                     value={bundleForm.slug}
                     onChange={(e) => setBundleForm({ ...bundleForm, slug: e.target.value })}
-                    placeholder="growth-package"
+                    placeholder="starter-pack"
                   />
                 </div>
               </div>
@@ -643,13 +748,21 @@ export default function AdminPromotions() {
 
                 <div className="space-y-2">
                   <Label htmlFor="bundle-tier">Tier Level</Label>
-                  <Input
-                    id="bundle-tier"
-                    type="number"
+                  <Select
                     value={bundleForm.tierLevel}
-                    onChange={(e) => setBundleForm({ ...bundleForm, tierLevel: e.target.value })}
-                    placeholder="1"
-                  />
+                    onValueChange={(value) => setBundleForm({ ...bundleForm, tierLevel: value })}
+                  >
+                    <SelectTrigger id="bundle-tier">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[1, 2, 3, 4].map((tier) => (
+                        <SelectItem key={tier} value={tier.toString()}>
+                          Tier {tier}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
@@ -666,35 +779,35 @@ export default function AdminPromotions() {
 
               <div className="space-y-2">
                 <Label htmlFor="bundle-target">Target Description</Label>
-                <Input
+                <Textarea
                   id="bundle-target"
                   value={bundleForm.targetDescription}
                   onChange={(e) => setBundleForm({ ...bundleForm, targetDescription: e.target.value })}
-                  placeholder="e.g., For emerging artists"
+                  placeholder="Who is this bundle for?"
+                  rows={2}
                 />
               </div>
 
               <div className="space-y-2">
                 <Label>Included Services</Label>
-                <div className="border rounded-lg p-4 space-y-2 max-h-64 overflow-y-auto">
+                <div className="border rounded-lg p-4 max-h-64 overflow-y-auto space-y-2">
                   {services.map((service) => (
-                    <div
+                    <label
                       key={service.id}
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 cursor-pointer"
-                      onClick={() => toggleServiceInBundle(service.id)}
+                      className="flex items-center gap-3 p-2 hover:bg-muted rounded cursor-pointer"
                     >
                       <input
                         type="checkbox"
                         checked={bundleForm.serviceIds.includes(service.id)}
                         onChange={() => toggleServiceInBundle(service.id)}
-                        className="h-4 w-4"
+                        className="rounded"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-sm">{service.name}</p>
-                        <p className="text-xs text-muted-foreground">{service.category}</p>
+                        <p className="font-medium">{service.name}</p>
+                        <p className="text-sm text-muted-foreground">{service.category}</p>
                       </div>
-                      <Badge variant="outline">₦{service.price.toLocaleString()}</Badge>
-                    </div>
+                      <p className="text-sm font-medium">₦{service.price.toLocaleString()}</p>
+                    </label>
                   ))}
                 </div>
               </div>

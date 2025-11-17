@@ -1,6 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { PromotionService } from '@/types/promotion';
 import { Check, ShoppingCart, Zap } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
@@ -23,7 +24,18 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
   };
 
   return (
-    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow">
+    <Card className="flex flex-col h-full hover:shadow-lg transition-shadow overflow-hidden">
+      {service.imageUrl && (
+        <div className="w-full h-48 overflow-hidden">
+          <CloudinaryImage
+            publicId={service.imageUrl}
+            alt={service.name}
+            width={400}
+            height={300}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
       <CardHeader>
         <div className="flex items-start justify-between gap-2 mb-2">
           <Badge variant="secondary" className="text-xs">

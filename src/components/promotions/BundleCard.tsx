@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { PromotionBundle } from '@/types/promotion';
 import { Check, ChevronDown, Sparkles } from 'lucide-react';
 import { useState } from 'react';
@@ -34,13 +35,25 @@ export const BundleCard = ({ bundle, onSelect, isRecommended }: BundleCardProps)
   };
 
   return (
-    <Card className={`flex flex-col h-full relative ${isRecommended ? 'border-primary shadow-lg' : 'hover:shadow-lg'} transition-all`}>
+    <Card className={`flex flex-col h-full relative overflow-hidden ${isRecommended ? 'border-primary shadow-lg' : 'hover:shadow-lg'} transition-all`}>
       {isRecommended && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
           <Badge className="bg-primary text-primary-foreground">
             <Sparkles className="h-3 w-3 mr-1" />
             Recommended
           </Badge>
+        </div>
+      )}
+
+      {bundle.imageUrl && (
+        <div className="w-full h-48 overflow-hidden">
+          <CloudinaryImage
+            publicId={bundle.imageUrl}
+            alt={bundle.name}
+            width={600}
+            height={300}
+            className="w-full h-full object-cover"
+          />
         </div>
       )}
 

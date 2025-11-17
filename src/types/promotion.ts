@@ -15,6 +15,7 @@ export interface PromotionService {
   price: number;
   duration?: string;
   features?: string[];
+  imageUrl?: string;
   isActive: boolean;
   sortOrder: number;
   createdAt: string;
@@ -29,6 +30,7 @@ export interface PromotionBundle {
   price: number;
   tierLevel: number;
   targetDescription?: string;
+  imageUrl?: string;
   includedServices?: PromotionService[];
   isActive: boolean;
   createdAt: string;
