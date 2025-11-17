@@ -23,7 +23,7 @@ export const CategoryFilter = ({
         className="rounded-full"
       >
         All Services
-        {serviceCounts['all'] && (
+        {serviceCounts['all'] > 0 && (
           <Badge variant="secondary" className="ml-2">
             {serviceCounts['all']}
           </Badge>
@@ -37,7 +37,7 @@ export const CategoryFilter = ({
           className="rounded-full"
         >
           {category}
-          {serviceCounts[category] && (
+          {serviceCounts[category] > 0 && (
             <Badge variant="secondary" className="ml-2">
               {serviceCounts[category]}
             </Badge>
