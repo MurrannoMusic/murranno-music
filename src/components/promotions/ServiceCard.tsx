@@ -7,6 +7,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { PromotionService } from '@/types/promotion';
 import { Check, ShoppingCart, ShoppingBag, Loader2 } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
+import { toast } from 'sonner';
 
 interface ServiceCardProps {
   service: PromotionService;
@@ -16,14 +17,46 @@ interface ServiceCardProps {
 export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
   const { addToCart, removeFromCart, isInCart } = useCart();
   const inCart = isInCart(service.id);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isBuyingNow, setIsBuyingNow] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
+  const isProcessing = isBuyingNow || isAddingToCart;
 
   const handleBuyNow = async () => {
-    setIsLoading(true);
+    setIsBuyingNow(true);
     try {
       await onSelect(service);
+      toast.success('Proceeding to checkout', {
+        description: `${service.name} - ${formatPrice(service.price)}`,
+      });
+    } catch (error) {
+      toast.error('Failed to process purchase');
     } finally {
-      setIsLoading(false);
+      setIsBuyingNow(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    setIsAddingToCart(true);
+    try {
+      await addToCart(service);
+      toast.success('Added to cart', {
+        description: service.name,
+      });
+    } finally {
+      setIsAddingToCart(false);
+    }
+  };
+
+  const handleRemoveFromCart = async () => {
+    setIsAddingToCart(true);
+    try {
+      await removeFromCart(service.id);
+      toast.success('Removed from cart', {
+        description: service.name,
+      });
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
@@ -140,30 +173,50 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
       <CardFooter className="flex gap-2">
         {inCart ? (
           <Button 
-            onClick={() => removeFromCart(service.id)} 
+            onClick={handleRemoveFromCart}
             variant="outline"
             className="flex-1"
+            disabled={isProcessing}
           >
-            <Check className="h-4 w-4 mr-2" />
-            In Cart
+            {isAddingToCart ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Removing...
+              </>
+            ) : (
+              <>
+                <Check className="h-4 w-4 mr-2" />
+                In Cart
+              </>
+            )}
           </Button>
         ) : (
           <Button 
-            onClick={() => addToCart(service)} 
+            onClick={handleAddToCart}
             variant="secondary"
             className="flex-1"
+            disabled={isProcessing}
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Add to Cart
+            {isAddingToCart ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Adding...
+              </>
+            ) : (
+              <>
+                <ShoppingCart className="h-4 w-4 mr-2" />
+                Add to Cart
+              </>
+            )}
           </Button>
         )}
         <Button 
           onClick={handleBuyNow}
           variant="default"
           className="flex-1"
-          disabled={isLoading}
+          disabled={isProcessing}
         >
-          {isLoading ? (
+          {isBuyingNow ? (
             <>
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
               Processing...
