@@ -10,22 +10,26 @@ export const useCampaignActions = () => {
   const pauseCampaign = async (campaignId: string, currentStatus: string) => {
     try {
       setLoading(true);
-      const newStatus = currentStatus === 'Active' ? 'Paused' : 'Active';
+      const pause = currentStatus === 'Active';
 
-      const { data, error } = await supabase.functions.invoke('update-campaign', {
+      const { data, error } = await supabase.functions.invoke('pause-campaign', {
         body: {
           campaignId,
-          status: newStatus,
+          pause,
         }
       });
 
       if (error) throw error;
 
-      toast.success(`Campaign ${newStatus === 'Paused' ? 'paused' : 'resumed'} successfully`);
+      if (!data?.success) {
+        throw new Error(data?.error || 'Failed to update campaign status');
+      }
+
+      toast.success(`Campaign ${pause ? 'paused' : 'resumed'} successfully`);
       return true;
     } catch (error: any) {
       console.error('Error updating campaign status:', error);
-      toast.error('Failed to update campaign status');
+      toast.error(error.message || 'Failed to update campaign status');
       return false;
     } finally {
       setLoading(false);

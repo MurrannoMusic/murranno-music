@@ -205,24 +205,30 @@ export type Database = {
       campaign_services: {
         Row: {
           campaign_id: string
+          completed_at: string | null
           created_at: string
           id: string
+          notes: string | null
           service_id: string
           status: string
           updated_at: string
         }
         Insert: {
           campaign_id: string
+          completed_at?: string | null
           created_at?: string
           id?: string
+          notes?: string | null
           service_id: string
           status?: string
           updated_at?: string
         }
         Update: {
           campaign_id?: string
+          completed_at?: string | null
           created_at?: string
           id?: string
+          notes?: string | null
           service_id?: string
           status?: string
           updated_at?: string
@@ -349,6 +355,51 @@ export type Database = {
             columns: ["release_id"]
             isOneToOne: false
             referencedRelation: "releases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cart_items: {
+        Row: {
+          bundle_id: string | null
+          created_at: string | null
+          id: string
+          quantity: number | null
+          service_id: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          bundle_id?: string | null
+          created_at?: string | null
+          id?: string
+          quantity?: number | null
+          service_id?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          bundle_id?: string | null
+          created_at?: string | null
+          id?: string
+          quantity?: number | null
+          service_id?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_bundle_id_fkey"
+            columns: ["bundle_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_bundles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cart_items_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "promotion_services"
             referencedColumns: ["id"]
           },
         ]

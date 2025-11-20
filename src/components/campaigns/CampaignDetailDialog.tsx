@@ -16,8 +16,12 @@ import {
   FileText,
   ExternalLink,
   Image as ImageIcon,
+  TrendingUp,
+  CheckCircle,
 } from "lucide-react";
 import { format } from "date-fns";
+import { CampaignMetricsDisplay } from "./CampaignMetricsDisplay";
+import { ServiceDeliveryStatus } from "./ServiceDeliveryStatus";
 
 interface CampaignDetailDialogProps {
   campaign: Campaign;
@@ -221,7 +225,35 @@ export function CampaignDetailDialog({
               </>
             )}
 
-            {/* Payment Info */}
+            {/* Campaign Performance Metrics - Only show for active/completed campaigns */}
+            {['Active', 'Completed', 'Paused'].includes(campaign.status) && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4" />
+                    Performance Metrics
+                  </h3>
+                  <CampaignMetricsDisplay campaignId={campaign.id} />
+                </div>
+              </>
+            )}
+
+            {/* Service Delivery Status */}
+            {['Paid', 'In Review', 'Active', 'Completed', 'Paused'].includes(campaign.status) && (
+              <>
+                <Separator />
+                <div className="space-y-3">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" />
+                    Service Delivery
+                  </h3>
+                  <ServiceDeliveryStatus campaignId={campaign.id} />
+                </div>
+              </>
+            )}
+
+            <Separator />
             <div className="space-y-3">
               <h3 className="font-semibold flex items-center gap-2">
                 <DollarSign className="h-4 w-4" />
