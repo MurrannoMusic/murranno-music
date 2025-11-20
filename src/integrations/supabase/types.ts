@@ -689,6 +689,7 @@ export type Database = {
           features: Json | null
           id: string
           image_url: string | null
+          images: string[] | null
           is_active: boolean
           name: string
           price: number
@@ -703,6 +704,7 @@ export type Database = {
           features?: Json | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
           is_active?: boolean
           name: string
           price: number
@@ -717,6 +719,7 @@ export type Database = {
           features?: Json | null
           id?: string
           image_url?: string | null
+          images?: string[] | null
           is_active?: boolean
           name?: string
           price?: number
