@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ArrowLeft, Megaphone } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import promotionsHeroBg from '@/assets/promotions-hero-bg.jpg';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -90,8 +91,13 @@ const PromotionsContent = () => {
 
       <div className="mobile-container space-y-6 mt-4">
         {/* Hero Section */}
-        <Card className="gradient-primary text-white">
-          <CardContent className="p-6 text-center space-y-4">
+        <Card className="overflow-hidden relative">
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${promotionsHeroBg})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-accent/70" />
+          <CardContent className="relative p-6 text-center space-y-4 text-white">
             <Megaphone className="h-12 w-12 mx-auto mb-4" />
             <h1 className="text-2xl font-bold mb-2">Full-Service Promotional Catalog</h1>
             <p className="text-white/90">
