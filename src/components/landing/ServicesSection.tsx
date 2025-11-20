@@ -1,14 +1,14 @@
-import { Music, TrendingUp, BarChart3, User, Headphones, Image } from "lucide-react";
+import { Columns, Layers, Folder, CreditCard, List, Square } from "lucide-react";
 import { ServiceCard } from "./ServiceCard";
 
 export const ServicesSection = () => {
   const services = [
-    { icon: Music, title: "Music Distribution", variant: "primary" as const },
-    { icon: TrendingUp, title: "Promotion", variant: "secondary" as const },
-    { icon: BarChart3, title: "Streaming Analytics", variant: "primary" as const },
-    { icon: User, title: "Artist Profile Creation", variant: "secondary" as const },
-    { icon: Headphones, title: "Artist Support", variant: "primary" as const },
-    { icon: Image, title: "Cover Arts & Videos", variant: "secondary" as const },
+    { icon: Columns, title: "Music Distribution", variant: "primary" as const },
+    { icon: Layers, title: "Promotion", variant: "secondary" as const },
+    { icon: Folder, title: "Streaming Analytics", variant: "primary" as const },
+    { icon: CreditCard, title: "Artist Profile Creation", variant: "secondary" as const },
+    { icon: List, title: "Artist Support", variant: "primary" as const },
+    { icon: Square, title: "Cover Arts & Videos", variant: "secondary" as const },
   ];
 
   return (
