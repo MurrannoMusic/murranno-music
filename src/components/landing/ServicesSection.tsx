@@ -3,12 +3,42 @@ import { ServiceCard } from "./ServiceCard";
 
 export const ServicesSection = () => {
   const services = [
-    { icon: Columns, title: "Music Distribution", variant: "primary" as const },
-    { icon: Layers, title: "Promotion", variant: "secondary" as const },
-    { icon: Folder, title: "Streaming Analytics", variant: "primary" as const },
-    { icon: CreditCard, title: "Artist Profile Creation", variant: "secondary" as const },
-    { icon: List, title: "Artist Support", variant: "primary" as const },
-    { icon: Square, title: "Cover Arts & Videos", variant: "secondary" as const },
+    { 
+      icon: Columns, 
+      title: "Music Distribution", 
+      description: "Get your music on Spotify, Apple Music, TikTok, YouTube, and more. Free and 100% royalties available",
+      variant: "primary" as const 
+    },
+    { 
+      icon: Layers, 
+      title: "Promotion", 
+      description: "Boost your music reach with targeted campaigns across social media and streaming platforms",
+      variant: "secondary" as const 
+    },
+    { 
+      icon: Folder, 
+      title: "Streaming Analytics", 
+      description: "Track your performance with detailed insights on streams, listeners, and engagement metrics",
+      variant: "primary" as const 
+    },
+    { 
+      icon: CreditCard, 
+      title: "Artist Profile Creation", 
+      description: "Build your professional artist presence with optimized profiles across all major platforms",
+      variant: "secondary" as const 
+    },
+    { 
+      icon: List, 
+      title: "Artist Support", 
+      description: "Get dedicated support from music industry experts to help grow your career",
+      variant: "primary" as const 
+    },
+    { 
+      icon: Square, 
+      title: "Cover Arts & Videos", 
+      description: "Professional design services for album covers, promotional videos, and visual content",
+      variant: "secondary" as const 
+    },
   ];
 
   return (
@@ -32,6 +62,7 @@ export const ServicesSection = () => {
               key={index}
               icon={service.icon}
               title={service.title}
+              description={service.description}
               variant={service.variant}
             />
           ))}
