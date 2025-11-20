@@ -28,6 +28,7 @@ interface ServiceFormData {
   features: string;
   imageUrl: string;
   images: string[];
+  videos: string[];
 }
 
 interface BundleFormData {
@@ -60,6 +61,7 @@ export default function AdminPromotions() {
     features: '',
     imageUrl: '',
     images: [],
+    videos: [],
   });
 
   const [bundleForm, setBundleForm] = useState<BundleFormData>({
@@ -95,6 +97,50 @@ export default function AdminPromotions() {
     }));
   };
 
+  const handleVideoUpload = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'promotions/services/videos');
+
+      const { data: { session } } = await supabase.auth.getSession();
+      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-audio-cloudinary`;
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${session?.access_token ?? ''}`,
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
+        },
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const errText = await res.text();
+        throw new Error(`Upload failed (${res.status}): ${errText}`);
+      }
+
+      const data = await res.json();
+      if (!data?.url) throw new Error('No URL returned from upload');
+      
+      setServiceForm(prev => ({
+        ...prev,
+        videos: [...prev.videos, data.url],
+      }));
+      
+      toast.success('Video uploaded successfully');
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to upload video');
+    }
+  };
+
+  const removeVideo = (index: number) => {
+    setServiceForm(prev => ({
+      ...prev,
+      videos: prev.videos.filter((_, i) => i !== index),
+    }));
+  };
+
   const handleImageUpload = async (file: File, isBundle: boolean = false) => {
     try {
       const result = await uploadImage(file, isBundle ? 'promotions/bundles' : 'promotions/services');
@@ -124,6 +170,7 @@ export default function AdminPromotions() {
           features: data.features.split('\n').filter(f => f.trim()),
           image_url: data.imageUrl,
           images: data.images,
+          videos: data.videos,
         })
         .select()
         .single();
@@ -155,6 +202,7 @@ export default function AdminPromotions() {
           features: data.features.split('\n').filter(f => f.trim()),
           image_url: data.imageUrl,
           images: data.images,
+          videos: data.videos,
         })
         .eq('id', id)
         .select()
@@ -311,6 +359,7 @@ export default function AdminPromotions() {
       features: '',
       imageUrl: '',
       images: [],
+      videos: [],
     });
     setEditingService(null);
   };
@@ -340,6 +389,7 @@ export default function AdminPromotions() {
         features: (service.features || []).join('\n'),
         imageUrl: service.imageUrl || '',
         images: service.images || [],
+        videos: service.videos || [],
       });
       setEditingService(service);
     } else {
@@ -734,6 +784,50 @@ export default function AdminPromotions() {
                           size="icon"
                           className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
                           onClick={() => removeGalleryImage(index)}
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label className="flex items-center gap-2">
+                  <Upload className="h-4 w-4" />
+                  Video Gallery
+                </Label>
+                <p className="text-sm text-muted-foreground">
+                  Add videos to showcase campaign examples and testimonials
+                </p>
+                <div className="flex items-center gap-4">
+                  <Input
+                    type="file"
+                    accept="video/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleVideoUpload(file);
+                    }}
+                    disabled={uploading}
+                  />
+                  {uploading && <span className="text-sm text-muted-foreground">Uploading...</span>}
+                </div>
+                
+                {serviceForm.videos.length > 0 && (
+                  <div className="grid grid-cols-2 gap-2 mt-4">
+                    {serviceForm.videos.map((videoUrl, index) => (
+                      <div key={index} className="relative group">
+                        <video
+                          src={videoUrl}
+                          controls
+                          className="w-full h-32 object-cover rounded"
+                        />
+                        <Button
+                          variant="destructive"
+                          size="icon"
+                          className="absolute -top-2 -right-2 h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={() => removeVideo(index)}
                         >
                           <X className="h-3 w-3" />
                         </Button>

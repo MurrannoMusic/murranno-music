@@ -38,6 +38,7 @@ export const usePromotionServices = (category?: PromotionCategory) => {
         features: service.features as string[],
         imageUrl: service.image_url,
         images: service.images as string[] || [],
+        videos: service.videos as string[] || [],
         isActive: service.is_active,
         sortOrder: service.sort_order,
         createdAt: service.created_at,
