@@ -263,17 +263,23 @@ export const CampaignCreationWizard = ({
               <Select
                 value={formData.releaseId}
                 onValueChange={(value) => setFormData({ ...formData, releaseId: value })}
-                disabled={releasesLoading}
+                disabled={releasesLoading || releases.length === 0}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Choose a release" />
+                  <SelectValue placeholder={releasesLoading ? "Loading releases..." : releases.length === 0 ? "No releases available" : "Choose a release"} />
                 </SelectTrigger>
-                <SelectContent>
-                  {releases.map((release) => (
-                    <SelectItem key={release.id} value={release.id}>
-                      {release.title} - {release.artist}
-                    </SelectItem>
-                  ))}
+                <SelectContent className="z-[100]">
+                  {releases.length === 0 && !releasesLoading ? (
+                    <div className="p-2 text-sm text-muted-foreground text-center">
+                      No releases found. Please create a release first.
+                    </div>
+                  ) : (
+                    releases.map((release) => (
+                      <SelectItem key={release.id} value={release.id}>
+                        {release.title} - {release.artist}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
             </div>
