@@ -62,3 +62,12 @@ verify_jwt = true
 
 [functions.seed-promotion-services]
 verify_jwt = true
+
+[functions.update-campaign-metrics]
+verify_jwt = true
+
+[functions.complete-campaign-service]
+verify_jwt = true
+
+[functions.pause-campaign]
+verify_jwt = true

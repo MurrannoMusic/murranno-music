@@ -26,40 +26,60 @@ export default function CampaignPaymentSuccess() {
 
   const verifyPayment = async () => {
     try {
-      // Verify payment with Paystack
-      const paystackResponse = await fetch(
-        `https://api.paystack.co/transaction/verify/${reference}`,
-        {
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_PAYSTACK_PUBLIC_KEY}`,
-          },
+      // Poll campaign status from database (webhook will update it)
+      let attempts = 0;
+      const maxAttempts = 20; // 60 seconds total (20 attempts * 3 seconds)
+      
+      const pollInterval = setInterval(async () => {
+        attempts++;
+        
+        try {
+          // Get campaign ID from reference by querying campaigns
+          const { data: campaigns, error: searchError } = await supabase
+            .from('campaigns')
+            .select('id, name, status, payment_status')
+            .eq('payment_reference', reference)
+            .maybeSingle();
+
+          if (searchError) {
+            console.error('Error fetching campaign:', searchError);
+            return;
+          }
+
+          if (!campaigns) {
+            if (attempts >= maxAttempts) {
+              clearInterval(pollInterval);
+              setStatus('failed');
+              toast.error('Payment verification timed out. Please contact support if payment was deducted.');
+            }
+            return;
+          }
+
+          // Check if payment was successful
+          if (campaigns.payment_status === 'paid') {
+            clearInterval(pollInterval);
+            setCampaignName(campaigns.name);
+            setStatus('success');
+            toast.success('Payment successful! Your campaign is now under review.');
+          } else if (campaigns.payment_status === 'failed') {
+            clearInterval(pollInterval);
+            setStatus('failed');
+            toast.error('Payment failed. Please try again.');
+          } else if (attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            setStatus('failed');
+            toast.error('Payment verification timed out. Please contact support if payment was deducted.');
+          }
+        } catch (pollError) {
+          console.error('Error polling campaign status:', pollError);
+          if (attempts >= maxAttempts) {
+            clearInterval(pollInterval);
+            setStatus('failed');
+            toast.error('Error verifying payment. Please contact support.');
+          }
         }
-      );
-
-      const paystackData = await paystackResponse.json();
-
-      if (paystackData.status && paystackData.data.status === 'success') {
-        const campaignId = paystackData.data.metadata.campaign_id;
-
-        // Fetch campaign details to verify update
-        const { data: campaign, error } = await supabase
-          .from('campaigns')
-          .select('name, status, payment_status')
-          .eq('id', campaignId)
-          .single();
-
-        if (error) {
-          console.error('Error fetching campaign:', error);
-          throw error;
-        }
-
-        setCampaignName(campaign.name);
-        setStatus('success');
-        toast.success('Payment successful! Your campaign is now under review.');
-      } else {
-        setStatus('failed');
-        toast.error('Payment verification failed. Please contact support.');
-      }
+      }, 3000); // Poll every 3 seconds
+      
     } catch (error) {
       console.error('Payment verification error:', error);
       setStatus('failed');
