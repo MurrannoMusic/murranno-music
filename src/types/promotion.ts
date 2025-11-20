@@ -16,6 +16,7 @@ export interface PromotionService {
   duration?: string;
   features?: string[];
   imageUrl?: string;
+  images?: string[];
   isActive: boolean;
   sortOrder: number;
   createdAt: string;

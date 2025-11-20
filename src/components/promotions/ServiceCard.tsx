@@ -2,6 +2,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { PromotionService } from '@/types/promotion';
 import { Check, ShoppingCart, Zap } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
@@ -23,17 +24,43 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
     }).format(price);
   };
 
+  const displayImages = service.images && service.images.length > 0 
+    ? service.images 
+    : service.imageUrl 
+    ? [service.imageUrl] 
+    : [];
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow overflow-hidden">
-      {service.imageUrl && (
-        <div className="w-full h-48 overflow-hidden">
-          <CloudinaryImage
-            publicId={service.imageUrl}
-            alt={service.name}
-            width={400}
-            height={300}
-            className="w-full h-full object-cover"
-          />
+      {displayImages.length > 0 && (
+        <div className="w-full h-48 overflow-hidden relative">
+          {displayImages.length === 1 ? (
+            <CloudinaryImage
+              publicId={displayImages[0]}
+              alt={service.name}
+              width={400}
+              height={300}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <Carousel className="w-full h-full">
+              <CarouselContent>
+                {displayImages.map((image, index) => (
+                  <CarouselItem key={index}>
+                    <CloudinaryImage
+                      publicId={image}
+                      alt={`${service.name} - Image ${index + 1}`}
+                      width={400}
+                      height={300}
+                      className="w-full h-48 object-cover"
+                    />
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
+          )}
         </div>
       )}
       <CardHeader>
