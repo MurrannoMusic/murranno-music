@@ -96,17 +96,17 @@ const PromotionsContent = () => {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${promotionsHeroBg})` }}
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/80 to-accent/70" />
-          <CardContent className="relative p-6 text-center space-y-4 text-white">
-            <Megaphone className="h-12 w-12 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold mb-2">Full-Service Promotional Catalog</h1>
-            <p className="text-white/90">
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-primary/85 to-accent/80" />
+          <CardContent className="relative p-8 text-center space-y-4 text-white">
+            <Megaphone className="h-12 w-12 mx-auto mb-4 drop-shadow-lg" />
+            <h1 className="text-3xl font-bold mb-2 drop-shadow-lg">Full-Service Promotional Catalog</h1>
+            <p className="text-white text-lg drop-shadow-md">
               Premium music promotion services and strategic bundles to amplify your reach
             </p>
             <Button
               variant="secondary"
               onClick={() => navigate('/app/campaign-tracking')}
-              className="mt-4"
+              className="mt-4 shadow-xl"
             >
               View My Campaigns
             </Button>
