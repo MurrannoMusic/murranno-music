@@ -1,49 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 
 export const HeroSection = () => {
-  const [bgImage, setBgImage] = useState<string>("");
-
-  useEffect(() => {
-    const generateBackground = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke('generate-hero-background');
-        if (error) throw error;
-        if (data?.imageUrl) {
-          setBgImage(data.imageUrl);
-        }
-      } catch (error) {
-        console.error('Error generating background:', error);
-      }
-    };
-
-    generateBackground();
-  }, []);
-
   return (
     <section 
       id="home" 
-      className="relative h-screen flex items-center justify-center overflow-hidden"
-      style={{
-        backgroundImage: bgImage ? `url(${bgImage})` : 'none',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundColor: '#000',
-      }}
+      className="relative h-screen flex items-center justify-center overflow-hidden bg-black"
     >
-      {/* Dark overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Animated gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black" />
       
-      {/* Gradient overlay matching the mockup */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
+      {/* Purple/Blue gradient overlays */}
+      <div className="absolute inset-0 bg-gradient-to-tr from-primary/20 via-transparent to-accent/20" />
+      <div className="absolute inset-0 bg-gradient-to-bl from-transparent via-primary/5 to-transparent" />
       
-      {/* Geometric shape accents */}
+      {/* Geometric shape accents with glow */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary/10 rounded-full blur-3xl" />
       </div>
+
+      {/* Grid pattern overlay */}
+      <div className="absolute inset-0 opacity-10" style={{
+        backgroundImage: 'linear-gradient(rgba(139, 92, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 92, 246, 0.1) 1px, transparent 1px)',
+        backgroundSize: '50px 50px'
+      }} />
+
+      {/* Vignette effect */}
+      <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/80" />
 
       <div className="relative z-10 container mx-auto px-6">
         <div className="max-w-5xl mx-auto text-center">
