@@ -1,43 +1,78 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { PlatformLogos } from "./PlatformLogos";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const HeroSection = () => {
-  const scrollToServices = () => {
-    const element = document.getElementById('services');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const [bgImage, setBgImage] = useState<string>("");
+
+  useEffect(() => {
+    const generateBackground = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('generate-hero-background');
+        if (error) throw error;
+        if (data?.imageUrl) {
+          setBgImage(data.imageUrl);
+        }
+      } catch (error) {
+        console.error('Error generating background:', error);
+      }
+    };
+
+    generateBackground();
+  }, []);
 
   return (
-    <section id="home" className="relative min-h-screen pt-24 pb-12 bg-gradient-to-br from-background via-background to-primary/10">
-      <div className="container mx-auto px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+    <section 
+      id="home" 
+      className="relative h-screen flex items-center justify-center overflow-hidden"
+      style={{
+        backgroundImage: bgImage ? `url(${bgImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundColor: '#000',
+      }}
+    >
+      {/* Dark overlay for better text readability */}
+      <div className="absolute inset-0 bg-black/40" />
+      
+      {/* Gradient overlay matching the mockup */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80" />
+      
+      {/* Geometric shape accents */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 container mx-auto px-6">
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-6xl md:text-7xl lg:text-8xl font-bold mb-6 text-white leading-tight">
             Your Music to the World
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-            Empowering music professionals with the tools that make the process of creating, distributing, and promoting music seamless and efficient.
+          <p className="text-lg md:text-xl text-white/90 mb-12 max-w-3xl mx-auto">
+            Empowering Artists Worldwide with Digital Music Distribution and Promotions
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
-            <Button asChild size="lg" className="text-lg px-8">
-              <Link to="/signup">Get Started</Link>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button 
+              asChild 
+              size="lg" 
+              className="text-lg px-10 py-6 bg-primary hover:bg-primary/90 text-white rounded-lg font-semibold"
+            >
+              <Link to="/releases">Distribute</Link>
             </Button>
             <Button 
+              asChild
               variant="outline" 
               size="lg" 
-              className="text-lg px-8"
-              onClick={scrollToServices}
+              className="text-lg px-10 py-6 bg-transparent border-2 border-white text-white hover:bg-white/10 rounded-lg font-semibold"
             >
-              Explore
+              <Link to="/promotions">Promote</Link>
             </Button>
           </div>
         </div>
       </div>
-      
-      <PlatformLogos />
     </section>
   );
 };
