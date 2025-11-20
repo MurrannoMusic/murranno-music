@@ -14,12 +14,15 @@ export const ServicesSection = () => {
   return (
     <section id="services" className="py-20 bg-background">
       <div className="container mx-auto px-6">
-        <div className="text-center mb-16">
+        <div className="mb-16 max-w-6xl mx-auto">
+          <p className="text-sm font-semibold tracking-wider text-foreground/60 mb-2">
+            FOCUS AREAS
+          </p>
           <h2 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
             Music Business Solutions
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Everything you need to succeed in the music industry
+          <p className="text-foreground/70 max-w-2xl">
+            We empower artists from every background to thrive in today's digital and interconnected global music industry.
           </p>
         </div>
         
