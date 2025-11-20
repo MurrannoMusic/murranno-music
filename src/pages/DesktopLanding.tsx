@@ -1,5 +1,6 @@
 import { LandingNav } from "@/components/landing/LandingNav";
 import { HeroSection } from "@/components/landing/HeroSection";
+import { PlatformLogos } from "@/components/landing/PlatformLogos";
 import { ServicesSection } from "@/components/landing/ServicesSection";
 import { WhySection } from "@/components/landing/WhySection";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
@@ -8,9 +9,10 @@ import { LandingFooter } from "@/components/landing/LandingFooter";
 
 export const DesktopLanding = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-black">
       <LandingNav />
       <HeroSection />
+      <PlatformLogos />
       <ServicesSection />
       <WhySection />
       <TestimonialsSection />
