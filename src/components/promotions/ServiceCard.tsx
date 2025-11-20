@@ -43,6 +43,10 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
               <video
                 src={displayVideos[0]}
                 controls
+                autoPlay
+                muted
+                loop
+                playsInline
                 className="w-full h-full object-cover"
               />
             ) : (
@@ -73,6 +77,10 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
                     <video
                       src={video}
                       controls
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
                       className="w-full h-48 object-cover"
                     />
                   </CarouselItem>
