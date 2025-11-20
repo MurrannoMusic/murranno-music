@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { PromotionService } from '@/types/promotion';
-import { Check, ShoppingCart, Zap } from 'lucide-react';
+import { Check, ShoppingCart, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
 interface ServiceCardProps {
@@ -151,7 +151,7 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
           variant="default"
           className="flex-1"
         >
-          <Zap className="h-4 w-4 mr-2" />
+          <ShoppingBag className="h-4 w-4 mr-2" />
           Buy Now
         </Button>
       </CardFooter>
