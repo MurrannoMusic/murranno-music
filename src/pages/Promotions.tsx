@@ -98,7 +98,6 @@ const PromotionsContent = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-primary/55 to-accent/50" />
           <CardContent className="relative p-8 text-center space-y-4 text-white">
-            <Megaphone className="h-12 w-12 mx-auto mb-4 drop-shadow-lg" />
             <h1 className="text-3xl font-bold mb-2 drop-shadow-lg">Full-Service Promotional Catalog</h1>
             <p className="text-white text-lg drop-shadow-md">
               Premium music promotion services and strategic bundles to amplify your reach
