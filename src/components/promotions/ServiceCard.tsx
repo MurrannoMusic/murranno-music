@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
 import { PromotionService } from '@/types/promotion';
-import { Check, ShoppingCart, ShoppingBag } from 'lucide-react';
+import { Check, ShoppingCart, ShoppingBag, Loader2 } from 'lucide-react';
 import { useCart } from '@/hooks/useCart';
 
 interface ServiceCardProps {
@@ -15,6 +16,16 @@ interface ServiceCardProps {
 export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
   const { addToCart, removeFromCart, isInCart } = useCart();
   const inCart = isInCart(service.id);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleBuyNow = async () => {
+    setIsLoading(true);
+    try {
+      await onSelect(service);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -147,12 +158,22 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
           </Button>
         )}
         <Button 
-          onClick={() => onSelect(service)} 
+          onClick={handleBuyNow}
           variant="default"
           className="flex-1"
+          disabled={isLoading}
         >
-          <ShoppingBag className="h-4 w-4 mr-2" />
-          Buy Now
+          {isLoading ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Processing...
+            </>
+          ) : (
+            <>
+              <ShoppingBag className="h-4 w-4 mr-2" />
+              Buy Now
+            </>
+          )}
         </Button>
       </CardFooter>
     </Card>
