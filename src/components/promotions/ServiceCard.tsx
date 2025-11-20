@@ -30,28 +30,49 @@ export const ServiceCard = ({ service, onSelect }: ServiceCardProps) => {
     ? [service.imageUrl] 
     : [];
 
+  const displayVideos = service.videos || [];
+  const hasMedia = displayImages.length > 0 || displayVideos.length > 0;
+  const allMedia = [...displayImages, ...displayVideos];
+
   return (
     <Card className="flex flex-col h-full hover:shadow-lg transition-shadow overflow-hidden">
-      {displayImages.length > 0 && (
+      {hasMedia && (
         <div className="w-full h-48 overflow-hidden relative">
-          {displayImages.length === 1 ? (
-            <CloudinaryImage
-              publicId={displayImages[0]}
-              alt={service.name}
-              width={400}
-              height={300}
-              className="w-full h-full object-cover"
-            />
+          {allMedia.length === 1 ? (
+            displayVideos.length > 0 ? (
+              <video
+                src={displayVideos[0]}
+                controls
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <CloudinaryImage
+                publicId={displayImages[0]}
+                alt={service.name}
+                width={400}
+                height={300}
+                className="w-full h-full object-cover"
+              />
+            )
           ) : (
             <Carousel className="w-full h-full">
               <CarouselContent>
                 {displayImages.map((image, index) => (
-                  <CarouselItem key={index}>
+                  <CarouselItem key={`img-${index}`}>
                     <CloudinaryImage
                       publicId={image}
                       alt={`${service.name} - Image ${index + 1}`}
                       width={400}
                       height={300}
+                      className="w-full h-48 object-cover"
+                    />
+                  </CarouselItem>
+                ))}
+                {displayVideos.map((video, index) => (
+                  <CarouselItem key={`vid-${index}`}>
+                    <video
+                      src={video}
+                      controls
                       className="w-full h-48 object-cover"
                     />
                   </CarouselItem>
