@@ -518,6 +518,48 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          campaign_updates: boolean
+          created_at: string
+          earnings_alerts: boolean
+          email_notifications: boolean
+          id: string
+          in_app_notifications: boolean
+          marketing_emails: boolean
+          push_notifications: boolean
+          release_updates: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          campaign_updates?: boolean
+          created_at?: string
+          earnings_alerts?: boolean
+          email_notifications?: boolean
+          id?: string
+          in_app_notifications?: boolean
+          marketing_emails?: boolean
+          push_notifications?: boolean
+          release_updates?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          campaign_updates?: boolean
+          created_at?: string
+          earnings_alerts?: boolean
+          email_notifications?: boolean
+          id?: string
+          in_app_notifications?: boolean
+          marketing_emails?: boolean
+          push_notifications?: boolean
+          release_updates?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           created_at: string | null
