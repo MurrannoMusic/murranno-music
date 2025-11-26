@@ -6,6 +6,7 @@ import { WhySection } from "@/components/landing/WhySection";
 import { TestimonialsSection } from "@/components/landing/TestimonialsSection";
 import { PlaylistCTASection } from "@/components/landing/PlaylistCTASection";
 import { LandingFooter } from "@/components/landing/LandingFooter";
+import { ScrollToTopButton } from "@/components/landing/ScrollToTopButton";
 
 export const DesktopLanding = () => {
   return (
@@ -18,6 +19,7 @@ export const DesktopLanding = () => {
       <TestimonialsSection />
       <PlaylistCTASection />
       <LandingFooter />
+      <ScrollToTopButton />
     </div>
   );
 };
