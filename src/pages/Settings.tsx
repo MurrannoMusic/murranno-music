@@ -10,6 +10,8 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { useTheme } from '@/components/ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ChangeEmailDialog } from '@/components/settings/ChangeEmailDialog';
+import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
 
 export const Settings = () => {
   const { theme, setTheme } = useTheme();
@@ -20,6 +22,10 @@ export const Settings = () => {
   const [pushNotifications, setPushNotifications] = useState(true);
   const [releaseUpdates, setReleaseUpdates] = useState(true);
   const [earningsAlerts, setEarningsAlerts] = useState(true);
+  
+  // Dialog states
+  const [emailDialogOpen, setEmailDialogOpen] = useState(false);
+  const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
 
   const handleSignOut = async () => {
     try {
@@ -156,12 +162,18 @@ export const Settings = () => {
               </button>
             </Link>
 
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => setEmailDialogOpen(true)}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <Mail className="h-5 w-5 text-primary" />
               <span className="text-card-foreground font-medium">Change Email</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => setPasswordDialogOpen(true)}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <Lock className="h-5 w-5 text-primary" />
               <span className="text-card-foreground font-medium">Change Password</span>
             </button>
@@ -195,19 +207,31 @@ export const Settings = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => navigate('/faq')}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <span className="text-card-foreground font-medium">FAQs</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => navigate('/support')}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <span className="text-card-foreground font-medium">Contact Support</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => navigate('/terms')}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <span className="text-card-foreground font-medium">Terms of Service</span>
             </button>
 
-            <button className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left">
+            <button 
+              onClick={() => navigate('/privacy')}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
               <span className="text-card-foreground font-medium">Privacy Policy</span>
             </button>
           </CardContent>
@@ -223,6 +247,9 @@ export const Settings = () => {
           Sign Out
         </Button>
       </div>
+
+      <ChangeEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} />
+      <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
     </PageContainer>
   );
 };

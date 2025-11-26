@@ -41,6 +41,10 @@ import { Settings } from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import NewsDetail from "./pages/NewsDetail";
 import SubscriptionPlans from "./pages/SubscriptionPlans";
+import { TermsOfService } from "./pages/TermsOfService";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
+import { FAQ } from "./pages/FAQ";
+import { Support } from "./pages/Support";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminContent from "./pages/admin/AdminContent";
@@ -76,6 +80,12 @@ const App = () => (
               <Route path="/get-started" element={<MobileOnlyRoute><GetStarted /></MobileOnlyRoute>} />
               <Route path="/login" element={<MobileOnlyRoute><Login /></MobileOnlyRoute>} />
               <Route path="/signup" element={<MobileOnlyRoute><Signup /></MobileOnlyRoute>} />
+              
+              {/* Legal & Support Pages */}
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/support" element={<Support />} />
               
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
