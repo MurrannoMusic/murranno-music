@@ -47,6 +47,42 @@ export type Database = {
         }
         Relationships: []
       }
+      agency_clients: {
+        Row: {
+          agency_id: string
+          client_id: string
+          commission_percentage: number | null
+          contract_details: Json | null
+          created_at: string
+          id: string
+          notes: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          agency_id: string
+          client_id: string
+          commission_percentage?: number | null
+          contract_details?: Json | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string
+          client_id?: string
+          commission_percentage?: number | null
+          contract_details?: Json | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       artists: {
         Row: {
           apple_music_id: string | null
@@ -482,8 +518,11 @@ export type Database = {
           created_at: string
           id: string
           label_id: string
+          notes: string | null
+          payout_schedule: string | null
           revenue_share_percentage: number | null
           status: string
+          total_paid_out: number | null
           updated_at: string
         }
         Insert: {
@@ -493,8 +532,11 @@ export type Database = {
           created_at?: string
           id?: string
           label_id: string
+          notes?: string | null
+          payout_schedule?: string | null
           revenue_share_percentage?: number | null
           status?: string
+          total_paid_out?: number | null
           updated_at?: string
         }
         Update: {
@@ -504,8 +546,11 @@ export type Database = {
           created_at?: string
           id?: string
           label_id?: string
+          notes?: string | null
+          payout_schedule?: string | null
           revenue_share_percentage?: number | null
           status?: string
+          total_paid_out?: number | null
           updated_at?: string
         }
         Relationships: [

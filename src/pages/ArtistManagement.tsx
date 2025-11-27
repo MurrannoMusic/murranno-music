@@ -18,20 +18,39 @@ export const ArtistManagement = () => {
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [adding, setAdding] = useState(false);
 
-  const handleAddArtist = async (artist: { name: string; stageName: string; email?: string }) => {
+  const handleAddArtist = async (artist: { name: string; stageName: string; email?: string; revenueShare?: number; contractStartDate?: Date; contractEndDate?: Date; notes?: string }) => {
     try {
       setAdding(true);
       
-      const { data, error } = await supabase.functions.invoke('add-artist-to-label', {
-        body: {
-          stage_name: artist.stageName,
-          email: artist.email,
-        }
-      });
+      // If email is provided, use invite function
+      if (artist.email) {
+        const { data, error } = await supabase.functions.invoke('invite-artist-to-label', {
+          body: {
+            artistEmail: artist.email,
+            revenueSharePercentage: artist.revenueShare || 50,
+            contractStartDate: artist.contractStartDate?.toISOString(),
+            contractEndDate: artist.contractEndDate?.toISOString(),
+          }
+        });
 
-      if (error) throw error;
+        if (error) throw error;
+        toast.success('Artist invitation sent');
+      } else {
+        // Create new artist profile
+        const { data, error } = await supabase.functions.invoke('add-artist-to-label', {
+          body: {
+            stage_name: artist.stageName,
+            revenue_share_percentage: artist.revenueShare || 50,
+            contract_start_date: artist.contractStartDate?.toISOString(),
+            contract_end_date: artist.contractEndDate?.toISOString(),
+            notes: artist.notes,
+          }
+        });
 
-      toast.success('Artist added successfully');
+        if (error) throw error;
+        toast.success('Artist added successfully');
+      }
+      
       setShowAddDialog(false);
       refetch();
     } catch (error: any) {
@@ -53,6 +72,7 @@ export const ArtistManagement = () => {
       <AddArtistForm 
         onAdd={handleAddArtist}
         onCancel={() => setShowAddDialog(false)}
+        isLabel={true}
       />
     </Dialog>
   );
@@ -123,18 +143,19 @@ export const ArtistManagement = () => {
               </div>
             ) : (
               artists.map((artist) => (
-                <div key={artist.id} className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border hover:bg-secondary/30 transition-all duration-200 cursor-pointer">
-                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Users className="h-5 w-5 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-semibold text-card-foreground truncate">{artist.stage_name}</p>
-                      <span className="px-2 py-1 bg-primary/20 text-primary rounded-full text-xs font-semibold">{artist.status}</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground">{artist.releases} releases • {artist.streams} streams</p>
-                  </div>
-                </div>
+                <ArtistCard
+                  key={artist.id}
+                  artist={{
+                    id: artist.id,
+                    name: artist.stage_name,
+                    stageName: artist.stage_name,
+                    status: artist.status,
+                    releases: artist.releases,
+                    streams: artist.streams,
+                    revenue: artist.revenue
+                  }}
+                  onViewDetails={(id) => window.location.href = `/app/artist-management/${id}`}
+                />
               ))
             )}
           </CardContent>
