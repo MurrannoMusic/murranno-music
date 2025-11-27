@@ -83,3 +83,6 @@ verify_jwt = false
 
 [functions.invite-client-to-agency]
 verify_jwt = true
+
+[functions.send-release-status-email]
+verify_jwt = false
