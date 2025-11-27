@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone, Eye, User, Building2, Tag, CreditCard } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone, Eye, User, Building2, Tag, CreditCard, Bell } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -23,6 +23,7 @@ const menuItems = [
   { title: 'Payments', url: '/admin/payments', icon: CreditCard },
   { title: 'Financials', url: '/admin/financials', icon: DollarSign },
   { title: 'Analytics', url: '/admin/analytics', icon: BarChart3 },
+  { title: 'Notifications', url: '/admin/notifications', icon: Bell },
   { title: 'Audit Logs', url: '/admin/audit-logs', icon: FileText },
   { title: 'Settings', url: '/admin/settings', icon: Settings },
 ];
