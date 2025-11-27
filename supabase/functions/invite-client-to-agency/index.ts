@@ -1,7 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.74.0";
 import { Resend } from "npm:resend@2.0.0";
-import { labelInvitationEmail } from "../_shared/email-templates.ts";
+import { agencyInvitationEmail } from "../_shared/email-templates.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -33,82 +33,67 @@ serve(async (req) => {
       );
     }
 
-    // Verify user is a label
+    // Verify user is an agency
     const { data: userRole } = await supabase
       .from('user_roles')
       .select('tier')
       .eq('user_id', user.id)
       .single();
 
-    if (userRole?.tier !== 'label') {
+    if (userRole?.tier !== 'agency') {
       return new Response(
-        JSON.stringify({ error: 'Only labels can invite artists' }),
+        JSON.stringify({ error: 'Only agencies can invite clients' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const { artistEmail, revenueSharePercentage, contractStartDate, contractEndDate } = await req.json();
+    const { clientEmail, commissionPercentage, contractDetails } = await req.json();
 
-    if (!artistEmail) {
+    if (!clientEmail) {
       return new Response(
-        JSON.stringify({ error: 'Artist email is required' }),
+        JSON.stringify({ error: 'Client email is required' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Inviting artist to label:', { labelId: user.id, artistEmail });
+    console.log('Inviting client to agency:', { agencyId: user.id, clientEmail });
 
-    // Find artist by email
-    const { data: artistProfile } = await supabase
+    // Find client by email
+    const { data: clientProfile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('email', artistEmail)
+      .eq('email', clientEmail)
       .single();
 
-    if (!artistProfile) {
+    if (!clientProfile) {
       return new Response(
-        JSON.stringify({ error: 'Artist with this email not found' }),
+        JSON.stringify({ error: 'User with this email not found' }),
         { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Check if artist has artist role
-    const { data: artistRole } = await supabase
+    // Check if client has artist role
+    const { data: clientRole } = await supabase
       .from('user_roles')
       .select('tier')
-      .eq('user_id', artistProfile.id)
+      .eq('user_id', clientProfile.id)
       .single();
 
-    if (!artistRole || artistRole.tier !== 'artist') {
+    if (!clientRole || clientRole.tier !== 'artist') {
       return new Response(
         JSON.stringify({ error: 'User is not an artist' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Get artist details
-    const { data: artist } = await supabase
-      .from('artists')
-      .select('id')
-      .eq('user_id', artistProfile.id)
-      .single();
-
-    if (!artist) {
-      return new Response(
-        JSON.stringify({ error: 'Artist profile not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Add artist to label
-    const { data: labelArtist, error: insertError } = await supabase
-      .from('label_artists')
+    // Add client to agency
+    const { data: agencyClient, error: insertError } = await supabase
+      .from('agency_clients')
       .insert({
-        label_id: user.id,
-        artist_id: artist.id,
-        revenue_share_percentage: revenueSharePercentage || 50,
-        contract_start_date: contractStartDate || null,
-        contract_end_date: contractEndDate || null,
+        agency_id: user.id,
+        client_id: clientProfile.id,
+        commission_percentage: commissionPercentage || 15,
+        contract_details: contractDetails || null,
         status: 'active'
       })
       .select()
@@ -117,79 +102,77 @@ serve(async (req) => {
     if (insertError) {
       if (insertError.code === '23505') {
         return new Response(
-          JSON.stringify({ error: 'Artist is already signed to this label' }),
+          JSON.stringify({ error: 'Client is already signed to this agency' }),
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
       throw insertError;
     }
 
-    // Create notification for the artist
+    // Create notification for the client
     await supabase.from('notifications').insert({
-      user_id: artistProfile.id,
-      title: 'Added to Label',
-      message: 'You have been added to a record label',
+      user_id: clientProfile.id,
+      title: 'Added to Agency',
+      message: 'You have been added as a client to an agency',
       type: 'info',
-      related_type: 'label',
+      related_type: 'agency',
       related_id: user.id
     });
 
-    // Get label name and artist details for email
-    const { data: labelProfile } = await supabase
+    // Get agency name and artist name for email
+    const { data: agencyProfile } = await supabase
       .from('profiles')
-      .select('full_name, email')
+      .select('full_name')
       .eq('id', user.id)
       .single();
 
-    const { data: fullArtist } = await supabase
+    const { data: artist } = await supabase
       .from('artists')
       .select('stage_name')
-      .eq('id', artist.id)
+      .eq('user_id', clientProfile.id)
       .single();
 
     // Send email notification
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
     
-    // Check if artist has email notifications enabled
+    // Check if client has email notifications enabled
     const { data: preferences } = await supabase
       .from('notification_preferences')
       .select('email_notifications')
-      .eq('user_id', artistProfile.id)
+      .eq('user_id', clientProfile.id)
       .single();
 
     if (!preferences || preferences.email_notifications) {
       try {
-        const labelName = labelProfile?.full_name || 'Your Label';
-        const artistName = fullArtist?.stage_name || 'Artist';
+        const agencyName = agencyProfile?.full_name || 'Your Agency';
+        const artistName = artist?.stage_name || 'Artist';
 
         await resend.emails.send({
           from: 'Murranno Music <notifications@resend.dev>',
-          to: [artistEmail],
-          subject: `You've been added to ${labelName}!`,
-          html: labelInvitationEmail(
+          to: [clientEmail],
+          subject: `You've been added to ${agencyName}!`,
+          html: agencyInvitationEmail(
             artistName,
-            labelName,
-            revenueSharePercentage || 50,
-            contractStartDate,
-            contractEndDate
+            agencyName,
+            commissionPercentage || 15
           ),
         });
-        console.log('Invitation email sent to:', artistEmail);
+        console.log('Invitation email sent to:', clientEmail);
       } catch (emailError) {
         console.error('Failed to send invitation email:', emailError);
         // Don't fail the whole request if email fails
       }
     }
 
-    console.log('Artist invited successfully:', labelArtist.id);
+    console.log('Client invited successfully:', agencyClient.id);
 
     return new Response(
-      JSON.stringify({ success: true, labelArtist }),
+      JSON.stringify({ success: true, agencyClient }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
   } catch (error) {
-    console.error('Invite artist to label error:', error);
+    console.error('Invite client to agency error:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
