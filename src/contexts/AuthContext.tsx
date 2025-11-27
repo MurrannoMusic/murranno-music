@@ -126,6 +126,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTimeout(() => {
             fetchUserData(session.user.id);
           }, 0);
+
+          // Send welcome email for new signups
+          if (event === 'SIGNED_UP') {
+            setTimeout(async () => {
+              try {
+                await supabase.functions.invoke('send-welcome-email', {
+                  body: { userId: session.user.id }
+                });
+                console.log('Welcome email sent for new user');
+              } catch (err) {
+                console.error('Failed to send welcome email:', err);
+                // Don't show error to user, this is a background operation
+              }
+            }, 0);
+          }
         } else {
           setProfile(null);
           setUserRole(null);

@@ -62,6 +62,24 @@ serve(async (req) => {
       metadata: { status, reason },
     });
 
+    // Send release status email notification
+    try {
+      const { error: emailError } = await supabase.functions.invoke('send-release-status-email', {
+        body: {
+          releaseId,
+          status,
+          rejectionReason: reason
+        }
+      });
+
+      if (emailError) {
+        console.error('Failed to send release status email:', emailError);
+        // Don't fail the whole operation if email fails
+      }
+    } catch (emailErr) {
+      console.error('Error invoking send-release-status-email:', emailErr);
+    }
+
     console.log(`Admin ${user.email} moderated release ${releaseId} to status ${status}`);
 
     return new Response(JSON.stringify({ success: true }), {
