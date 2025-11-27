@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { useBadgeCount } from './useBadgeCount';
 
 export interface Notification {
   id: string;
@@ -19,6 +20,9 @@ export const useNotifications = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  
+  // Update badge count whenever unread count changes
+  const { clearBadge } = useBadgeCount(unreadCount);
 
   useEffect(() => {
     fetchNotifications();
@@ -120,6 +124,9 @@ export const useNotifications = () => {
       if (error) throw error;
 
       setUnreadCount(0);
+      
+      // Clear the badge since all notifications are read
+      await clearBadge();
     } catch (error) {
       console.error('Error marking all as read:', error);
     }

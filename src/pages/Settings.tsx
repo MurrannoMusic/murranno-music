@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ChangeEmailDialog } from '@/components/settings/ChangeEmailDialog';
 import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog';
+import { BadgeSettings } from '@/components/settings/BadgeSettings';
 import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
 import { Loader2 } from 'lucide-react';
 
@@ -195,6 +196,9 @@ export const Settings = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Badge Settings */}
+        <BadgeSettings />
 
         {/* Account Management */}
         <Card className="bg-card border border-border rounded-[20px] shadow-soft">
