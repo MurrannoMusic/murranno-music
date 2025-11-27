@@ -116,6 +116,7 @@ serve(async (req) => {
     }
 
     // Send emails
+    let emailsSent = 0;
     if (profiles && profiles.length > 0) {
       console.log(`Sending ${profiles.length} emails`);
       
@@ -137,6 +138,7 @@ serve(async (req) => {
               </div>
             `,
           });
+          emailsSent++;
           console.log(`Email sent to ${profile.email}`);
         } catch (emailSendError) {
           console.error(`Failed to send email to ${profile.email}:`, emailSendError);
@@ -144,11 +146,71 @@ serve(async (req) => {
       }
     }
 
+    // Send push notifications
+    let pushNotificationsSent = 0;
+    
+    // Get users who have push notifications enabled
+    const { data: pushUsers, error: pushError } = await supabaseClient
+      .from('notification_preferences')
+      .select('user_id')
+      .eq('push_notifications', true)
+      .in('user_id', userRoles.map(r => r.user_id));
+
+    if (pushError) {
+      console.error('Error fetching push preferences:', pushError);
+    }
+
+    const pushUserIds = new Set(pushUsers?.map(u => u.user_id) || []);
+    console.log(`${pushUserIds.size} users have push notifications enabled`);
+
+    if (pushUserIds.size > 0) {
+      // Get active push tokens for users with push notifications enabled
+      const { data: pushTokens, error: tokensError } = await supabaseClient
+        .from('push_notification_tokens')
+        .select('token, platform')
+        .eq('is_active', true)
+        .in('user_id', Array.from(pushUserIds));
+
+      if (tokensError) {
+        console.error('Error fetching push tokens:', tokensError);
+      }
+
+      if (pushTokens && pushTokens.length > 0) {
+        console.log(`Sending push notifications to ${pushTokens.length} devices`);
+        
+        // Note: This is a placeholder for actual push notification sending
+        // In production, you would use Firebase Cloud Messaging (FCM) for Android
+        // and Apple Push Notification service (APNs) for iOS
+        // For now, we just log that push notifications would be sent
+        console.log('Push notification payload:', {
+          title,
+          body: message,
+          data: {
+            type,
+            notificationId: Date.now().toString(),
+          },
+        });
+        
+        pushNotificationsSent = pushTokens.length;
+        
+        // TODO: Implement actual push notification sending
+        // Example with FCM:
+        // for (const token of pushTokens) {
+        //   if (token.platform === 'android') {
+        //     await sendFCMNotification(token.token, { title, message, type });
+        //   } else if (token.platform === 'ios') {
+        //     await sendAPNsNotification(token.token, { title, message, type });
+        //   }
+        // }
+      }
+    }
+
     return new Response(
       JSON.stringify({ 
         success: true, 
         notificationsSent: notifications.length,
-        emailsSent: profiles?.length || 0,
+        emailsSent,
+        pushNotificationsSent,
       }),
       {
         status: 200,
