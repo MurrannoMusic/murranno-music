@@ -71,3 +71,15 @@ verify_jwt = true
 
 [functions.pause-campaign]
 verify_jwt = true
+
+[functions.send-welcome-email]
+verify_jwt = false
+
+[functions.send-campaign-status-email]
+verify_jwt = false
+
+[functions.send-earnings-alert-email]
+verify_jwt = false
+
+[functions.invite-client-to-agency]
+verify_jwt = true
