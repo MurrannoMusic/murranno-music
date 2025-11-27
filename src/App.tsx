@@ -35,6 +35,9 @@ import { ArtistManagement } from "./pages/ArtistManagement";
 import { CampaignManager } from "./pages/CampaignManager";
 import { PayoutManager } from "./pages/PayoutManager";
 import { Results } from "./pages/Results";
+import ArtistDetail from "./pages/ArtistDetail";
+import ClientManagement from "./pages/ClientManagement";
+import AgencyAnalyticsDashboard from "./pages/AgencyAnalyticsDashboard";
 import { Profile } from "./pages/Profile";
 import { ArtistProfile } from "./pages/ArtistProfile";
 import { Settings } from "./pages/Settings";
@@ -102,6 +105,9 @@ const App = () => (
                 <Route path="analytics" element={<Analytics />} />
                 <Route path="label-analytics" element={<LabelAnalytics />} />
                 <Route path="artist-management" element={<ArtistManagement />} />
+                <Route path="artist-management/:artistId" element={<ArtistDetail />} />
+                <Route path="client-management" element={<ClientManagement />} />
+                <Route path="agency-analytics" element={<AgencyAnalyticsDashboard />} />
                 <Route path="campaign-manager" element={<CampaignManager />} />
                 <Route path="payout-manager" element={<PayoutManager />} />
                 <Route path="results" element={<Results />} />

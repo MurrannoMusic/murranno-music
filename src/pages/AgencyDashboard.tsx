@@ -158,9 +158,15 @@ export const AgencyDashboard = () => {
             </div>
             
             <div className="grid grid-cols-2 gap-2">
-              <Link to="/app/results">
+              <Link to="/app/client-management">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
-                  View Results
+                  Manage Clients
+                </button>
+              </Link>
+              
+              <Link to="/app/agency-analytics">
+                <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
+                  View Analytics
                 </button>
               </Link>
               

@@ -20,6 +20,7 @@ interface ArtistCardProps {
   onViewReleases?: (id: string) => void;
   onViewAnalytics?: (id: string) => void;
   onManagePayouts?: (id: string) => void;
+  onViewDetails?: (id: string) => void;
 }
 
 export const ArtistCard = ({ 
@@ -27,7 +28,8 @@ export const ArtistCard = ({
   onEdit, 
   onViewReleases, 
   onViewAnalytics, 
-  onManagePayouts 
+  onManagePayouts,
+  onViewDetails
 }: ArtistCardProps) => {
   return (
     <div className="interactive-element p-4 bg-muted/20 rounded-xl border border-border/10">
@@ -62,6 +64,11 @@ export const ArtistCard = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="glass-card border-border/20">
+            {onViewDetails && (
+              <DropdownMenuItem onClick={() => onViewDetails(artist.id)}>
+                View Details
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem onClick={() => onEdit?.(artist.id)}>
               <Edit className="h-4 w-4 mr-2" />
               Edit Profile
