@@ -55,6 +55,16 @@ serve(async (req) => {
 
     console.log('Updating campaign status:', { campaignId, status });
 
+    // Get the current campaign to store old status BEFORE update
+    const { data: oldCampaign, error: fetchError } = await supabase
+      .from('campaigns')
+      .select('status')
+      .eq('id', campaignId)
+      .single();
+
+    if (fetchError) throw fetchError;
+    const oldStatus = oldCampaign?.status || 'unknown';
+
     // Build update object
     const updates: any = {
       status,
@@ -88,12 +98,31 @@ serve(async (req) => {
         target_type: 'campaign',
         target_id: campaignId,
         metadata: {
-          old_status: campaign.status,
+          old_status: oldStatus,
           new_status: status,
           admin_notes: adminNotes,
           rejection_reason: rejectionReason,
         },
       });
+
+    // Send campaign status email notification
+    try {
+      const { error: emailError } = await supabase.functions.invoke('send-campaign-status-email', {
+        body: {
+          campaignId,
+          oldStatus,
+          newStatus: status,
+          rejectionReason
+        }
+      });
+
+      if (emailError) {
+        console.error('Failed to send campaign status email:', emailError);
+        // Don't fail the whole operation if email fails
+      }
+    } catch (emailErr) {
+      console.error('Error invoking send-campaign-status-email:', emailErr);
+    }
 
     console.log('Campaign status updated successfully:', campaign.id);
 

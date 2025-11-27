@@ -126,21 +126,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           setTimeout(() => {
             fetchUserData(session.user.id);
           }, 0);
-
-          // Send welcome email for new signups
-          if (event === 'SIGNED_UP') {
-            setTimeout(async () => {
-              try {
-                await supabase.functions.invoke('send-welcome-email', {
-                  body: { userId: session.user.id }
-                });
-                console.log('Welcome email sent for new user');
-              } catch (err) {
-                console.error('Failed to send welcome email:', err);
-                // Don't show error to user, this is a background operation
-              }
-            }, 0);
-          }
         } else {
           setProfile(null);
           setUserRole(null);
@@ -168,7 +153,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
@@ -190,6 +175,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           title: 'Welcome!',
           description: 'Your account has been created with a 14-day free trial.',
         });
+
+        // Send welcome email for new user
+        if (data.user) {
+          setTimeout(async () => {
+            try {
+              await supabase.functions.invoke('send-welcome-email', {
+                body: { userId: data.user.id }
+              });
+              console.log('Welcome email queued for new user');
+            } catch (err) {
+              console.error('Failed to queue welcome email:', err);
+              // Don't show error to user, this is a background operation
+            }
+          }, 1000); // Wait 1 second to ensure user profile is created
+        }
       }
 
       return { error };
