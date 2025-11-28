@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { WelcomeCarousel } from '@/components/mobile/WelcomeCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
 import { User, Building2, Megaphone, ChevronRight } from 'lucide-react';
 import { UserType } from '@/types/user';
 
 export const Welcome = () => {
   const navigate = useNavigate();
   const [selectedUserType, setSelectedUserType] = useState<UserType | null>(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const userTypes: { 
     type: UserType; 
@@ -47,19 +49,39 @@ export const Welcome = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Compact carousel at top */}
-      <WelcomeCarousel compact />
+    <div className="min-h-screen bg-background flex flex-col relative">
+      {/* Full carousel */}
+      <WelcomeCarousel />
 
-      {/* User type selection section */}
-      <div className="flex-1 bg-background">
-        <div className="mobile-container py-6">
-          <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold mb-2">Choose Your Account Type</h2>
-            <p className="text-muted-foreground text-sm">Select how you'll be using Murranno Music</p>
-          </div>
+      {/* Fixed bottom CTA area */}
+      <div className="fixed bottom-0 inset-x-0 p-6 bg-gradient-to-t from-background via-background/95 to-transparent pointer-events-none">
+        <div className="pointer-events-auto space-y-4">
+          <Button 
+            onClick={() => setDrawerOpen(true)}
+            className="w-full gradient-primary music-button shadow-primary"
+            size="lg"
+          >
+            Get Started
+          </Button>
+          
+          <p className="text-sm text-muted-foreground text-center">
+            Already have an account?{' '}
+            <Link to="/login" className="text-primary font-medium hover:underline">
+              Log in
+            </Link>
+          </p>
+        </div>
+      </div>
 
-          <div className="space-y-3 mb-6">
+      {/* Account type selection drawer */}
+      <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
+        <DrawerContent className="max-h-[85vh]">
+          <DrawerHeader>
+            <DrawerTitle>Choose Your Account Type</DrawerTitle>
+            <DrawerDescription>Select how you'll be using Murranno Music</DrawerDescription>
+          </DrawerHeader>
+
+          <div className="px-4 space-y-3 overflow-y-auto flex-1">
             {userTypes.map(({ type, label, icon: Icon, description, color }) => (
               <Card 
                 key={type} 
@@ -92,33 +114,21 @@ export const Welcome = () => {
             ))}
           </div>
 
-          {/* CTA Button */}
-          <Button 
-            onClick={handleCreateAccount}
-            disabled={!selectedUserType}
-            className="w-full gradient-primary music-button shadow-primary"
-            size="lg"
-          >
-            Create Account
-          </Button>
-
-          {/* Login link */}
-          <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary font-medium hover:underline">
-                Log in
-              </Link>
-            </p>
-          </div>
-
-          <div className="mt-4 text-center">
-            <p className="text-xs text-muted-foreground">
+          <DrawerFooter>
+            <Button 
+              onClick={handleCreateAccount}
+              disabled={!selectedUserType}
+              className="w-full gradient-primary music-button shadow-primary"
+              size="lg"
+            >
+              Create Account
+            </Button>
+            <p className="text-xs text-center text-muted-foreground mt-2">
               You can change your account type later in settings
             </p>
-          </div>
-        </div>
-      </div>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
     </div>
   );
 };
