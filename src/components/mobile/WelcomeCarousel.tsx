@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Pause, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import prototypeOne from '@/assets/prototype-1.jpg';
@@ -39,10 +39,28 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
   const [currentSlide, setCurrentSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
+
+  // Autoplay functionality
+  useEffect(() => {
+    if (isAutoplayPaused) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => {
+        if (prev < slides.length - 1) {
+          return prev + 1;
+        }
+        return 0; // Loop back to first slide
+      });
+    }, 4000); // Change slide every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [isAutoplayPaused]);
 
   const minSwipeDistance = 50;
 
   const nextSlide = () => {
+    setIsAutoplayPaused(true); // Pause autoplay when user manually navigates
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     } else {
@@ -51,13 +69,24 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
   };
 
   const previousSlide = () => {
+    setIsAutoplayPaused(true); // Pause autoplay when user manually navigates
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
   };
 
   const skipToEnd = () => {
+    setIsAutoplayPaused(true);
     onComplete();
+  };
+
+  const goToSlide = (index: number) => {
+    setIsAutoplayPaused(true); // Pause autoplay when user clicks a dot
+    setCurrentSlide(index);
+  };
+
+  const toggleAutoplay = () => {
+    setIsAutoplayPaused(!isAutoplayPaused);
   };
 
   const onTouchStart = (e: React.TouchEvent) => {
@@ -72,6 +101,7 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     
+    setIsAutoplayPaused(true); // Pause autoplay on swipe
     const distance = touchStart - touchEnd;
     const isLeftSwipe = distance > minSwipeDistance;
     const isRightSwipe = distance < -minSwipeDistance;
@@ -136,18 +166,34 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
           </div>
         </div>
 
-        {/* Progress indicators - Now clickable */}
-        <div className={`flex space-x-2 ${compact ? 'mt-3' : 'mt-8'}`}>
-          {slides.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:scale-125 ${
-                index === currentSlide ? 'bg-primary w-6' : 'bg-white/50 hover:bg-white/70'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
+        {/* Progress indicators with pause/play button */}
+        <div className={`flex items-center gap-3 ${compact ? 'mt-3' : 'mt-8'}`}>
+          {/* Pause/Play button */}
+          <button
+            onClick={toggleAutoplay}
+            className="p-1.5 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-all"
+            aria-label={isAutoplayPaused ? 'Resume autoplay' : 'Pause autoplay'}
+          >
+            {isAutoplayPaused ? (
+              <Play className="w-3 h-3 text-white fill-white" />
+            ) : (
+              <Pause className="w-3 h-3 text-white fill-white" />
+            )}
+          </button>
+
+          {/* Progress dots */}
+          <div className="flex space-x-2">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:scale-125 ${
+                  index === currentSlide ? 'bg-primary w-6' : 'bg-white/50 hover:bg-white/70'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* Compact mode navigation */}
