@@ -109,42 +109,43 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
       ))}
 
       <div className={`relative z-10 flex-1 flex flex-col justify-end items-center ${compact ? 'px-4 py-4' : 'px-6 py-8'}`}>
-        <div className="w-full max-w-sm">
-          {slides.map((slide, index) => (
-            <div
-              key={index}
-              className={`transition-smooth transform ${
-                index === currentSlide 
-                  ? 'opacity-100 scale-100 translate-x-0' 
-                  : index < currentSlide 
-                    ? 'opacity-0 scale-95 -translate-x-full absolute'
-                    : 'opacity-0 scale-95 translate-x-full absolute'
-              } ${index === currentSlide ? 'relative' : ''}`}
-            >
-              <Card className="backdrop-blur-xl bg-black/30 border-white/20">
-                <div className={`${compact ? 'p-4' : 'p-8'} text-center ${compact ? 'space-y-2' : 'space-y-6'}`}>
-                  <div className={compact ? 'space-y-2' : 'space-y-4'}>
-                    <h2 className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-white leading-tight drop-shadow-lg`}>
-                      {slide.title}
-                    </h2>
-                    <p className={`text-white/90 ${compact ? 'text-sm' : 'text-base'} leading-relaxed drop-shadow-md`}>
-                      {slide.description}
-                    </p>
+        <div className="w-full max-w-sm overflow-hidden">
+          <div 
+            className="flex transition-transform duration-500 ease-out"
+            style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+          >
+            {slides.map((slide, index) => (
+              <div
+                key={index}
+                className="w-full flex-shrink-0 px-2"
+              >
+                <Card className="backdrop-blur-xl bg-black/30 border-white/20">
+                  <div className={`${compact ? 'p-4' : 'p-8'} text-center ${compact ? 'space-y-2' : 'space-y-6'}`}>
+                    <div className={compact ? 'space-y-2' : 'space-y-4'}>
+                      <h2 className={`${compact ? 'text-lg' : 'text-2xl'} font-bold text-white leading-tight drop-shadow-lg`}>
+                        {slide.title}
+                      </h2>
+                      <p className={`text-white/90 ${compact ? 'text-sm' : 'text-base'} leading-relaxed drop-shadow-md`}>
+                        {slide.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Card>
-            </div>
-          ))}
+                </Card>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Progress indicators */}
+        {/* Progress indicators - Now clickable */}
         <div className={`flex space-x-2 ${compact ? 'mt-3' : 'mt-8'}`}>
           {slides.map((_, index) => (
-            <div
+            <button
               key={index}
-              className={`w-2 h-2 rounded-full transition-smooth ${
-                index === currentSlide ? 'bg-primary' : 'bg-white/50'
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-all duration-300 cursor-pointer hover:scale-125 ${
+                index === currentSlide ? 'bg-primary w-6' : 'bg-white/50 hover:bg-white/70'
               }`}
+              aria-label={`Go to slide ${index + 1}`}
             />
           ))}
         </div>
