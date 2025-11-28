@@ -86,7 +86,7 @@ export const WelcomeCarousel = ({ onComplete, compact = false }: WelcomeCarousel
 
   return (
     <div 
-      className={`${compact ? 'h-[calc(100vh-180px)]' : 'min-h-screen'} flex flex-col relative overflow-hidden ${compact ? 'rounded-t-3xl' : ''}`}
+      className={`${compact ? 'h-[calc(100vh-140px)]' : 'min-h-screen'} flex flex-col relative overflow-hidden ${compact ? 'rounded-t-3xl' : ''}`}
       onTouchStart={onTouchStart}
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
