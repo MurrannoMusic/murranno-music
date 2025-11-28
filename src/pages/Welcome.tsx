@@ -50,13 +50,13 @@ export const Welcome = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col relative">
-      {/* Full carousel with bottom padding for button */}
-      <div className="flex-1 pb-32">
-        <WelcomeCarousel />
+      {/* Carousel without internal navigation */}
+      <div className="flex-1">
+        <WelcomeCarousel compact />
       </div>
 
       {/* Fixed bottom CTA area with proper z-index */}
-      <div className="fixed bottom-0 inset-x-0 z-50 p-6 bg-gradient-to-t from-background via-background to-transparent">
+      <div className="fixed bottom-0 inset-x-0 z-50 p-6 pt-16 bg-gradient-to-t from-background via-background to-transparent">
         <div className="space-y-4">
           <Button 
             onClick={() => setDrawerOpen(true)}
