@@ -4,7 +4,7 @@ import { WelcomeCarousel } from '@/components/mobile/WelcomeCarousel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Drawer, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle } from '@/components/ui/drawer';
-import { User, Building2, Megaphone, ChevronRight } from 'lucide-react';
+import { User, Building2, Megaphone, ChevronRight, ChevronUp } from 'lucide-react';
 import { UserType } from '@/types/user';
 
 export const Welcome = () => {
@@ -60,10 +60,13 @@ export const Welcome = () => {
         <div className="space-y-4">
           <Button 
             onClick={() => setDrawerOpen(true)}
-            className="w-full gradient-primary music-button shadow-primary"
+            className="w-full gradient-primary music-button shadow-primary relative"
             size="lg"
           >
-            Get Started
+            <span className="flex items-center justify-center gap-2">
+              Get Started
+              <ChevronUp className="w-5 h-5 animate-bounce" />
+            </span>
           </Button>
           
           <p className="text-sm text-muted-foreground text-center">
