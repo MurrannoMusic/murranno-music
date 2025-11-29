@@ -5,12 +5,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { SlidersHorizontal, Share2, ExternalLink, Music, DollarSign, Play } from 'lucide-react';
+import { SlidersHorizontal, Share2, ExternalLink, Music, DollarSign, Play, Copy } from 'lucide-react';
 import { toast } from 'sonner';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { useReleaseDetail } from '@/hooks/useReleaseDetail';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useShare } from '@/hooks/useShare';
+import { useClipboard } from '@/hooks/useClipboard';
 
 
 const statusColors: Record<string, string> = {
@@ -38,6 +39,7 @@ const ReleaseDetail = () => {
   const navigate = useNavigate();
   const { release, loading } = useReleaseDetail(id);
   const { shareUrl } = useShare();
+  const { copySmartlink } = useClipboard();
 
 
   if (loading) {
@@ -267,15 +269,25 @@ const ReleaseDetail = () => {
               <h2 className="text-sm font-bold text-muted-foreground mb-4 tracking-wider">
                 SMARTLINK
               </h2>
-              <a
-                href={release.smartlink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-primary hover:underline break-all"
-              >
-                {release.smartlink}
-                <ExternalLink className="h-4 w-4 flex-shrink-0" />
-              </a>
+              <div className="flex items-center gap-2">
+                <a
+                  href={release.smartlink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 text-primary hover:underline break-all flex-1"
+                >
+                  {release.smartlink}
+                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                </a>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => copySmartlink(release.smartlink!)}
+                  className="h-8 w-8 p-0 flex-shrink-0"
+                >
+                  <Copy className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           )}
 

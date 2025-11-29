@@ -5,8 +5,9 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { CheckCircle2, XCircle, Loader2 } from "lucide-react";
+import { CheckCircle2, XCircle, Loader2, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { useClipboard } from "@/hooks/useClipboard";
 
 export default function CampaignPaymentSuccess() {
   const [searchParams] = useSearchParams();
@@ -14,6 +15,7 @@ export default function CampaignPaymentSuccess() {
   const [status, setStatus] = useState<'verifying' | 'success' | 'failed'>('verifying');
   const [campaignName, setCampaignName] = useState('');
   const reference = searchParams.get('reference');
+  const { copyPaymentReference } = useClipboard();
 
   useEffect(() => {
     if (!reference) {
@@ -111,6 +113,21 @@ export default function CampaignPaymentSuccess() {
                 <p className="text-muted-foreground">
                   Your campaign "{campaignName}" has been paid and is now under review by our team.
                 </p>
+                {reference && (
+                  <div className="flex items-center justify-center gap-2 pt-2">
+                    <p className="text-xs text-muted-foreground font-mono">
+                      Ref: {reference.slice(0, 16)}...
+                    </p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => copyPaymentReference(reference)}
+                      className="h-6 w-6 p-0"
+                    >
+                      <Copy className="h-3 w-3" />
+                    </Button>
+                  </div>
+                )}
               </div>
               <div className="space-y-3 pt-4">
                 <Button
