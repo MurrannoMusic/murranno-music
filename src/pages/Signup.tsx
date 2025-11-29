@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import musicianBg from '@/assets/musician-background.jpg';
 import { UserType } from '@/types/user';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 export const Signup = () => {
   const navigate = useNavigate();
@@ -115,7 +116,9 @@ export const Signup = () => {
               <CardTitle className="text-center text-2xl text-white drop-shadow-lg">Join Murranno Music</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSignup} className="space-y-6">
+              <SocialLoginButtons />
+
+              <form onSubmit={handleSignup} className="space-y-6 mt-6">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
