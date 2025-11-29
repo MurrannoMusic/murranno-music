@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2, Mail } from 'lucide-react';
 import musicianBg from '@/assets/musician-background.jpg';
 import { UserType } from '@/types/user';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
@@ -23,6 +23,7 @@ export const Signup = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showVerificationMessage, setShowVerificationMessage] = useState(false);
   
   const preselectedTier = location.state?.tier as UserType | undefined;
 
@@ -64,31 +65,21 @@ export const Signup = () => {
     setLoading(true);
     
     try {
-      await signUp(email, password, fullName);
+      const { error } = await signUp(email, password, fullName);
       
-      // If a tier was preselected from the welcome screen, set it and navigate to dashboard
-      if (preselectedTier) {
-        await switchUserType(preselectedTier);
-        
-        // Navigate to appropriate dashboard
-        switch(preselectedTier) {
-          case 'artist':
-            navigate('/app/artist-dashboard');
-            break;
-          case 'label':
-            navigate('/app/label-dashboard');
-            break;
-          case 'agency':
-            navigate('/app/agency-dashboard');
-            break;
-          case 'admin':
-            navigate('/admin');
-            break;
-        }
-      } else {
-        // No preselected tier, go to user type selection
-        navigate('/app/user-type-selection');
+      if (error) {
+        // Signup failed, error toast already shown by AuthContext
+        setLoading(false);
+        return;
       }
+      
+      // Show verification message instead of navigating
+      setShowVerificationMessage(true);
+      
+      toast({
+        title: 'Check your email',
+        description: 'We sent you a verification link. Please verify your email to continue.',
+      });
     } catch (error) {
       console.error('Signup error:', error);
     } finally {
@@ -121,10 +112,39 @@ export const Signup = () => {
 
           <Card className="backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
             <CardHeader className="bg-white/5 border-b border-white/10">
-              <CardTitle className="text-center text-2xl text-white drop-shadow-lg">Join Murranno Music</CardTitle>
+              <CardTitle className="text-center text-2xl text-white drop-shadow-lg">
+                {showVerificationMessage ? 'Verify Your Email' : 'Join Murranno Music'}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <SocialLoginButtons />
+              {showVerificationMessage ? (
+                <div className="text-center space-y-4 py-6">
+                  <div className="w-16 h-16 mx-auto bg-primary/20 rounded-full flex items-center justify-center">
+                    <Mail className="w-8 h-8 text-primary" />
+                  </div>
+                  <p className="text-white/90 drop-shadow-md">
+                    We've sent a verification link to <strong>{email}</strong>
+                  </p>
+                  <p className="text-white/70 text-sm drop-shadow-md">
+                    Please check your inbox and click the link to verify your account.
+                  </p>
+                  <Button
+                    onClick={() => navigate('/verify-email')}
+                    className="w-full gradient-primary music-button shadow-primary"
+                  >
+                    Go to Verification Page
+                  </Button>
+                  <Button
+                    onClick={() => setShowVerificationMessage(false)}
+                    variant="ghost"
+                    className="w-full text-white/70 hover:text-white hover:bg-white/10"
+                  >
+                    Back to Signup
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <SocialLoginButtons />
 
               <form onSubmit={handleSignup} className="space-y-6 mt-6">
                 <div className="space-y-4">
@@ -193,14 +213,16 @@ export const Signup = () => {
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
-                <p className="text-white/90 drop-shadow-md">
-                  Already have an account?{' '}
-                  <Link to="/login" className="text-primary font-medium hover:underline drop-shadow-lg">
-                    Log in
-                  </Link>
-                </p>
-              </div>
+                  <div className="mt-6 text-center">
+                    <p className="text-white/90 drop-shadow-md">
+                      Already have an account?{' '}
+                      <Link to="/login" className="text-primary font-medium hover:underline drop-shadow-lg">
+                        Log in
+                      </Link>
+                    </p>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
         </div>

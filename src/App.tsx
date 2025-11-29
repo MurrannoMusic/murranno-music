@@ -17,6 +17,7 @@ import { Splash } from "./pages/Splash";
 import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
+import { VerifyEmail } from "./pages/VerifyEmail";
 import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { UserTypeSelection } from "./pages/UserTypeSelection";
@@ -86,6 +87,7 @@ const App = () => (
               <Route path="/get-started" element={<MobileOnlyRoute><GetStarted /></MobileOnlyRoute>} />
               <Route path="/login" element={<MobileOnlyRoute><Login /></MobileOnlyRoute>} />
               <Route path="/signup" element={<MobileOnlyRoute><Signup /></MobileOnlyRoute>} />
+              <Route path="/verify-email" element={<MobileOnlyRoute><VerifyEmail /></MobileOnlyRoute>} />
               <Route path="/forgot-password" element={<MobileOnlyRoute><ForgotPassword /></MobileOnlyRoute>} />
               <Route path="/reset-password" element={<MobileOnlyRoute><ResetPassword /></MobileOnlyRoute>} />
               
