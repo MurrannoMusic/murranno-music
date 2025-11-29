@@ -7,70 +7,22 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSubscriptionPlans } from '@/hooks/useSubscriptionPlans';
 import { supabase } from '@/integrations/supabase/client';
-import { Check, Loader2, AlertCircle, ArrowLeft, Zap } from 'lucide-react';
+import { Check, Loader2, AlertCircle, ArrowLeft, Music, Building2, Briefcase } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SubscriptionPlans() {
   const navigate = useNavigate();
-  const { user, subscription, userRole, refreshUserData } = useAuth();
+  const { user, subscriptions, accessibleTiers, refreshUserData } = useAuth();
   const { data: plans, isLoading } = useSubscriptionPlans();
-  const [upgradingTo, setUpgradingTo] = useState<string | null>(null);
+  const [addingTier, setAddingTier] = useState<string | null>(null);
 
-  const currentTier = userRole?.tier || 'artist';
-  
-  // Determine correct dashboard path based on user tier
-  const getDashboardPath = () => {
-    switch (currentTier) {
-      case 'label':
-        return '/app/label-dashboard';
-      case 'agency':
-        return '/app/agency-dashboard';
-      case 'artist':
-      default:
-        return '/app/artist-dashboard';
-    }
-  };
-  const isTrialEnded = subscription?.status === 'trial' && subscription?.trial_ends_at && new Date(subscription.trial_ends_at) < new Date();
-  const isExpired = subscription?.status === 'expired' || subscription?.status === 'cancelled';
-
-  const handleUpgrade = async (tier: string) => {
+  const handleAddSubscription = async (tier: 'label' | 'agency') => {
     if (!user?.email) {
       toast.error('User email not found');
       return;
     }
 
-    setUpgradingTo(tier);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('paystack-upgrade-subscription', {
-        body: { new_tier: tier, email: user.email }
-      });
-
-      if (error) throw error;
-
-      if (data?.authorization_url) {
-        // Redirect to Paystack payment page
-        window.location.href = data.authorization_url;
-      } else if (data?.redirect_url) {
-        // Free upgrade completed
-        toast.success(data.message || 'Upgrade successful!');
-        await refreshUserData();
-        navigate(data.redirect_url);
-      }
-    } catch (error: any) {
-      console.error('Upgrade error:', error);
-      toast.error(error.message || 'Failed to initiate upgrade');
-      setUpgradingTo(null);
-    }
-  };
-
-  const handleInitializeSubscription = async (tier: string) => {
-    if (!user?.email) {
-      toast.error('User email not found');
-      return;
-    }
-
-    setUpgradingTo(tier);
+    setAddingTier(tier);
 
     try {
       const { data, error } = await supabase.functions.invoke('paystack-initialize-subscription', {
@@ -84,43 +36,46 @@ export default function SubscriptionPlans() {
       if (error) throw error;
 
       if (data?.authorization_url) {
+        // Redirect to Paystack payment page
         window.location.href = data.authorization_url;
       } else if (data?.redirect_url) {
         // Free subscription activated
-        toast.success(data.message || 'Subscription activated!');
+        toast.success(data.message || `${tier} access added!`);
         await refreshUserData();
         navigate(data.redirect_url);
       }
     } catch (error: any) {
-      console.error('Subscription initialization error:', error);
-      toast.error(error.message || 'Failed to initialize subscription');
-      setUpgradingTo(null);
+      console.error('Subscription error:', error);
+      toast.error(error.message || 'Failed to add subscription');
+      setAddingTier(null);
     }
   };
 
-  const getStatusMessage = () => {
-    if (isTrialEnded) {
-      return {
-        title: 'Your trial has ended',
-        description: 'Continue enjoying all features by subscribing to a paid plan.',
-        variant: 'destructive' as const
-      };
+  const getTierIcon = (tier: string) => {
+    switch (tier) {
+      case 'artist':
+        return <Music className="w-6 h-6" />;
+      case 'label':
+        return <Building2 className="w-6 h-6" />;
+      case 'agency':
+        return <Briefcase className="w-6 h-6" />;
+      default:
+        return null;
     }
-    if (isExpired) {
-      return {
-        title: 'Your subscription has expired',
-        description: 'Renew your subscription to continue using all features.',
-        variant: 'destructive' as const
-      };
-    }
-    return {
-      title: 'Upgrade your plan',
-      description: 'Get access to more features by upgrading to a higher tier.',
-      variant: 'default' as const
-    };
   };
 
-  const statusMessage = getStatusMessage();
+  const getTierSubscription = (tier: string) => {
+    return subscriptions.find(sub => sub.tier === tier);
+  };
+
+  const getStatusForTier = (tier: string) => {
+    const sub = getTierSubscription(tier);
+    if (!sub) return 'not_subscribed';
+    
+    if (sub.status === 'active') return 'active';
+    if (sub.status === 'trial' && sub.trial_ends_at && new Date(sub.trial_ends_at) > new Date()) return 'trial';
+    return 'expired';
+  };
 
   return (
     <div className="dark min-h-screen bg-gradient-mesh overflow-y-auto">
@@ -130,7 +85,7 @@ export default function SubscriptionPlans() {
         <div className="flex items-center justify-between">
           <Button
             variant="ghost"
-            onClick={() => navigate(getDashboardPath())}
+            onClick={() => navigate('/app/artist-dashboard')}
             className="gap-2"
           >
             <ArrowLeft className="w-4 h-4" />
@@ -144,37 +99,42 @@ export default function SubscriptionPlans() {
           </Button>
         </div>
 
-        {/* Status Alert */}
-        <Alert variant={statusMessage.variant}>
+        {/* Info Alert */}
+        <Alert>
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
             <div className="space-y-1">
-              <p className="font-semibold">{statusMessage.title}</p>
-              <p className="text-sm">{statusMessage.description}</p>
+              <p className="font-semibold">Flexible Subscription Model</p>
+              <p className="text-sm">Artist access is always free. Add Label or Agency subscriptions as independent add-ons to unlock additional features.</p>
             </div>
           </AlertDescription>
         </Alert>
 
-        {/* Current Plan Info */}
-        {subscription && (
+        {/* Active Subscriptions */}
+        {subscriptions.length > 0 && (
           <Card className="border-border/40">
             <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="space-y-1">
-                  <p className="text-sm text-muted-foreground">Current Plan</p>
-                  <p className="text-2xl font-bold capitalize">{currentTier}</p>
-                  {subscription.status === 'trial' && subscription.trial_ends_at && (
-                    <p className="text-sm text-muted-foreground">
-                      Trial {isTrialEnded ? 'ended' : 'ends'}: {new Date(subscription.trial_ends_at).toLocaleDateString()}
-                    </p>
-                  )}
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground font-semibold">Your Active Subscriptions</p>
+                <div className="space-y-2">
+                  {subscriptions.map(sub => (
+                    <div key={sub.id} className="flex items-center justify-between p-3 rounded-lg bg-secondary/20">
+                      <div className="flex items-center gap-3">
+                        {getTierIcon(sub.tier)}
+                        <div>
+                          <p className="font-medium capitalize">{sub.tier} Access</p>
+                          <p className="text-xs text-muted-foreground">
+                            {sub.status === 'trial' ? 'Trial' : 'Active'} • 
+                            {sub.current_period_end ? ` Renews ${new Date(sub.current_period_end).toLocaleDateString()}` : ''}
+                          </p>
+                        </div>
+                      </div>
+                      <Badge variant={sub.isActive ? 'default' : 'secondary'} className="capitalize">
+                        {sub.status}
+                      </Badge>
+                    </div>
+                  ))}
                 </div>
-                <Badge 
-                  variant={isTrialEnded || isExpired ? 'destructive' : 'default'}
-                  className="capitalize"
-                >
-                  {subscription.status}
-                </Badge>
               </div>
             </CardContent>
           </Card>
@@ -183,8 +143,8 @@ export default function SubscriptionPlans() {
         {/* Plans */}
         <div className="space-y-4">
           <div className="text-center space-y-1">
-            <h2 className="text-2xl font-bold text-foreground">Choose Your Plan</h2>
-            <p className="text-sm text-muted-foreground">Select the plan that best fits your needs</p>
+            <h2 className="text-2xl font-bold text-foreground">Subscription Plans</h2>
+            <p className="text-sm text-muted-foreground">Add the features you need, when you need them</p>
           </div>
 
           {isLoading ? (
@@ -193,33 +153,65 @@ export default function SubscriptionPlans() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Artist (Always Free) */}
+              <Card className="border-2 border-primary/40 bg-primary/5">
+                <CardHeader className="text-center pb-4">
+                  <div className="flex justify-center mb-2">
+                    <Music className="w-8 h-8 text-primary" />
+                  </div>
+                  <CardTitle className="text-xl">Artist</CardTitle>
+                  <div className="flex items-baseline justify-center gap-1 mt-2">
+                    <span className="text-3xl font-bold text-foreground">Free</span>
+                    <span className="text-muted-foreground">/forever</span>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">Upload & distribute music</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">Track analytics</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">Earnings dashboard</span>
+                    </div>
+                    <div className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-success mt-0.5 flex-shrink-0" />
+                      <span className="text-muted-foreground">Promotion services</span>
+                    </div>
+                  </div>
+
+                  <Button className="w-full" variant="outline" disabled>
+                    Always Included
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Label & Agency Plans */}
               {plans?.map((plan) => {
-                const isCurrentPlan = plan.tier === currentTier;
-                const isPopular = plan.tier === 'label';
-                const isUpgrading = upgradingTo === plan.tier;
+                const hasAccess = accessibleTiers.includes(plan.tier);
+                const status = getStatusForTier(plan.tier);
+                const isAdding = addingTier === plan.tier;
 
                 return (
                   <Card
                     key={plan.id}
-                    className={`border-2 overflow-hidden relative ${
-                      isCurrentPlan
+                    className={`border-2 ${
+                      hasAccess
                         ? 'border-primary/60 bg-primary/5'
-                        : isPopular
-                        ? 'border-primary/40 shadow-lg shadow-primary/20'
                         : 'border-border/40'
                     }`}
                   >
-                    {isPopular && (
-                      <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                        <Badge className="bg-gradient-to-r from-primary to-accent border-0 shadow-lg">
-                          <Zap className="w-3 h-3 mr-1" />
-                          Popular
-                        </Badge>
-                      </div>
-                    )}
-                    
                     <CardHeader className="text-center pb-4">
-                      <CardTitle className="text-xl capitalize">{plan.tier}</CardTitle>
+                      <div className="flex justify-center mb-2">
+                        {getTierIcon(plan.tier)}
+                      </div>
+                      <CardTitle className="text-xl capitalize">{plan.name}</CardTitle>
                       <div className="flex items-baseline justify-center gap-1 mt-2">
                         <span className="text-3xl font-bold text-foreground">
                           ₦{plan.price_monthly.toLocaleString()}
@@ -240,26 +232,24 @@ export default function SubscriptionPlans() {
 
                       <Button
                         className="w-full"
-                        variant={isCurrentPlan ? 'outline' : 'default'}
-                        disabled={isCurrentPlan || isUpgrading}
-                        onClick={() => {
-                          if (isTrialEnded || isExpired) {
-                            handleInitializeSubscription(plan.tier);
-                          } else {
-                            handleUpgrade(plan.tier);
-                          }
-                        }}
+                        variant={hasAccess ? 'outline' : 'default'}
+                        disabled={hasAccess || isAdding}
+                        onClick={() => handleAddSubscription(plan.tier as 'label' | 'agency')}
                       >
-                        {isUpgrading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        {isCurrentPlan 
-                          ? 'Current Plan'
-                          : isUpgrading
+                        {isAdding && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        {hasAccess
+                          ? status === 'active' ? 'Active Subscription' : 'Subscription Expired'
+                          : isAdding
                           ? 'Processing...'
-                          : isTrialEnded || isExpired
-                          ? 'Subscribe'
-                          : 'Upgrade'
+                          : 'Add Access'
                         }
                       </Button>
+
+                      {hasAccess && status !== 'expired' && (
+                        <p className="text-xs text-center text-muted-foreground">
+                          Access granted • Switch dashboards via avatar menu
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
                 );

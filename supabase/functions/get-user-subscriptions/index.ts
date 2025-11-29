@@ -1,18 +1,18 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.74.0";
+import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { createClient } from 'jsr:@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const supabase = createClient(
+    const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       {
@@ -22,19 +22,16 @@ serve(async (req) => {
       }
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
-      console.error('Authentication error:', authError);
+    const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
+    if (userError || !user) {
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    console.log('Fetching subscription status for user:', user.id);
-
-    // Get all subscriptions for the user (label and agency add-ons)
-    const { data: subscriptions, error: subError } = await supabase
+    // Get all subscriptions for the user (label and agency)
+    const { data: subscriptions, error: subsError } = await supabaseClient
       .from('subscriptions')
       .select(`
         *,
@@ -48,11 +45,14 @@ serve(async (req) => {
       `)
       .eq('user_id', user.id);
 
-    if (subError) throw subError;
+    if (subsError) {
+      console.error('Error fetching subscriptions:', subsError);
+      throw subsError;
+    }
 
     const now = new Date();
 
-    // Process each subscription
+    // Process each subscription to determine access
     const processedSubscriptions = (subscriptions || []).map(sub => {
       const trialEnded = sub.trial_ends_at && new Date(sub.trial_ends_at) < now;
       const periodEnded = sub.current_period_end && new Date(sub.current_period_end) < now;
@@ -81,15 +81,15 @@ serve(async (req) => {
       };
     });
 
-    // Artist is always accessible
+    // Determine accessible tiers
+    // Artist is always available for authenticated users
     const accessibleTiers = ['artist'];
+    
     processedSubscriptions.forEach(sub => {
       if (sub.isActive) {
         accessibleTiers.push(sub.tier);
       }
     });
-
-    console.log('Subscription status fetched successfully');
 
     return new Response(
       JSON.stringify({
@@ -103,7 +103,7 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Get subscription status error:', error);
+    console.error('Error in get-user-subscriptions:', error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }

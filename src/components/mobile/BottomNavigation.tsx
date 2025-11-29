@@ -5,24 +5,11 @@ import { useUserType } from '@/hooks/useUserType';
 
 export const BottomNavigation = () => {
   const location = useLocation();
-  const { isArtist, isLabel, isAgency } = useUserType();
+  const { currentViewingTier } = useUserType();
 
-  // Dynamic navigation based on user type (with route fallback)
+  // Dynamic navigation based on current viewing tier
   const getNavItems = () => {
-    const path = location.pathname;
-
-    // Infer user type from route only if hook flags are not set
-    const inferredArtist = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/app/artist') || ['/app/upload', '/app/earnings', '/app/analytics', '/app/promotions'].includes(path)
-    );
-    const inferredLabel = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/app/label') || ['/app/artist-management', '/app/payout-manager', '/app/label-analytics'].includes(path)
-    );
-    const inferredAgency = !isArtist && !isLabel && !isAgency && (
-      path.startsWith('/app/agency') || ['/app/campaign-manager'].includes(path)
-    );
-
-    if (isArtist || inferredArtist) {
+    if (currentViewingTier === 'artist') {
       return [
         { icon: Home, label: 'Home', path: '/app/artist-dashboard' },
         { icon: BarChart3, label: 'Analytics', path: '/app/analytics' },
@@ -32,7 +19,7 @@ export const BottomNavigation = () => {
       ];
     }
 
-    if (isLabel || inferredLabel) {
+    if (currentViewingTier === 'label') {
       return [
         { icon: Home, label: 'Home', path: '/app/label-dashboard' },
         { icon: Users, label: 'Artists', path: '/app/artist-management' },
@@ -42,7 +29,7 @@ export const BottomNavigation = () => {
       ];
     }
 
-    if (isAgency || inferredAgency) {
+    if (currentViewingTier === 'agency') {
       return [
         { icon: Home, label: 'Home', path: '/app/agency-dashboard' },
         { icon: Megaphone, label: 'Campaigns', path: '/app/campaign-tracking' },
@@ -52,7 +39,7 @@ export const BottomNavigation = () => {
     }
 
     // Default fallback
-    return [{ icon: Home, label: 'Home', path: '/app/dashboard' }];
+    return [{ icon: Home, label: 'Home', path: '/app/artist-dashboard' }];
   };
 
   const navItems = getNavItems();

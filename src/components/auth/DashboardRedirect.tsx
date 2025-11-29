@@ -3,22 +3,34 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const DashboardRedirect = () => {
-  const { userRole, loading } = useAuth();
+  const { loading, accessibleTiers, userRole } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && userRole) {
-      const dashboardMap: Record<string, string> = {
-        artist: '/app/artist-dashboard',
-        label: '/app/label-dashboard',
-        agency: '/app/agency-dashboard',
-        admin: '/admin',
-      };
+    if (!loading) {
+      // Check for admin first
+      if (userRole?.tier === 'admin') {
+        navigate('/admin', { replace: true });
+        return;
+      }
 
-      const targetRoute = dashboardMap[userRole.tier] || '/app/user-type-selection';
-      navigate(targetRoute, { replace: true });
+      // Get last viewed dashboard from localStorage
+      const lastViewed = localStorage.getItem('lastViewedDashboard') as 'artist' | 'label' | 'agency' | null;
+      
+      // If we have a last viewed dashboard and user has access, go there
+      if (lastViewed && accessibleTiers.includes(lastViewed)) {
+        const dashboardMap = {
+          artist: '/app/artist-dashboard',
+          label: '/app/label-dashboard',
+          agency: '/app/agency-dashboard',
+        };
+        navigate(dashboardMap[lastViewed], { replace: true });
+      } else {
+        // Default to artist dashboard (always accessible)
+        navigate('/app/artist-dashboard', { replace: true });
+      }
     }
-  }, [userRole, loading, navigate]);
+  }, [loading, accessibleTiers, userRole, navigate]);
 
   if (loading) {
     return (

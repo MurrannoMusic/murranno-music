@@ -1,4 +1,4 @@
-import { User, Settings, Moon, Sun, Monitor } from 'lucide-react';
+import { User, Settings, Moon, Sun, Monitor, Building2, Briefcase, Music } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,17 +12,28 @@ import {
 import { useTheme } from '@/components/ThemeProvider';
 import { useUserType } from '@/hooks/useUserType';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export const AvatarDropdown = () => {
   const { theme, setTheme } = useTheme();
-  const { currentUser } = useUserType();
+  const { currentUser, accessibleTiers, currentViewingTier, switchDashboard } = useUserType();
   const { profile } = useArtistProfile();
+  const navigate = useNavigate();
 
   if (!currentUser) {
     return null;
   }
+
+  const handleDashboardSwitch = (tier: 'artist' | 'label' | 'agency') => {
+    switchDashboard(tier);
+    const dashboardRoutes = {
+      artist: '/app/artist-dashboard',
+      label: '/app/label-dashboard',
+      agency: '/app/agency-dashboard',
+    };
+    navigate(dashboardRoutes[tier]);
+  };
 
   return (
     <DropdownMenu>
@@ -46,14 +57,66 @@ export const AvatarDropdown = () => {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         
-        {currentUser.accountType === 'artist' && (
-          <Link to="/app/artist-profile">
-            <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
-              <User className="h-4 w-4 mr-2" />
-              Artist Profile
+        {/* Dashboard Switcher */}
+        <DropdownMenuLabel className="text-foreground text-xs">
+          Switch Dashboard
+        </DropdownMenuLabel>
+        
+        <DropdownMenuItem
+          onClick={() => handleDashboardSwitch('artist')}
+          className={`text-foreground hover:bg-secondary/50 cursor-pointer ${currentViewingTier === 'artist' ? 'bg-primary/10' : ''}`}
+        >
+          <Music className="h-4 w-4 mr-2" />
+          Artist
+          {currentViewingTier === 'artist' && <span className="ml-auto text-xs text-primary">Active</span>}
+        </DropdownMenuItem>
+        
+        {accessibleTiers.includes('label') ? (
+          <DropdownMenuItem
+            onClick={() => handleDashboardSwitch('label')}
+            className={`text-foreground hover:bg-secondary/50 cursor-pointer ${currentViewingTier === 'label' ? 'bg-primary/10' : ''}`}
+          >
+            <Building2 className="h-4 w-4 mr-2" />
+            Label
+            {currentViewingTier === 'label' && <span className="ml-auto text-xs text-primary">Active</span>}
+          </DropdownMenuItem>
+        ) : (
+          <Link to="/app/subscription/plans">
+            <DropdownMenuItem className="text-muted-foreground hover:bg-secondary/50 cursor-pointer">
+              <Building2 className="h-4 w-4 mr-2" />
+              Label
+              <span className="ml-auto text-xs">Subscribe</span>
             </DropdownMenuItem>
           </Link>
         )}
+        
+        {accessibleTiers.includes('agency') ? (
+          <DropdownMenuItem
+            onClick={() => handleDashboardSwitch('agency')}
+            className={`text-foreground hover:bg-secondary/50 cursor-pointer ${currentViewingTier === 'agency' ? 'bg-primary/10' : ''}`}
+          >
+            <Briefcase className="h-4 w-4 mr-2" />
+            Agency
+            {currentViewingTier === 'agency' && <span className="ml-auto text-xs text-primary">Active</span>}
+          </DropdownMenuItem>
+        ) : (
+          <Link to="/app/subscription/plans">
+            <DropdownMenuItem className="text-muted-foreground hover:bg-secondary/50 cursor-pointer">
+              <Briefcase className="h-4 w-4 mr-2" />
+              Agency
+              <span className="ml-auto text-xs">Subscribe</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
+        
+        <DropdownMenuSeparator />
+        
+        <Link to="/app/artist-profile">
+          <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">
+            <User className="h-4 w-4 mr-2" />
+            Artist Profile
+          </DropdownMenuItem>
+        </Link>
         
         <Link to="/app/profile">
           <DropdownMenuItem className="text-foreground hover:bg-secondary/50 cursor-pointer">

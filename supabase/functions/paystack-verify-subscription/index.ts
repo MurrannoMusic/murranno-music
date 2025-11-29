@@ -54,34 +54,23 @@ Deno.serve(async (req) => {
 
     const { user_id, tier } = paystackData.data.metadata;
 
-    // Update user role
-    const { error: roleError } = await supabaseClient
-      .from('user_roles')
-      .update({ tier })
-      .eq('user_id', user_id);
-
-    if (roleError) {
-      console.error('Role update error:', roleError);
-      throw roleError;
-    }
-
-    // Update subscription
+    // Create or update subscription for this specific tier (add-on model)
     const now = new Date();
     const periodEnd = new Date(now.setMonth(now.getMonth() + 1));
 
     const { error: subscriptionError } = await supabaseClient
       .from('subscriptions')
-      .update({
+      .upsert({
+        user_id: user_id,
         tier,
         status: 'active',
         current_period_start: new Date().toISOString(),
         current_period_end: periodEnd.toISOString(),
         trial_ends_at: null,
-      })
-      .eq('user_id', user_id);
+      }, { onConflict: 'user_id,tier' });
 
     if (subscriptionError) {
-      console.error('Subscription update error:', subscriptionError);
+      console.error('Subscription creation error:', subscriptionError);
       throw subscriptionError;
     }
 
