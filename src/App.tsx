@@ -67,6 +67,7 @@ import AdminAuditLogs from "./pages/admin/AdminAuditLogs";
 import AudioDemo from "./pages/AudioDemo";
 import CampaignPaymentSuccess from "./pages/CampaignPaymentSuccess";
 import CampaignTracking from "./pages/CampaignTracking";
+import PreflightCheck from "./pages/PreflightCheck";
 import { DashboardPreviewLayout } from "./components/admin/DashboardPreviewLayout";
 
 const queryClient = new QueryClient();
@@ -99,6 +100,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/support" element={<Support />} />
+              <Route path="/preflight-check" element={<PreflightCheck />} />
               
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
