@@ -17,6 +17,8 @@ import { Splash } from "./pages/Splash";
 import { Welcome } from "./pages/Welcome";
 import { Login } from "./pages/Login";
 import { Signup } from "./pages/Signup";
+import { ForgotPassword } from "./pages/ForgotPassword";
+import { ResetPassword } from "./pages/ResetPassword";
 import { UserTypeSelection } from "./pages/UserTypeSelection";
 import { DesktopLanding } from "./pages/DesktopLanding";
 import { Dashboard } from "./pages/Dashboard";
@@ -84,6 +86,8 @@ const App = () => (
               <Route path="/get-started" element={<MobileOnlyRoute><GetStarted /></MobileOnlyRoute>} />
               <Route path="/login" element={<MobileOnlyRoute><Login /></MobileOnlyRoute>} />
               <Route path="/signup" element={<MobileOnlyRoute><Signup /></MobileOnlyRoute>} />
+              <Route path="/forgot-password" element={<MobileOnlyRoute><ForgotPassword /></MobileOnlyRoute>} />
+              <Route path="/reset-password" element={<MobileOnlyRoute><ResetPassword /></MobileOnlyRoute>} />
               
               {/* Legal & Support Pages */}
               <Route path="/terms" element={<TermsOfService />} />

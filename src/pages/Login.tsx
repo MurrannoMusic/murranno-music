@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import musicianBg from '@/assets/musician-background.jpg';
+import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -80,7 +81,9 @@ export const Login = () => {
               <CardTitle className="text-center text-2xl text-white drop-shadow-lg">Log in to your account</CardTitle>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleLogin} className="space-y-6">
+              <SocialLoginButtons />
+
+              <form onSubmit={handleLogin} className="space-y-6 mt-6">
                 <div className="space-y-4">
                   <div>
                     <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
@@ -96,7 +99,12 @@ export const Login = () => {
                   </div>
                   
                   <div>
-                    <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>
+                    <div className="flex items-center justify-between mb-2">
+                      <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>
+                      <Link to="/forgot-password" className="text-sm text-primary hover:underline drop-shadow-lg">
+                        Forgot password?
+                      </Link>
+                    </div>
                     <Input
                       id="password"
                       type="password"
