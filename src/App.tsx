@@ -59,6 +59,7 @@ import AdminCampaigns from "./pages/admin/AdminCampaigns";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminPayments from "./pages/admin/AdminPayments";
 import AdminFinancials from "./pages/admin/AdminFinancials";
+import AdminSubscriptions from "./pages/admin/AdminSubscriptions";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
@@ -138,6 +139,7 @@ const App = () => (
               <Route path="/admin/promotions" element={<AdminRoute><AdminPromotions /></AdminRoute>} />
               <Route path="/admin/payments" element={<AdminRoute><AdminPayments /></AdminRoute>} />
               <Route path="/admin/financials" element={<AdminRoute><AdminFinancials /></AdminRoute>} />
+              <Route path="/admin/subscriptions" element={<AdminRoute><AdminSubscriptions /></AdminRoute>} />
               <Route path="/admin/analytics" element={<AdminRoute><AdminAnalytics /></AdminRoute>} />
               <Route path="/admin/notifications" element={<AdminRoute><AdminNotifications /></AdminRoute>} />
               <Route path="/admin/settings" element={<AdminRoute><AdminSettings /></AdminRoute>} />
