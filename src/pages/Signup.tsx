@@ -10,12 +10,15 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import musicianBg from '@/assets/musician-background.jpg';
 import { UserType } from '@/types/user';
 import { SocialLoginButtons } from '@/components/auth/SocialLoginButtons';
+import { useToast } from '@/hooks/use-toast';
 
 export const Signup = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { signUp, user, userRole } = useAuth();
   const { switchUserType } = useUserType();
+  const { toast } = useToast();
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -50,13 +53,18 @@ export const Signup = () => {
     e.preventDefault();
     
     if (password !== confirmPassword) {
+      toast({
+        title: 'Passwords do not match',
+        description: 'Please make sure both passwords are the same',
+        variant: 'destructive',
+      });
       return;
     }
     
     setLoading(true);
     
     try {
-      await signUp(email, password, '');
+      await signUp(email, password, fullName);
       
       // If a tier was preselected from the welcome screen, set it and navigate to dashboard
       if (preselectedTier) {
@@ -120,6 +128,19 @@ export const Signup = () => {
 
               <form onSubmit={handleSignup} className="space-y-6 mt-6">
                 <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="fullName" className="text-white/90 drop-shadow-md">Full Name</Label>
+                    <Input
+                      id="fullName"
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Enter your full name"
+                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                      required
+                    />
+                  </div>
+                  
                   <div>
                     <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
                     <Input
