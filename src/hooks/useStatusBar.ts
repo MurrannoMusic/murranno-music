@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { isNativeApp } from '@/utils/platformDetection';
 
 export const useStatusBar = () => {
-  const setStyle = async (style: 'light' | 'dark') => {
+  const setStyle = useCallback(async (style: 'light' | 'dark') => {
     if (!isNativeApp()) return;
 
     try {
@@ -13,9 +13,9 @@ export const useStatusBar = () => {
     } catch (error) {
       console.error('Failed to set status bar style:', error);
     }
-  };
+  }, []);
 
-  const setBackgroundColor = async (color: string) => {
+  const setBackgroundColor = useCallback(async (color: string) => {
     if (!isNativeApp()) return;
 
     try {
@@ -23,9 +23,9 @@ export const useStatusBar = () => {
     } catch (error) {
       console.error('Failed to set status bar background:', error);
     }
-  };
+  }, []);
 
-  const hide = async () => {
+  const hide = useCallback(async () => {
     if (!isNativeApp()) return;
 
     try {
@@ -33,9 +33,9 @@ export const useStatusBar = () => {
     } catch (error) {
       console.error('Failed to hide status bar:', error);
     }
-  };
+  }, []);
 
-  const show = async () => {
+  const show = useCallback(async () => {
     if (!isNativeApp()) return;
 
     try {
@@ -43,9 +43,9 @@ export const useStatusBar = () => {
     } catch (error) {
       console.error('Failed to show status bar:', error);
     }
-  };
+  }, []);
 
-  const setOverlaysWebView = async (overlay: boolean) => {
+  const setOverlaysWebView = useCallback(async (overlay: boolean) => {
     if (!isNativeApp()) return;
 
     try {
@@ -53,7 +53,7 @@ export const useStatusBar = () => {
     } catch (error) {
       console.error('Failed to set status bar overlay:', error);
     }
-  };
+  }, []);
 
   return {
     setStyle,
@@ -72,5 +72,5 @@ export const useAutoStatusBar = (theme: 'light' | 'dark') => {
     if (isNativeApp()) {
       setStyle(theme);
     }
-  }, [theme]);
+  }, [theme, setStyle]);
 };
