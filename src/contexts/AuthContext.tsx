@@ -31,6 +31,9 @@ interface Subscription {
   cancelled_at: string | null;
   created_at: string;
   updated_at: string;
+  isActive?: boolean;
+  isTrial?: boolean;
+  daysRemaining?: number;
 }
 
 interface AuthContextType {
@@ -38,7 +41,8 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   userRole: UserRole | null;
-  subscription: Subscription | null;
+  subscriptions: Subscription[];
+  accessibleTiers: string[];
   loading: boolean;
   signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
@@ -47,11 +51,9 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
   isArtist: boolean;
-  isLabel: boolean;
-  isAgency: boolean;
+  hasLabelAccess: boolean;
+  hasAgencyAccess: boolean;
   hasActiveSubscription: boolean;
-  isTrialActive: boolean;
-  daysUntilTrialEnd: number | null;
   refreshUserData: () => Promise<void>;
 }
 
@@ -70,7 +72,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [userRole, setUserRole] = useState<UserRole | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([]);
+  const [accessibleTiers, setAccessibleTiers] = useState<string[]>(['artist']);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -96,15 +99,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (roleError) throw roleError;
       setUserRole(roleData);
 
-      // Fetch subscription
-      const { data: subscriptionData, error: subscriptionError } = await supabase
-        .from('subscriptions')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
-
-      if (subscriptionError) throw subscriptionError;
-      setSubscription(subscriptionData);
+      // Fetch subscriptions (multiple add-ons)
+      const { data: subData } = await supabase.functions.invoke('get-user-subscriptions');
+      if (subData?.success) {
+        setSubscriptions(subData.subscriptions || []);
+        setAccessibleTiers(subData.accessibleTiers || ['artist']);
+      }
     } catch (error) {
       console.error('Error fetching user data:', error);
     }
@@ -132,7 +132,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         } else {
           setProfile(null);
           setUserRole(null);
-          setSubscription(null);
+          setSubscriptions([]);
+          setAccessibleTiers(['artist']);
         }
         setLoading(false);
       }
@@ -229,7 +230,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setSession(null);
       setProfile(null);
       setUserRole(null);
-      setSubscription(null);
+      setSubscriptions([]);
+      setAccessibleTiers(['artist']);
       toast({
         title: 'Logged out',
         description: 'You have been successfully logged out.',
@@ -313,26 +315,20 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const isArtist = userRole?.tier === 'artist';
-  const isLabel = userRole?.tier === 'label';
-  const isAgency = userRole?.tier === 'agency';
-
-  const hasActiveSubscription = subscription?.status === 'active' || subscription?.status === 'trial';
+  // Derived state
+  const isArtist = true; // Always true for authenticated users
+  const hasLabelAccess = accessibleTiers.includes('label');
+  const hasAgencyAccess = accessibleTiers.includes('agency');
   
-  const isTrialActive = subscription?.status === 'trial' && 
-    subscription?.trial_ends_at && 
-    new Date(subscription.trial_ends_at) > new Date();
+  const hasActiveSubscription = subscriptions.some(sub => sub.isActive);
 
-  const daysUntilTrialEnd = subscription?.trial_ends_at
-    ? Math.ceil((new Date(subscription.trial_ends_at).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
-    : null;
-
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     profile,
     userRole,
-    subscription,
+    subscriptions,
+    accessibleTiers,
     loading,
     signUp,
     signIn,
@@ -341,11 +337,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     signInWithGoogle,
     signInWithApple,
     isArtist,
-    isLabel,
-    isAgency,
+    hasLabelAccess,
+    hasAgencyAccess,
     hasActiveSubscription,
-    isTrialActive,
-    daysUntilTrialEnd,
     refreshUserData,
   };
 

@@ -3,88 +3,103 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export const useUserType = () => {
-  const [userType, setUserType] = useState<'artist' | 'label' | 'manager' | 'agency' | 'admin' | null>(null);
+  const [accessibleTiers, setAccessibleTiers] = useState<string[]>(['artist']);
+  const [currentViewingTier, setCurrentViewingTier] = useState<'artist' | 'label' | 'agency'>('artist');
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [selectedArtist, setSelectedArtist] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchUserType();
+    fetchUserData();
+    
+    // Load last viewed dashboard from localStorage
+    const lastViewed = localStorage.getItem('lastViewedDashboard') as 'artist' | 'label' | 'agency';
+    if (lastViewed) {
+      setCurrentViewingTier(lastViewed);
+    }
   }, []);
 
-  const fetchUserType = async () => {
+  const fetchUserData = async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
 
       if (!user) {
-        setUserType(null);
+        setAccessibleTiers(['artist']);
         setCurrentUser(null);
         return;
       }
 
       // Fetch user profile
       const { data: profileData, error: profileError } = await supabase.functions.invoke('get-profile');
-
       if (profileError) throw profileError;
 
       if (profileData?.success && profileData.profile) {
-        setUserType(profileData.profile.tier);
         setCurrentUser({
           id: profileData.profile.id,
           name: profileData.profile.full_name,
           email: profileData.profile.email,
-          accountType: profileData.profile.tier,
+          accountType: 'artist', // Base type
         });
       }
+
+      // Fetch accessible tiers from subscriptions
+      const { data: subData } = await supabase.functions.invoke('get-user-subscriptions');
+      if (subData?.success) {
+        setAccessibleTiers(subData.accessibleTiers || ['artist']);
+      }
     } catch (error: any) {
-      console.error('Error fetching user type:', error);
-      toast.error('Failed to load user type');
-      setUserType('artist'); // Default fallback
+      console.error('Error fetching user data:', error);
+      toast.error('Failed to load user data');
+      setAccessibleTiers(['artist']); // Fallback
     } finally {
       setLoading(false);
     }
   };
 
-  const switchUserType = async (newType: 'artist' | 'label' | 'manager' | 'agency' | 'admin') => {
-    try {
-      const { data, error } = await supabase.functions.invoke('update-subscription-tier', {
-        body: { tier: newType }
-      });
-
-      if (error) throw error;
-
-      if (!data?.success) {
-        throw new Error(data?.error || 'Failed to update user type');
-      }
-
-      setUserType(newType);
-      toast.success(`Switched to ${newType} account`);
-      
-      // Refresh user data instead of reloading
-      await fetchUserType();
-    } catch (error: any) {
-      console.error('Error switching user type:', error);
-      toast.error(error.message || 'Failed to switch account type');
-      throw error; // Re-throw to allow caller to handle
+  const switchDashboard = (tier: 'artist' | 'label' | 'agency') => {
+    if (!accessibleTiers.includes(tier)) {
+      toast.error(`You don't have access to ${tier} dashboard`);
+      return;
     }
+    
+    setCurrentViewingTier(tier);
+    localStorage.setItem('lastViewedDashboard', tier);
+    toast.success(`Switched to ${tier} dashboard`);
   };
 
   const selectArtist = (artistId: string) => {
     setSelectedArtist(artistId);
   };
 
+  // Legacy function for backward compatibility
+  const switchUserType = async (newType: 'artist' | 'label' | 'agency' | 'admin') => {
+    // Admin doesn't need dashboard switching
+    if (newType === 'admin') {
+      toast.info('Admin access is managed separately');
+      return;
+    }
+    // This now just switches the viewing dashboard
+    switchDashboard(newType);
+  };
+
   return {
-    currentUserType: userType,
-    userType,
+    accessibleTiers,
+    currentViewingTier,
     currentUser,
     selectedArtist,
     loading,
-    switchUserType,
+    switchDashboard,
     selectArtist,
-    refetch: fetchUserType,
-    isLabel: userType === 'label',
-    isAgency: userType === 'agency',
-    isArtist: userType === 'artist',
+    switchUserType, // Legacy support
+    refetch: fetchUserData,
+    isArtist: true, // Always true for authenticated users
+    hasLabelAccess: accessibleTiers.includes('label'),
+    hasAgencyAccess: accessibleTiers.includes('agency'),
+    // Legacy support
+    userType: currentViewingTier,
+    currentUserType: currentViewingTier,
+    isLabel: currentViewingTier === 'label',
+    isAgency: currentViewingTier === 'agency',
   };
 };

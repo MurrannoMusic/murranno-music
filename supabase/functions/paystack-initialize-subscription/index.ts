@@ -60,35 +60,36 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Check if user already has this subscription
+    const { data: existingSub } = await supabaseClient
+      .from('subscriptions')
+      .select('*')
+      .eq('user_id', user.id)
+      .eq('tier', tier)
+      .maybeSingle();
+
+    if (existingSub && existingSub.status === 'active') {
+      return new Response(
+        JSON.stringify({ error: 'You already have an active subscription for this tier' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Handle free subscriptions (for development)
     if (plan.price_monthly === 0) {
       console.log('Free subscription detected, activating directly');
       
-      // Update user role
-      const { error: roleError } = await supabaseClient
-        .from('user_roles')
-        .update({ tier })
-        .eq('user_id', user.id);
-
-      if (roleError) {
-        console.error('Role update error:', roleError);
-        return new Response(
-          JSON.stringify({ error: 'Failed to update user role' }),
-          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
-
-      // Update subscription to active
+      // Create or update subscription for this tier (add-on model)
       const { error: subError } = await supabaseClient
         .from('subscriptions')
-        .update({
+        .upsert({
+          user_id: user.id,
           tier,
           status: 'active',
           trial_ends_at: null,
           current_period_start: new Date().toISOString(),
           current_period_end: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        })
-        .eq('user_id', user.id);
+        }, { onConflict: 'user_id,tier' });
 
       if (subError) {
         console.error('Subscription update error:', subError);
@@ -101,8 +102,8 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ 
           success: true,
-          message: 'Free subscription activated',
-          redirect_url: tier === 'label' ? '/label-dashboard' : '/agency-dashboard'
+          message: `${tier} access activated`,
+          redirect_url: tier === 'label' ? '/app/label-dashboard' : '/app/agency-dashboard'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );

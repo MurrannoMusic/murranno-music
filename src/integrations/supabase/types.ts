@@ -1257,6 +1257,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_active_tiers: {
+        Args: { user_id_param: string }
+        Returns: string[]
+      }
       get_user_tier: {
         Args: { user_id: string }
         Returns: Database["public"]["Enums"]["user_tier"]

@@ -7,11 +7,11 @@ interface ProtectedRouteProps {
   requiredTier?: 'artist' | 'label' | 'agency';
 }
 
-// Set to false when ready to enforce subscription and tier restrictions
-const IS_DEV_MODE = true;
+// Set to false when ready to enforce subscription restrictions
+const IS_DEV_MODE = false;
 
 export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) => {
-  const { user, userRole, subscription, loading } = useAuth();
+  const { user, accessibleTiers, subscriptions, loading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -21,41 +21,27 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
         return;
       }
 
-      // Skip subscription and tier checks in development mode
+      // Skip subscription checks in development mode
       if (IS_DEV_MODE) {
         return;
       }
 
-      if (subscription?.status === 'expired' || subscription?.status === 'cancelled') {
-        const now = new Date();
-        const periodEnd = subscription.current_period_end 
-          ? new Date(subscription.current_period_end) 
-          : null;
+      // Check if required tier is accessible
+      if (requiredTier && !accessibleTiers.includes(requiredTier)) {
+        // User doesn't have access to this tier
+        // Check if they have an expired subscription for this tier
+        const tierSub = subscriptions.find(sub => sub.tier === requiredTier);
         
-        if (!periodEnd || periodEnd < now) {
+        if (tierSub && (tierSub.status === 'expired' || tierSub.status === 'cancelled')) {
           navigate('/app/subscription/plans');
           return;
         }
-      }
-
-      if (subscription?.status === 'trial' && subscription.trial_ends_at) {
-        const trialEnd = new Date(subscription.trial_ends_at);
-        if (trialEnd < new Date()) {
-          navigate('/app/subscription/plans');
-          return;
-        }
-      }
-
-      if (requiredTier && userRole?.tier !== requiredTier) {
-        const dashboardMap = {
-          artist: '/app/artist-dashboard',
-          label: '/app/label-dashboard',
-          agency: '/app/agency-dashboard',
-        };
-        navigate(dashboardMap[userRole?.tier || 'artist']);
+        
+        // Otherwise redirect to artist dashboard (always accessible)
+        navigate('/app/artist-dashboard');
       }
     }
-  }, [user, userRole, subscription, loading, requiredTier, navigate]);
+  }, [user, accessibleTiers, subscriptions, loading, requiredTier, navigate]);
 
   if (loading) {
     return (
