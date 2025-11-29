@@ -3,6 +3,9 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sh
 import { Button } from '@/components/ui/button';
 import { EarningsTransaction } from '@/types/wallet';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 interface TransactionDetailsSheetProps {
   transaction: EarningsTransaction | null;
@@ -19,7 +22,38 @@ const statusColors = {
 };
 
 export const TransactionDetailsSheet = ({ transaction, open, onClose }: TransactionDetailsSheetProps) => {
+  const [isDownloading, setIsDownloading] = useState(false);
+
   if (!transaction) return null;
+
+  const handleDownloadReceipt = async () => {
+    setIsDownloading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-receipt', {
+        body: { transactionId: transaction.transactionId },
+      });
+
+      if (error) throw error;
+
+      // Create blob and download
+      const blob = new Blob([data], { type: 'text/html' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `receipt-${transaction.transactionId}.html`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+
+      toast.success('Receipt downloaded successfully');
+    } catch (error: any) {
+      console.error('Error downloading receipt:', error);
+      toast.error('Failed to download receipt');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -118,10 +152,11 @@ export const TransactionDetailsSheet = ({ transaction, open, onClose }: Transact
           <Button 
             variant="outline" 
             className="w-full"
-            onClick={() => {/* TODO: Implement receipt download */}}
+            onClick={handleDownloadReceipt}
+            disabled={isDownloading}
           >
             <Download className="h-4 w-4 mr-2" />
-            Download Receipt
+            {isDownloading ? 'Generating...' : 'Download Receipt'}
           </Button>
         </div>
       </SheetContent>
