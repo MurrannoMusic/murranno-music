@@ -93,7 +93,7 @@ export default function AdminFinancials() {
     },
   });
 
-  const { data: transactions, isLoading: transactionsLoading } = useQuery({
+  const { data: transactions, isLoading: transactionsLoading, refetch: refetchTransactions } = useQuery({
     queryKey: ['admin-transactions', statusFilter],
     queryFn: async () => {
       let query = supabase
@@ -400,7 +400,7 @@ export default function AdminFinancials() {
         onOpenChange={setWithdrawalDialogOpen}
         withdrawal={selectedWithdrawal}
         onSuccess={() => {
-          refetch();
+          refetchTransactions();
           setWithdrawalDialogOpen(false);
         }}
       />

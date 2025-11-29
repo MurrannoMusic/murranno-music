@@ -1284,6 +1284,10 @@ export type Database = {
         Returns: Database["public"]["Enums"]["user_tier"]
       }
       has_admin_role: { Args: { _user_id: string }; Returns: boolean }
+      refund_withdrawal_to_wallet: {
+        Args: { p_amount: number; p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       payment_status: "pending" | "paid" | "failed" | "refunded"
