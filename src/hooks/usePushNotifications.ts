@@ -33,13 +33,10 @@ export const usePushNotifications = () => {
       await PushNotifications.register();
 
       // Listen for registration success
-      await PushNotifications.addListener('registration', (token: Token) => {
+      await PushNotifications.addListener('registration', async (token: Token) => {
         console.log('Push registration success, token:', token.value);
         setToken(token.value);
         setIsRegistered(true);
-        
-        // TODO: Send token to backend
-        // You can call your edge function here to store the token
       });
 
       // Listen for registration errors

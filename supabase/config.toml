@@ -10,7 +10,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.admin-promote-user]
-verify_jwt = false
+verify_jwt = true
 
 [functions.paystack-resolve-account]
 verify_jwt = true
@@ -86,3 +86,12 @@ verify_jwt = true
 
 [functions.send-release-status-email]
 verify_jwt = false
+
+[functions.generate-receipt]
+verify_jwt = true
+
+[functions.send-notification-email]
+verify_jwt = true
+
+[functions.register-push-token]
+verify_jwt = true
