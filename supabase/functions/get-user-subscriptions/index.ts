@@ -33,16 +33,7 @@ Deno.serve(async (req) => {
     // Get all subscriptions for the user (label and agency)
     const { data: subscriptions, error: subsError } = await supabaseClient
       .from('subscriptions')
-      .select(`
-        *,
-        subscription_plans (
-          name,
-          price_monthly,
-          currency,
-          max_artists,
-          features
-        )
-      `)
+      .select('*')
       .eq('user_id', user.id);
 
     if (subsError) {
@@ -50,10 +41,35 @@ Deno.serve(async (req) => {
       throw subsError;
     }
 
+    // Get all subscription plans
+    const { data: plans, error: plansError } = await supabaseClient
+      .from('subscription_plans')
+      .select('*');
+
+    if (plansError) {
+      console.error('Error fetching plans:', plansError);
+      throw plansError;
+    }
+
+    // Manually join subscriptions with their plans based on tier
+    const subscriptionsWithPlans = (subscriptions || []).map(sub => {
+      const plan = plans?.find(p => p.tier === sub.tier);
+      return {
+        ...sub,
+        subscription_plans: plan ? {
+          name: plan.name,
+          price_monthly: plan.price_monthly,
+          currency: plan.currency,
+          max_artists: plan.max_artists,
+          features: plan.features
+        } : null
+      };
+    });
+
     const now = new Date();
 
     // Process each subscription to determine access
-    const processedSubscriptions = (subscriptions || []).map(sub => {
+    const processedSubscriptions = subscriptionsWithPlans.map(sub => {
       const trialEnded = sub.trial_ends_at && new Date(sub.trial_ends_at) < now;
       const periodEnded = sub.current_period_end && new Date(sub.current_period_end) < now;
       const isActive = (sub.status === 'active' && !periodEnded) || 
