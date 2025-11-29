@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Settings, Edit, Save, X, Music, Music2, Disc3 } from 'lucide-react';
+import { ArrowLeft, Settings, Edit, Save, X, Music, Music2, Disc3, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -13,10 +13,12 @@ import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { validateImageFile } from '@/utils/fileValidation';
 import { toast } from '@/hooks/use-toast';
+import { useShare } from '@/hooks/useShare';
 
 export const ArtistProfile = () => {
   const navigate = useNavigate();
   const { profile, loading, updating, updateProfile, uploadProfileImage } = useArtistProfile();
+  const { shareArtist } = useShare();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     stage_name: '',
@@ -210,10 +212,20 @@ export const ArtistProfile = () => {
               </Button>
             </>
           ) : (
-            <Button onClick={() => setIsEditing(true)} className="w-full">
-              <Edit className="w-4 h-4 mr-2" />
-              Edit Profile
-            </Button>
+            <>
+              <Button onClick={() => setIsEditing(true)} className="flex-1">
+                <Edit className="w-4 h-4 mr-2" />
+                Edit Profile
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => profile && shareArtist(profile.stage_name, window.location.href)}
+                className="flex-1"
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                Share
+              </Button>
+            </>
           )}
         </div>
 
