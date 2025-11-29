@@ -387,6 +387,13 @@ export const Settings = () => {
             >
               <span className="text-card-foreground font-medium">Privacy Policy</span>
             </button>
+
+            <button 
+              onClick={() => navigate('/developer-settings')}
+              className="w-full flex items-center gap-3 p-3 bg-secondary/20 rounded-[12px] border border-border hover:bg-secondary/30 transition-all text-left"
+            >
+              <span className="text-card-foreground font-medium">Developer Settings</span>
+            </button>
           </CardContent>
         </Card>
 
