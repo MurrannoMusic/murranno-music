@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { WithdrawalActionDialog } from '@/components/admin/WithdrawalActionDialog';
 import { 
   DollarSign, 
   TrendingUp, 
@@ -16,7 +17,8 @@ import {
   Download,
   Calendar,
   CreditCard,
-  Users
+  Users,
+  MoreHorizontal
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { formatCurrency } from '@/utils/formatters';
@@ -47,8 +49,10 @@ interface Transaction {
 export default function AdminFinancials() {
   const [timePeriod, setTimePeriod] = useState('30d');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<any>(null);
+  const [withdrawalDialogOpen, setWithdrawalDialogOpen] = useState(false);
 
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading, refetch } = useQuery({
     queryKey: ['admin-financial-stats', timePeriod],
     queryFn: async () => {
       const daysAgo = timePeriod === '7d' ? 7 : timePeriod === '30d' ? 30 : 90;
@@ -328,6 +332,7 @@ export default function AdminFinancials() {
                   <TableHead>User</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -366,6 +371,21 @@ export default function AdminFinancials() {
                           {transaction.status}
                         </Badge>
                       </TableCell>
+                      <TableCell>
+                        {['pending', 'flagged'].includes(transaction.status) && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => {
+                              setSelectedWithdrawal(transaction);
+                              setWithdrawalDialogOpen(true);
+                            }}
+                          >
+                            <MoreHorizontal className="h-4 w-4 mr-1" />
+                            Review
+                          </Button>
+                        )}
+                      </TableCell>
                     </TableRow>
                   ))
                 )}
@@ -374,6 +394,16 @@ export default function AdminFinancials() {
           </CardContent>
         </Card>
       </div>
+
+      <WithdrawalActionDialog
+        open={withdrawalDialogOpen}
+        onOpenChange={setWithdrawalDialogOpen}
+        withdrawal={selectedWithdrawal}
+        onSuccess={() => {
+          refetch();
+          setWithdrawalDialogOpen(false);
+        }}
+      />
     </AdminLayout>
   );
 }

@@ -1040,13 +1040,16 @@ export type Database = {
       }
       subscriptions: {
         Row: {
+          admin_notes: string | null
           cancelled_at: string | null
           created_at: string | null
           current_period_end: string | null
           current_period_start: string | null
           id: string
+          manually_managed: boolean | null
           paystack_customer_code: string | null
           paystack_subscription_code: string | null
+          refunded_at: string | null
           status: string
           tier: Database["public"]["Enums"]["user_tier"]
           trial_ends_at: string | null
@@ -1054,13 +1057,16 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          admin_notes?: string | null
           cancelled_at?: string | null
           created_at?: string | null
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
+          manually_managed?: boolean | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
+          refunded_at?: string | null
           status?: string
           tier: Database["public"]["Enums"]["user_tier"]
           trial_ends_at?: string | null
@@ -1068,13 +1074,16 @@ export type Database = {
           user_id: string
         }
         Update: {
+          admin_notes?: string | null
           cancelled_at?: string | null
           created_at?: string | null
           current_period_end?: string | null
           current_period_start?: string | null
           id?: string
+          manually_managed?: boolean | null
           paystack_customer_code?: string | null
           paystack_subscription_code?: string | null
+          refunded_at?: string | null
           status?: string
           tier?: Database["public"]["Enums"]["user_tier"]
           trial_ends_at?: string | null
@@ -1186,6 +1195,7 @@ export type Database = {
       }
       withdrawal_transactions: {
         Row: {
+          admin_notes: string | null
           amount: number
           completed_at: string | null
           created_at: string | null
@@ -1199,12 +1209,15 @@ export type Database = {
           paystack_response: Json | null
           reference: string
           requested_at: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
           status: string
           transfer_code: string | null
           updated_at: string | null
           user_id: string | null
         }
         Insert: {
+          admin_notes?: string | null
           amount: number
           completed_at?: string | null
           created_at?: string | null
@@ -1218,12 +1231,15 @@ export type Database = {
           paystack_response?: Json | null
           reference: string
           requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
           transfer_code?: string | null
           updated_at?: string | null
           user_id?: string | null
         }
         Update: {
+          admin_notes?: string | null
           amount?: number
           completed_at?: string | null
           created_at?: string | null
@@ -1237,6 +1253,8 @@ export type Database = {
           paystack_response?: Json | null
           reference?: string
           requested_at?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
           status?: string
           transfer_code?: string | null
           updated_at?: string | null

@@ -22,6 +22,7 @@ const menuItems = [
   { title: 'Promotions', url: '/admin/promotions', icon: Tag },
   { title: 'Payments', url: '/admin/payments', icon: CreditCard },
   { title: 'Financials', url: '/admin/financials', icon: DollarSign },
+  { title: 'Subscriptions', url: '/admin/subscriptions', icon: Settings },
   { title: 'Analytics', url: '/admin/analytics', icon: BarChart3 },
   { title: 'Notifications', url: '/admin/notifications', icon: Bell },
   { title: 'Audit Logs', url: '/admin/audit-logs', icon: FileText },
