@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ArrowLeft, Moon, Sun, Monitor, Bell, User, Lock, HelpCircle, CreditCard, LogOut, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ArrowLeft, Moon, Sun, Monitor, Bell, User, Lock, HelpCircle, CreditCard, LogOut, Mail, Fingerprint, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,15 +15,39 @@ import { ChangePasswordDialog } from '@/components/settings/ChangePasswordDialog
 import { BadgeSettings } from '@/components/settings/BadgeSettings';
 import { useNotificationPreferences } from '@/hooks/useNotificationPreferences';
 import { Loader2 } from 'lucide-react';
+import { useBiometricAuth } from '@/hooks/useBiometricAuth';
+import { useAppUpdate } from '@/hooks/useAppUpdate';
 
 export const Settings = () => {
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
   const { preferences, isLoading, updatePreference } = useNotificationPreferences();
+  const { checkAvailability, getBiometryName } = useBiometricAuth();
+  const { currentVersion, checkForUpdate, isChecking, updateAvailable, performImmediateUpdate } = useAppUpdate();
   
   // Dialog states
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
+  
+  // Biometric states
+  const [biometricEnabled, setBiometricEnabled] = useState(false);
+  const [biometricAvailable, setBiometricAvailable] = useState(false);
+  const [biometricType, setBiometricType] = useState('');
+
+  useEffect(() => {
+    const checkBiometric = async () => {
+      const availability = await checkAvailability();
+      setBiometricAvailable(availability.isAvailable);
+      if (availability.isAvailable) {
+        setBiometricType(getBiometryName(availability.biometryType));
+      }
+    };
+    
+    const savedBiometric = localStorage.getItem('biometric_enabled');
+    setBiometricEnabled(savedBiometric === 'true');
+    
+    checkBiometric();
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -199,6 +223,81 @@ export const Settings = () => {
 
         {/* Badge Settings */}
         <BadgeSettings />
+
+        {/* Security Settings */}
+        {biometricAvailable && (
+          <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
+                <Fingerprint className="h-5 w-5 text-primary" />
+                Security
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-secondary/20 rounded-[12px]">
+                <div className="flex-1">
+                  <p className="font-semibold text-card-foreground">{biometricType} Login</p>
+                  <p className="text-xs text-muted-foreground">Use biometrics to log in quickly</p>
+                </div>
+                <Switch 
+                  checked={biometricEnabled}
+                  onCheckedChange={(checked) => {
+                    setBiometricEnabled(checked);
+                    localStorage.setItem('biometric_enabled', String(checked));
+                    toast.success(checked ? 'Biometric login enabled' : 'Biometric login disabled');
+                  }}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* App Updates */}
+        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
+          <CardHeader>
+            <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
+              <RefreshCw className="h-5 w-5 text-primary" />
+              App Updates
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="p-3 bg-secondary/20 rounded-[12px]">
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-semibold text-card-foreground">Current Version</p>
+                <Badge variant="outline">{currentVersion || '1.0.0'}</Badge>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">Check for the latest updates</p>
+              <Button
+                onClick={checkForUpdate}
+                disabled={isChecking}
+                variant="outline"
+                size="sm"
+                className="w-full"
+              >
+                {isChecking ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Checking...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Check for Updates
+                  </>
+                )}
+              </Button>
+              {updateAvailable && (
+                <Button
+                  onClick={performImmediateUpdate}
+                  className="w-full mt-2 bg-primary hover:bg-primary/90"
+                  size="sm"
+                >
+                  Update Now
+                </Button>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Account Management */}
         <Card className="bg-card border border-border rounded-[20px] shadow-soft">
