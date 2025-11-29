@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { useReleaseDetail } from '@/hooks/useReleaseDetail';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useShare } from '@/hooks/useShare';
 
 
 const statusColors: Record<string, string> = {
@@ -36,6 +37,7 @@ const ReleaseDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { release, loading } = useReleaseDetail(id);
+  const { shareUrl } = useShare();
 
 
   if (loading) {
@@ -67,22 +69,12 @@ const ReleaseDetail = () => {
 
 
   const handleShareSmartlink = async () => {
-    try {
-      const smartlink = release.smartlink || window.location.href;
-      if (navigator.share) {
-        await navigator.share({
-          title: release.title,
-          text: `Check out ${release.title} by ${release.artist_name}`,
-          url: smartlink
-        });
-      } else {
-        await navigator.clipboard.writeText(smartlink);
-        toast.success('Smartlink copied to clipboard');
-      }
-    } catch (error) {
-      console.error('Error sharing:', error);
-      toast.error('Failed to share smartlink');
-    }
+    const smartlink = release.smartlink || window.location.href;
+    await shareUrl(
+      smartlink,
+      release.title,
+      `Check out ${release.title} by ${release.artist_name}`
+    );
   };
 
   const handleFilterInAnalytics = () => {

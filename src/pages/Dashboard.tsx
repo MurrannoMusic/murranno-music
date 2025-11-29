@@ -12,17 +12,44 @@ import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
 import { useEffect } from 'react';
+import { useDevice } from '@/hooks/useDevice';
+import { useGeolocation } from '@/hooks/useGeolocation';
 
 export const Dashboard = () => {
   const { currentUser, isLabel, isAgency, isArtist, selectedArtist } = useUserType();
   const { getStatsAsItems } = useStats();
   const navigate = useNavigate();
+  const { deviceInfo, getInfo } = useDevice();
+  const { getCurrentPosition, checkPermissions } = useGeolocation();
 
   useEffect(() => {
     if (!currentUser) {
       navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, navigate]);
+
+  // Log device and location info for analytics
+  useEffect(() => {
+    const logAnalytics = async () => {
+      // Get device info
+      const info = await getInfo();
+      console.log('Dashboard analytics - Device:', info);
+      
+      // Get location if permissions granted
+      const permissions = await checkPermissions();
+      if (permissions.location === 'granted') {
+        const position = await getCurrentPosition();
+        if (position) {
+          console.log('Dashboard analytics - Location:', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          });
+        }
+      }
+    };
+
+    logAnalytics();
+  }, []);
 
   if (!currentUser) {
     return (

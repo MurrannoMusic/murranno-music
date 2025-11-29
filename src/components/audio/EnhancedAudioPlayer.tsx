@@ -5,6 +5,8 @@ import { Play, Pause, Volume2, VolumeX, Maximize2, Minimize2, SkipBack, SkipForw
 import { cn } from '@/lib/utils';
 import { useScreenOrientation } from '@/hooks/useScreenOrientation';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useAppLifecycle } from '@/hooks/useAppLifecycle';
+import { useFilesystem } from '@/hooks/useFilesystem';
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 interface EnhancedAudioPlayerProps {
@@ -34,6 +36,22 @@ export const EnhancedAudioPlayer = ({
   
   const { lock, unlock, isLandscape } = useScreenOrientation();
   const { buttonPress, success } = useHaptics();
+  const { isActive } = useAppLifecycle();
+  const { cacheAudioFile, getCachedAudioPath } = useFilesystem();
+
+  // Cache audio file on mount
+  useEffect(() => {
+    const loadAudio = async () => {
+      const filename = audioUrl.split('/').pop() || 'track.mp3';
+      const cachedPath = await getCachedAudioPath(filename);
+      
+      if (!cachedPath) {
+        await cacheAudioFile(audioUrl, filename);
+      }
+    };
+    
+    loadAudio();
+  }, [audioUrl]);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -56,6 +74,17 @@ export const EnhancedAudioPlayer = ({
       audio.removeEventListener('ended', handleEnded);
     };
   }, []);
+
+  // Pause audio when app goes to background
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (!isActive && isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
+    }
+  }, [isActive]);
 
   // Audio visualization
   useEffect(() => {
