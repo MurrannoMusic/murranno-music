@@ -24,6 +24,7 @@ import { ForgotPassword } from "./pages/ForgotPassword";
 import { ResetPassword } from "./pages/ResetPassword";
 import { UserTypeSelection } from "./pages/UserTypeSelection";
 import { DesktopLanding } from "./pages/DesktopLanding";
+import { AuthCallback } from "./pages/AuthCallback";
 import { Dashboard } from "./pages/Dashboard";
 import { ArtistDashboard } from "./pages/ArtistDashboard";
 import { LabelDashboard } from "./pages/LabelDashboard";
@@ -103,6 +104,7 @@ const App = () => (
               <Route path="/verify-email" element={<MobileOnlyRoute><VerifyEmail /></MobileOnlyRoute>} />
               <Route path="/forgot-password" element={<MobileOnlyRoute><ForgotPassword /></MobileOnlyRoute>} />
               <Route path="/reset-password" element={<MobileOnlyRoute><ResetPassword /></MobileOnlyRoute>} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               
               {/* Legal & Support Pages */}
               <Route path="/terms" element={<TermsOfService />} />

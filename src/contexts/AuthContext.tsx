@@ -268,12 +268,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      const redirectUrl = isNativeApp() 
-        ? 'murranno://callback' 
-        : `${window.location.origin}/`;
+      // Use HTTPS callback URL for both web and native
+      const redirectUrl = `${window.location.origin}/auth/callback`;
 
       if (isNativeApp()) {
-        // For native apps, get the OAuth URL and open in browser
+        // For native apps, get the OAuth URL and open in in-app browser
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'google',
           options: {
@@ -292,12 +291,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (data?.url) {
-          // Open OAuth URL in system browser
+          // Open OAuth URL in in-app browser
           const { Browser } = await import('@capacitor/browser');
           await Browser.open({ 
             url: data.url,
             toolbarColor: '#1DB954',
           });
+          // The callback page will handle closing the browser and completing auth
         }
       } else {
         // For web, use standard OAuth flow
@@ -327,12 +327,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithApple = async () => {
     try {
-      const redirectUrl = isNativeApp() 
-        ? 'murranno://callback' 
-        : `${window.location.origin}/`;
+      // Use HTTPS callback URL for both web and native
+      const redirectUrl = `${window.location.origin}/auth/callback`;
 
       if (isNativeApp()) {
-        // For native apps, get the OAuth URL and open in browser
+        // For native apps, get the OAuth URL and open in in-app browser
         const { data, error } = await supabase.auth.signInWithOAuth({
           provider: 'apple',
           options: {
@@ -351,12 +350,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
 
         if (data?.url) {
-          // Open OAuth URL in system browser
+          // Open OAuth URL in in-app browser
           const { Browser } = await import('@capacitor/browser');
           await Browser.open({ 
             url: data.url,
             toolbarColor: '#000000',
           });
+          // The callback page will handle closing the browser and completing auth
         }
       } else {
         // For web, use standard OAuth flow
