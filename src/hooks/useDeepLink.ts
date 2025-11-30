@@ -16,10 +16,15 @@ export const useDeepLink = () => {
       
       // Check if this is an OAuth callback
       if (url.pathname === '/callback' || url.host === 'callback') {
-        const accessToken = url.searchParams.get('access_token');
-        const refreshToken = url.searchParams.get('refresh_token');
-        const error = url.searchParams.get('error');
-        const errorDescription = url.searchParams.get('error_description');
+        // Supabase returns tokens in URL hash fragment (after #), not query params
+        const fragment = url.hash.substring(1); // Remove the leading '#'
+        const fragmentParams = new URLSearchParams(fragment);
+        
+        // Try hash fragment first (Supabase standard), fallback to query params
+        let accessToken = fragmentParams.get('access_token') || url.searchParams.get('access_token');
+        let refreshToken = fragmentParams.get('refresh_token') || url.searchParams.get('refresh_token');
+        const error = fragmentParams.get('error') || url.searchParams.get('error');
+        const errorDescription = fragmentParams.get('error_description') || url.searchParams.get('error_description');
 
         if (error) {
           console.error('OAuth error:', error, errorDescription);
@@ -38,6 +43,11 @@ export const useDeepLink = () => {
             if (sessionError) throw sessionError;
 
             console.log('Session established from deep link:', sessionData);
+            
+            // Close the in-app browser to return to the app
+            const { Browser } = await import('@capacitor/browser');
+            await Browser.close();
+            
             toast.success('Successfully signed in!');
           } catch (error) {
             console.error('Failed to set session from deep link:', error);
