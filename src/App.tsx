@@ -8,6 +8,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { PushNotificationProvider } from "./components/app/PushNotificationProvider";
 import { NetworkStatus } from "./components/app/NetworkStatus";
 import { AppUpdateBanner } from "./components/app/AppUpdateBanner";
+import { useDeepLink } from "./hooks/useDeepLink";
 import { ProtectedRoute } from "./components/auth/ProtectedRoute";
 import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
@@ -73,6 +74,12 @@ import { DashboardPreviewLayout } from "./components/admin/DashboardPreviewLayou
 
 const queryClient = new QueryClient();
 
+// Component to initialize deep link handler
+const DeepLinkInitializer = () => {
+  useDeepLink();
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider defaultTheme="dark" storageKey="murranno-ui-theme">
@@ -84,6 +91,7 @@ const App = () => (
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <AuthProvider>
             <PushNotificationProvider>
+              <DeepLinkInitializer />
               <Routes>
               <Route path="/" element={<Navigate to="/splash" replace />} />
               <Route path="/desktop" element={<DesktopLanding />} />
