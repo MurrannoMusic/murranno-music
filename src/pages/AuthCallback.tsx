@@ -15,6 +15,10 @@ export const AuthCallback = () => {
         const fragment = window.location.hash.substring(1);
         const params = new URLSearchParams(fragment);
         
+        // Check if this is a native platform request
+        const urlParams = new URLSearchParams(window.location.search);
+        const platform = urlParams.get('platform');
+        
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
         const error = params.get('error');
@@ -28,7 +32,15 @@ export const AuthCallback = () => {
         }
 
         if (accessToken && refreshToken) {
-          // Establish Supabase session
+          // For native apps, redirect to custom URL scheme to pass tokens to native app
+          if (isNativeApp() || platform === 'native') {
+            const nativeCallbackUrl = `murranno://callback#access_token=${accessToken}&refresh_token=${refreshToken}`;
+            console.log('Redirecting to native app with tokens...');
+            window.location.href = nativeCallbackUrl;
+            return;
+          }
+
+          // For web: Establish Supabase session directly
           const { data, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
@@ -43,12 +55,6 @@ export const AuthCallback = () => {
 
           console.log('OAuth session established:', data.user?.email);
           toast.success('Successfully signed in!');
-
-          // Close browser if native app
-          if (isNativeApp()) {
-            const { Browser } = await import('@capacitor/browser');
-            await Browser.close();
-          }
 
           // Redirect to dashboard
           navigate('/app/dashboard');
