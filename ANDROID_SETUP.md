@@ -104,6 +104,14 @@ Add the following permissions inside the `<manifest>` tag:
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            
+            <!-- Deep Link for OAuth Callbacks -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="murranno" android:host="callback" />
+            </intent-filter>
         </activity>
         
         <!-- Push Notifications Receiver -->

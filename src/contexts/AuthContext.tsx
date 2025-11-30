@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { isNativeApp } from '@/utils/platformDetection';
 
 type UserTier = 'artist' | 'label' | 'agency' | 'admin';
 
@@ -267,19 +268,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithGoogle = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
+      const redirectUrl = isNativeApp() 
+        ? 'murranno://callback' 
+        : `${window.location.origin}/`;
 
-      if (error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
+      if (isNativeApp()) {
+        // For native apps, get the OAuth URL and open in browser
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectUrl,
+            skipBrowserRedirect: true,
+          },
         });
+
+        if (error) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        if (data?.url) {
+          // Open OAuth URL in system browser
+          const { Browser } = await import('@capacitor/browser');
+          await Browser.open({ 
+            url: data.url,
+            toolbarColor: '#1DB954',
+          });
+        }
+      } else {
+        // For web, use standard OAuth flow
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'google',
+          options: {
+            redirectTo: redirectUrl,
+          },
+        });
+
+        if (error) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+          });
+        }
       }
     } catch (error: any) {
       toast({
@@ -292,19 +327,53 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signInWithApple = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'apple',
-        options: {
-          redirectTo: `${window.location.origin}/`,
-        },
-      });
+      const redirectUrl = isNativeApp() 
+        ? 'murranno://callback' 
+        : `${window.location.origin}/`;
 
-      if (error) {
-        toast({
-          title: 'Error',
-          description: error.message,
-          variant: 'destructive',
+      if (isNativeApp()) {
+        // For native apps, get the OAuth URL and open in browser
+        const { data, error } = await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: {
+            redirectTo: redirectUrl,
+            skipBrowserRedirect: true,
+          },
         });
+
+        if (error) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+          });
+          return;
+        }
+
+        if (data?.url) {
+          // Open OAuth URL in system browser
+          const { Browser } = await import('@capacitor/browser');
+          await Browser.open({ 
+            url: data.url,
+            toolbarColor: '#000000',
+          });
+        }
+      } else {
+        // For web, use standard OAuth flow
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: 'apple',
+          options: {
+            redirectTo: redirectUrl,
+          },
+        });
+
+        if (error) {
+          toast({
+            title: 'Error',
+            description: error.message,
+            variant: 'destructive',
+          });
+        }
       }
     } catch (error: any) {
       toast({

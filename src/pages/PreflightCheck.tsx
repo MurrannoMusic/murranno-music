@@ -153,6 +153,50 @@ const PreflightCheck = () => {
         ],
       },
       {
+        category: 'OAuth & Deep Linking',
+        icon: FileText,
+        items: [
+          {
+            id: 'url-scheme',
+            name: 'Custom URL Scheme',
+            description: 'App URL scheme configured for OAuth callbacks',
+            status: 'pass',
+            details: 'Scheme: murranno://\nConfigured in capacitor.config.ts',
+          },
+          {
+            id: 'deep-link-handler',
+            name: 'Deep Link Handler',
+            description: 'Deep link listener registered in app',
+            status: 'pass',
+            details: 'Handler active in App component via useDeepLink hook',
+          },
+          {
+            id: 'oauth-redirect',
+            name: 'Backend OAuth Redirect URL',
+            description: 'Add murranno://callback to backend auth settings',
+            status: 'warning',
+            details: 'Go to Lovable Cloud → Users → Auth Settings and add:\nmurranno://callback',
+            action: 'Open Backend',
+          },
+          {
+            id: 'android-intent',
+            name: 'Android Intent Filter',
+            description: 'Configure deep link intent in AndroidManifest.xml',
+            status: 'info',
+            details: 'See ANDROID_SETUP.md for deep linking configuration',
+            action: 'View Guide',
+          },
+          {
+            id: 'ios-url-types',
+            name: 'iOS URL Types',
+            description: 'Configure URL scheme in Info.plist',
+            status: 'info',
+            details: 'See IOS_SETUP.md for URL scheme configuration',
+            action: 'View Guide',
+          },
+        ],
+      },
+      {
         category: 'Required Actions',
         icon: AlertCircle,
         items: [
