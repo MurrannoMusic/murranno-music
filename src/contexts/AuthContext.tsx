@@ -269,7 +269,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGoogle = async () => {
     try {
       // Use HTTPS callback URL for both web and native
-      const redirectUrl = `${window.location.origin}/auth/callback`;
+      const redirectUrl = isNativeApp() 
+        ? `${window.location.origin}/auth/callback?platform=native`
+        : `${window.location.origin}/auth/callback`;
 
       if (isNativeApp()) {
         // For native apps, get the OAuth URL and open in in-app browser
@@ -328,7 +330,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithApple = async () => {
     try {
       // Use HTTPS callback URL for both web and native
-      const redirectUrl = `${window.location.origin}/auth/callback`;
+      const redirectUrl = isNativeApp() 
+        ? `${window.location.origin}/auth/callback?platform=native`
+        : `${window.location.origin}/auth/callback`;
 
       if (isNativeApp()) {
         // For native apps, get the OAuth URL and open in in-app browser
