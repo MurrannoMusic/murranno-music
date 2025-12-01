@@ -119,14 +119,20 @@ const App = () => (
               <Route path="/app/artist-dashboard" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<ArtistDashboard />} />
               </Route>
+              
+              <Route path="/app/label-dashboard" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<LabelDashboard />} />
+              </Route>
+              
+              <Route path="/app/agency-dashboard" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<AgencyDashboard />} />
+              </Route>
 
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="label-dashboard" element={<LabelDashboard />} />
-                <Route path="agency-dashboard" element={<AgencyDashboard />} />
                 <Route path="upload" element={<Upload />} />
                 <Route path="promotions" element={<Promotions />} />
                 <Route path="earnings" element={<Earnings />} />
