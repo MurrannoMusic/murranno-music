@@ -40,7 +40,7 @@ serve(async (req) => {
       .eq('id', user.id)
       .maybeSingle();
 
-    if (profileError) throw profileError;
+    if (profileError && (profileError as any).code !== 'PGRST116') throw profileError;
 
     // Get user role
     const { data: userRole, error: roleError } = await supabase
@@ -49,7 +49,7 @@ serve(async (req) => {
       .eq('user_id', user.id)
       .maybeSingle();
 
-    if (roleError) throw roleError;
+    if (roleError && (roleError as any).code !== 'PGRST116') throw roleError;
 
     // Get subscription
     const { data: subscription, error: subError } = await supabase
@@ -58,7 +58,7 @@ serve(async (req) => {
       .eq('user_id', user.id)
       .maybeSingle();
 
-    if (subError) throw subError;
+    if (subError && (subError as any).code !== 'PGRST116') throw subError;
 
     console.log('Profile fetched successfully');
 
