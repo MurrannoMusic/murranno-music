@@ -146,15 +146,46 @@ The app is configured to handle OAuth callbacks via the custom URL scheme `murra
 
 ### Backend Configuration Required
 
-Add the following redirect URL to your backend auth settings (Lovable Cloud):
+**CRITICAL**: You must configure the correct redirect URLs in Lovable Cloud for OAuth to work in the native app.
+
+Add the following redirect URLs to your Lovable Cloud auth settings:
 ```
-murranno://callback
+https://c3daad86-3221-4cd7-8f32-217f9f05ec3c.lovableproject.com/auth/callback
+https://murranno-music.lovable.app/auth/callback
 ```
 
 To configure this:
 1. Open Lovable Cloud Dashboard
-2. Go to Users → Auth Settings
-3. Add `murranno://callback` to allowed redirect URLs
+2. Go to **Users → Auth Settings**
+3. Under **Redirect URLs**, add both URLs above
+4. Also ensure your **Site URL** is set to your production URL
+
+### How OAuth Flow Works
+
+1. User clicks "Sign in with Google/Apple" in native app
+2. App opens in-app browser with OAuth provider
+3. User completes authentication with Google/Apple
+4. OAuth provider redirects to: `https://[your-domain]/auth/callback?platform=native`
+5. The web callback page detects `platform=native` parameter
+6. Callback page immediately redirects to: `murranno://callback#access_token=xxx&refresh_token=xxx`
+7. iOS opens your native app via the custom URL scheme
+8. Deep link handler in `useDeepLink.ts` extracts tokens
+9. Tokens are used to establish Supabase session in native app
+10. User is redirected to dashboard
+
+### Common OAuth Issues
+
+**Problem: "Lovable Auth Bridge" appears instead of app opening**
+- **Cause**: Redirect URLs not configured in Lovable Cloud
+- **Solution**: Add both preview and production URLs to redirect URLs in Lovable Cloud auth settings
+
+**Problem: OAuth completes but app doesn't open**
+- **Cause**: Custom URL scheme not configured in Info.plist or not registered
+- **Solution**: Verify `murranno` scheme is in CFBundleURLSchemes in Info.plist
+
+**Problem: App opens but authentication fails**
+- **Cause**: Tokens not being passed correctly or session not established
+- **Solution**: Check console logs for errors in token parsing or session creation
 
 ### Testing Deep Links
 
@@ -274,14 +305,27 @@ cd ../..
 ### Deep Link Issues
 
 **OAuth callback not opening app**
-- Verify URL scheme is correctly configured in Info.plist
-- Check that `murranno://callback` is added to backend redirect URLs
-- Test with `xcrun simctl openurl booted murranno://test`
+- Verify URL scheme is correctly configured in Info.plist (`murranno` in CFBundleURLSchemes)
+- **CRITICAL**: Add HTTPS redirect URLs to Lovable Cloud (not `murranno://callback`)
+  - Add: `https://c3daad86-3221-4cd7-8f32-217f9f05ec3c.lovableproject.com/auth/callback`
+  - Add: `https://murranno-music.lovable.app/auth/callback`
+- Test with: `xcrun simctl openurl booted murranno://callback#access_token=test&refresh_token=test`
+
+**"Lovable Auth Bridge" appears**
+- This means redirect URLs are not configured in Lovable Cloud
+- Go to Lovable Cloud → Users → Auth Settings → Redirect URLs
+- Add both preview and production URLs (see above)
 
 **App opens but OAuth doesn't complete**
-- Check console logs for errors
-- Verify access_token and refresh_token are in URL parameters
-- Ensure deep link handler is registered in App component
+- Check browser console and native app logs for errors
+- Verify tokens are in URL hash fragment (not query params): `#access_token=xxx&refresh_token=xxx`
+- Ensure `useDeepLink` hook is initialized in App component
+- Check that `Browser.close()` is being called after tokens are received
+
+**Session not persisting after OAuth**
+- Verify `supabase.auth.setSession()` is being called with both tokens
+- Check that session and user state are being updated in AuthContext
+- Ensure auth state listener is set up correctly
 
 ## Production Build
 
