@@ -24,6 +24,9 @@ export const AuthCallback = () => {
         const error = params.get('error');
         const errorDescription = params.get('error_description');
 
+        console.log('AuthCallback - Platform:', platform, 'isNativeApp:', isNativeApp());
+        console.log('AuthCallback - Has tokens:', !!accessToken, !!refreshToken);
+
         if (error) {
           console.error('OAuth error:', error, errorDescription);
           toast.error(`Authentication failed: ${errorDescription || error}`);
@@ -32,11 +35,21 @@ export const AuthCallback = () => {
         }
 
         if (accessToken && refreshToken) {
-          // For native apps, redirect to custom URL scheme to pass tokens to native app
+          // For native apps, use immediate redirect with window.location.replace
+          // This prevents the auth bridge from intercepting the redirect
           if (isNativeApp() || platform === 'native') {
             const nativeCallbackUrl = `murranno://callback#access_token=${accessToken}&refresh_token=${refreshToken}`;
-            console.log('Redirecting to native app with tokens...');
-            window.location.href = nativeCallbackUrl;
+            console.log('Redirecting to native app immediately with tokens...');
+            
+            // Use replace() for immediate redirect without history entry
+            window.location.replace(nativeCallbackUrl);
+            
+            // Fallback timeout in case replace doesn't work
+            setTimeout(() => {
+              console.warn('Fallback redirect triggered');
+              window.location.href = nativeCallbackUrl;
+            }, 500);
+            
             return;
           }
 

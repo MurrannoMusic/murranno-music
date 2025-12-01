@@ -21,7 +21,8 @@ export const useDeepLink = () => {
           // Parse tokens from URL hash fragment
           const hashIndex = data.url.indexOf('#');
           if (hashIndex === -1) {
-            console.error('No hash fragment in deep link');
+            console.error('No hash fragment in deep link URL');
+            toast.error('Invalid authentication response');
             return;
           }
 
@@ -31,7 +32,16 @@ export const useDeepLink = () => {
           const accessToken = params.get('access_token');
           const refreshToken = params.get('refresh_token');
 
+          console.log('Deep link tokens parsed:', {
+            hasAccessToken: !!accessToken,
+            hasRefreshToken: !!refreshToken,
+            accessTokenLength: accessToken?.length || 0,
+            refreshTokenLength: refreshToken?.length || 0
+          });
+
           if (accessToken && refreshToken) {
+            console.log('Establishing native OAuth session...');
+            
             // Establish Supabase session in native app context
             const { data: sessionData, error: sessionError } = await supabase.auth.setSession({
               access_token: accessToken,
@@ -44,16 +54,28 @@ export const useDeepLink = () => {
               return;
             }
 
-            console.log('Native OAuth session established:', sessionData.user?.email);
+            console.log('Native OAuth session established successfully:', {
+              userId: sessionData.user?.id,
+              email: sessionData.user?.email
+            });
+            
             toast.success('Successfully signed in!');
 
             // Close the in-app browser
-            await Browser.close();
+            try {
+              await Browser.close();
+              console.log('In-app browser closed');
+            } catch (browserError) {
+              console.warn('Failed to close browser:', browserError);
+            }
 
             // Navigate to dashboard
             navigate('/app/dashboard');
           } else {
-            console.error('No tokens found in deep link');
+            console.error('Missing tokens in deep link:', {
+              hasAccessToken: !!accessToken,
+              hasRefreshToken: !!refreshToken
+            });
             toast.error('Authentication incomplete. Please try again.');
           }
         } catch (error) {
