@@ -1,4 +1,5 @@
-import { ArrowLeft, Target, Users, BarChart3, Download, Zap } from 'lucide-react';
+import { Target, Users, BarChart3, Download, Zap } from 'lucide-react';
+import mmLogo from "@/assets/mm_logo.png";
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -37,9 +38,9 @@ export const AgencyDashboard = () => {
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          {/* Logo (Left) */}
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           {/* User Type (Center) */}

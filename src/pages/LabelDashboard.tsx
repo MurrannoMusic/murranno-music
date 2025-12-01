@@ -1,4 +1,5 @@
-import { Users, Clock, DollarSign, TrendingUp, ArrowLeft, Upload, Play } from 'lucide-react';
+import { Users, Clock, DollarSign, TrendingUp, Upload, Play } from 'lucide-react';
+import mmLogo from "@/assets/mm_logo.png";
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -52,9 +53,9 @@ export const LabelDashboard = () => {
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to="/" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          {/* Logo (Left) */}
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           {/* User Type (Center) */}
