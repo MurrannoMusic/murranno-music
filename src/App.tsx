@@ -164,6 +164,14 @@ const App = () => (
                 <Route index element={<ArtistProfile />} />
               </Route>
 
+              <Route path="/app/releases/:id" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<ReleaseDetail />} />
+              </Route>
+
+              <Route path="/app/artist-management/:artistId" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<ArtistDetail />} />
+              </Route>
+
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
@@ -171,13 +179,11 @@ const App = () => (
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="label-analytics" element={<LabelAnalytics />} />
                 <Route path="artist-management" element={<ArtistManagement />} />
-                <Route path="artist-management/:artistId" element={<ArtistDetail />} />
                 <Route path="client-management" element={<ClientManagement />} />
                 <Route path="agency-analytics" element={<AgencyAnalyticsDashboard />} />
                 <Route path="campaign-manager" element={<CampaignManager />} />
                 <Route path="payout-manager" element={<PayoutManager />} />
                 <Route path="results" element={<Results />} />
-                <Route path="releases/:id" element={<ReleaseDetail />} />
                 <Route path="news/:id" element={<NewsDetail />} />
                 <Route path="subscription/plans" element={<SubscriptionPlans />} />
                 <Route path="audio-demo" element={<AudioDemo />} />

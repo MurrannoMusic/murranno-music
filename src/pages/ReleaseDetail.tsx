@@ -1,17 +1,15 @@
 import { useState } from 'react';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { PageHeader } from '@/components/layout/PageHeader';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { SlidersHorizontal, Share2, ExternalLink, Music, DollarSign, Play, Copy } from 'lucide-react';
-import { toast } from 'sonner';
 import { CloudinaryImage } from '@/components/ui/cloudinary-image';
 import { useReleaseDetail } from '@/hooks/useReleaseDetail';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useShare } from '@/hooks/useShare';
 import { useClipboard } from '@/hooks/useClipboard';
+import { TwoTierHeader } from '@/components/layout/TwoTierHeader';
 
 
 const statusColors: Record<string, string> = {
@@ -44,28 +42,28 @@ const ReleaseDetail = () => {
 
   if (loading) {
     return (
-      <PageContainer>
-        <PageHeader title="Loading..." backTo="/app/releases" />
-        <div className="mobile-container space-y-4">
+      <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+        <TwoTierHeader title="RELEASE DETAILS" backTo="/app/releases" />
+        <div className="mobile-container pt-[120px] pb-6 space-y-4">
           <Skeleton className="h-64 w-full" />
           <Skeleton className="h-32 w-full" />
           <Skeleton className="h-32 w-full" />
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   if (!release) {
     return (
-      <PageContainer>
-        <PageHeader title="Release Not Found" backTo="/app/releases" />
-        <div className="mobile-container py-12 text-center">
+      <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+        <TwoTierHeader title="RELEASE DETAILS" backTo="/app/releases" />
+        <div className="mobile-container pt-[120px] pb-6 text-center">
           <p className="text-muted-foreground">This release could not be found.</p>
           <Button onClick={() => navigate('/app/releases')} className="mt-4">
             Back to Releases
           </Button>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
@@ -98,10 +96,15 @@ const ReleaseDetail = () => {
   const coverArtPublicId = getPublicIdFromUrl(release.cover_art_url);
 
   return (
-    <PageContainer>
-      <PageHeader title="Release Details" backTo="/app/releases" />
+    <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+      <TwoTierHeader 
+        title="RELEASE DETAILS" 
+        backTo="/app/releases"
+        actionIcon={<Share2 className="w-4 h-4" />}
+        onAction={handleShareSmartlink}
+      />
 
-      <div className="pb-20">
+      <div className="pt-[120px] pb-20">
         {/* Hero Section with Blurred Background */}
         <div 
           className="relative min-h-[400px] flex items-center justify-center px-4 py-12"
@@ -311,7 +314,7 @@ const ReleaseDetail = () => {
           </div>
         </div>
       </div>
-    </PageContainer>
+    </div>
   );
 };
 
