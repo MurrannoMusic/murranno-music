@@ -1,4 +1,5 @@
-import { ArrowLeft, User, Music, Check, Edit2 } from 'lucide-react';
+import { User, Music, Check, Edit2 } from 'lucide-react';
+import mmLogo from "@/assets/mm_logo.png";
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
@@ -8,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { useUserType } from '@/hooks/useUserType';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
@@ -100,11 +100,11 @@ export const Profile = () => {
 
   if (!currentUser) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
         <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
           <div className="flex items-center justify-between">
-            <Link to="/app" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-              <ArrowLeft className="h-5 w-5" />
+            <Link to="/app" className="flex items-center">
+              <img src={mmLogo} alt="Murranno Music" className="h-8" />
             </Link>
             <div className="flex-1 text-center">
               <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">PROFILE</Badge>
@@ -120,16 +120,16 @@ export const Profile = () => {
             </CardContent>
           </Card>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           <div className="flex-1 text-center">
@@ -280,6 +280,6 @@ export const Profile = () => {
           </CardContent>
         </Card>
       </div>
-    </PageContainer>
+    </div>
   );
 };

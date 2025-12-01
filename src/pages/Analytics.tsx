@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { ArrowLeft, Filter } from 'lucide-react';
+import { Filter } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import mmLogo from "@/assets/mm_logo.png";
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { AnalyticsTabs } from '@/components/analytics/AnalyticsTabs';
 import { TimePeriodFilter } from '@/components/analytics/TimePeriodFilter';
 import { StatsComparison } from '@/components/analytics/StatsComparison';
@@ -46,12 +46,12 @@ export const Analytics = () => {
   };
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       {/* Header */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between mb-4">
-          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           <div className="flex-1 text-center">
@@ -113,6 +113,6 @@ export const Analytics = () => {
         onReset={resetFilters}
         onUpdate={handleUpdateFilters}
       />
-    </PageContainer>
+    </div>
   );
 };
