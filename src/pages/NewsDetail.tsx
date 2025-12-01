@@ -1,44 +1,54 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ExternalLink } from 'lucide-react';
+import { ExternalLink, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { NewsItem } from '@/types/news';
 import { format } from 'date-fns';
-import { PageContainer } from '@/components/layout/PageContainer';
+import { TwoTierHeader } from '@/components/layout/TwoTierHeader';
+import { useShare } from '@/hooks/useShare';
 
 export default function NewsDetail() {
   const location = useLocation();
   const navigate = useNavigate();
   const news = location.state?.news as NewsItem | null;
+  const { shareUrl } = useShare();
+
+  const handleShare = () => {
+    if (news) {
+      shareUrl(
+        window.location.href,
+        news.title,
+        news.subtitle || news.description.slice(0, 100)
+      );
+    }
+  };
 
   if (!news) {
     return (
-      <PageContainer>
-        <div className="max-w-4xl mx-auto px-4 py-8">
-          <Button onClick={() => navigate(-1)} variant="ghost">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+      <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+        <TwoTierHeader title="NEWS ARTICLE" backTo="/app/dashboard" />
+        <div className="mobile-container pt-[120px] pb-6 text-center">
+          <p className="text-muted-foreground">News article not found</p>
+          <Button onClick={() => navigate(-1)} className="mt-4">
+            Go Back
           </Button>
-          <p className="text-center py-12 text-muted-foreground">News article not found</p>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
 
   return (
-    <PageContainer>
-      <div className="max-w-4xl mx-auto px-4 py-8 pb-20">
-        <Button
-          variant="ghost"
-          onClick={() => navigate(-1)}
-          className="mb-6"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to News
-        </Button>
+    <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+      <TwoTierHeader 
+        title="NEWS ARTICLE" 
+        backTo="/app/dashboard"
+        actionIcon={<Share2 className="w-4 h-4" />}
+        onAction={handleShare}
+      />
 
+      <div className="mobile-container pt-[120px] pb-6 space-y-6">
         <article className="space-y-6">
           {news.image && (
             <div className="w-full aspect-video rounded-[20px] overflow-hidden border border-border">
@@ -89,6 +99,6 @@ export default function NewsDetail() {
           </Card>
         </article>
       </div>
-    </PageContainer>
+    </div>
   );
 }

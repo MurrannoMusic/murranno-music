@@ -172,6 +172,10 @@ const App = () => (
                 <Route index element={<ArtistDetail />} />
               </Route>
 
+              <Route path="/app/news/:id" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<NewsDetail />} />
+              </Route>
+
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
@@ -184,7 +188,6 @@ const App = () => (
                 <Route path="campaign-manager" element={<CampaignManager />} />
                 <Route path="payout-manager" element={<PayoutManager />} />
                 <Route path="results" element={<Results />} />
-                <Route path="news/:id" element={<NewsDetail />} />
                 <Route path="subscription/plans" element={<SubscriptionPlans />} />
                 <Route path="audio-demo" element={<AudioDemo />} />
                 <Route path="campaign-payment-success" element={<CampaignPaymentSuccess />} />
