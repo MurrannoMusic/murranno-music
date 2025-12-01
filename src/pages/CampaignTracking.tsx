@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { PageContainer } from "@/components/layout/PageContainer";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -151,7 +150,7 @@ export default function CampaignTracking() {
   const filteredCampaigns = filterCampaignsByTab(activeTab);
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       <PageHeader title="My Campaigns" />
 
       <div className="space-y-6">
@@ -293,6 +292,6 @@ export default function CampaignTracking() {
           onOpenChange={setDetailDialogOpen}
         />
       )}
-    </PageContainer>
+    </div>
   );
 }

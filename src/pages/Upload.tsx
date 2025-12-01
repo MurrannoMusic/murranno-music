@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
-import { ChevronLeft, Upload as UploadIcon, X, Music, Image as ImageIcon, Camera } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { Upload as UploadIcon, X, Music, Image as ImageIcon, Camera } from "lucide-react";
+import mmLogo from "@/assets/mm_logo.png";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
-import { PageContainer } from "@/components/layout/PageContainer";
 import { AvatarDropdown } from "@/components/layout/AvatarDropdown";
 import { GenreSelector } from "@/components/forms/GenreSelector";
 import { DynamicTextField } from "@/components/forms/DynamicTextField";
@@ -261,19 +261,14 @@ export default function Upload() {
     (selectedGenres.length > 0 || customGenre);
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       <div className="min-h-screen bg-background p-4 pb-24">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-              className="rounded-full"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </Button>
+            <Link to="/" className="flex items-center">
+              <img src={mmLogo} alt="Murranno Music" className="h-8" />
+            </Link>
             <Badge variant="outline" className="text-sm">UPLOAD</Badge>
           </div>
           <AvatarDropdown />
@@ -594,6 +589,6 @@ export default function Upload() {
           </div>
         </form>
       </div>
-    </PageContainer>
+    </div>
   );
 }

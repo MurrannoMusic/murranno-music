@@ -1,4 +1,4 @@
-import { PageContainer } from '@/components/layout/PageContainer';
+
 import { PageHeader } from '@/components/layout/PageHeader';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { useReleases } from '@/hooks/useReleases';
@@ -17,11 +17,11 @@ const Releases = () => {
   const { releases, searchQuery, setSearchQuery, statusFilter, setStatusFilter, getStatusCount } = useReleases();
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       <PageHeader 
         title="Music" 
         subtitle="Your Releases"
-        backTo="/app/artist-dashboard"
+        backTo="/"
         actions={<AvatarDropdown />}
       />
 
@@ -134,7 +134,7 @@ const Releases = () => {
           </div>
         )}
       </div>
-    </PageContainer>
+    </div>
   );
 };
 

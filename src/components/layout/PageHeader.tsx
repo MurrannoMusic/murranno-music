@@ -1,5 +1,5 @@
-import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import mmLogo from "@/assets/mm_logo.png";
 
 interface PageHeaderProps {
   title: string;
@@ -14,8 +14,8 @@ export const PageHeader = ({ title, subtitle, backTo, actions }: PageHeaderProps
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 flex-1 min-w-0">
           {backTo && (
-            <Link to={backTo} className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth flex-shrink-0">
-              <ArrowLeft className="h-4 w-4 md:h-5 md:w-5" />
+            <Link to={backTo} className="flex items-center flex-shrink-0">
+              <img src={mmLogo} alt="Murranno Music" className="h-8" />
             </Link>
           )}
           <div className="min-w-0 flex-1">
