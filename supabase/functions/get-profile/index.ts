@@ -38,7 +38,7 @@ serve(async (req) => {
       .from('profiles')
       .select('*')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (profileError) throw profileError;
 
@@ -47,7 +47,7 @@ serve(async (req) => {
       .from('user_roles')
       .select('tier')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (roleError) throw roleError;
 
@@ -56,7 +56,7 @@ serve(async (req) => {
       .from('subscriptions')
       .select('*')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (subError) throw subError;
 
@@ -65,11 +65,11 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({
         success: true,
-        profile: {
+        profile: profile ? {
           ...profile,
-          tier: userRole.tier,
-          subscription,
-        },
+          tier: userRole?.tier || null,
+          subscription: subscription || null,
+        } : null,
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
