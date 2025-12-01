@@ -9,7 +9,7 @@ import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
 import { useEffect } from 'react';
 
 import { StatsGrid } from '@/components/stats/StatsGrid';
-import { PageContainer } from '@/components/layout/PageContainer';
+
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
 import { TopTracksCard } from '@/components/modern/TopTracksCard';
@@ -33,18 +33,18 @@ export const ArtistDashboard = () => {
 
   if (loading || !currentUser) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
         <div className="mobile-container py-8 text-center text-muted-foreground text-sm">
           {loading ? 'Loading...' : 'Redirecting…'}
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   const stats = getStatsAsItems();
 
   return (
-    <PageContainer className="smooth-scroll" showHeader={false}>
+    <div className="smooth-scroll">
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
@@ -139,6 +139,6 @@ export const ArtistDashboard = () => {
       </div>
 
       <FloatingActionButton />
-    </PageContainer>
+    </div>
   );
 };

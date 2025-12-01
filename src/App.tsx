@@ -14,6 +14,7 @@ import { MobileOnlyRoute } from "./components/auth/MobileOnlyRoute";
 import { AdminRoute } from "./components/admin/AdminRoute";
 import { DashboardRedirect } from "./components/auth/DashboardRedirect";
 import { AppLayout } from "./layouts/AppLayout";
+import { AppLayoutNoHeader } from "./layouts/AppLayoutNoHeader";
 import GetStarted from "./pages/GetStarted";
 import { Splash } from "./pages/Splash";
 import { Welcome } from "./pages/Welcome";
@@ -114,12 +115,16 @@ const App = () => (
               <Route path="/preflight-check" element={<PreflightCheck />} />
               <Route path="/developer-settings" element={<DeveloperSettings />} />
               
+              {/* Pages with custom headers - use layout without default header */}
+              <Route path="/app/artist-dashboard" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<ArtistDashboard />} />
+              </Route>
+
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="artist-dashboard" element={<ArtistDashboard />} />
                 <Route path="label-dashboard" element={<LabelDashboard />} />
                 <Route path="agency-dashboard" element={<AgencyDashboard />} />
                 <Route path="upload" element={<Upload />} />
