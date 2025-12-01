@@ -44,7 +44,7 @@ export const ArtistDashboard = () => {
   const stats = getStatsAsItems();
 
   return (
-    <PageContainer className="smooth-scroll">
+    <PageContainer className="smooth-scroll" showHeader={false}>
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
