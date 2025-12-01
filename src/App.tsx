@@ -148,12 +148,23 @@ const App = () => (
                 <Route index element={<Promotions />} />
               </Route>
 
+              <Route path="/app/releases" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Releases />} />
+              </Route>
+
+              <Route path="/app/upload" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Upload />} />
+              </Route>
+
+              <Route path="/app/campaign-tracking" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<CampaignTracking />} />
+              </Route>
+
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="upload" element={<Upload />} />
                 <Route path="label-analytics" element={<LabelAnalytics />} />
                 <Route path="artist-management" element={<ArtistManagement />} />
                 <Route path="artist-management/:artistId" element={<ArtistDetail />} />
@@ -163,13 +174,11 @@ const App = () => (
                 <Route path="payout-manager" element={<PayoutManager />} />
                 <Route path="results" element={<Results />} />
                 <Route path="artist-profile" element={<ArtistProfile />} />
-                <Route path="releases" element={<Releases />} />
                 <Route path="releases/:id" element={<ReleaseDetail />} />
                 <Route path="news/:id" element={<NewsDetail />} />
                 <Route path="subscription/plans" element={<SubscriptionPlans />} />
                 <Route path="audio-demo" element={<AudioDemo />} />
                 <Route path="campaign-payment-success" element={<CampaignPaymentSuccess />} />
-                <Route path="campaign-tracking" element={<CampaignTracking />} />
               </Route>
 
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
