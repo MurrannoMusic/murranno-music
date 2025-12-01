@@ -36,7 +36,7 @@ export const shouldShowMobileRoutes = () => {
   const stored = getStoredDevicePreference();
   if (stored === 'mobile') return true;
   if (stored === 'desktop') return false;
-  return isNativeApp() || isDevelopment();
+  return isNativeApp() || isDevelopment() || isMobileScreen();
 };
 
 // Get effective mobile state (respects stored preference)
