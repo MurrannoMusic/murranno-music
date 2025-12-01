@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ModernStatCard } from '@/components/modern/ModernStatCard';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
+
 import { useUserType } from '@/hooks/useUserType';
 import { useCampaigns } from '@/hooks/useCampaigns';
 import { useEffect } from 'react';
@@ -24,16 +24,16 @@ export const AgencyDashboard = () => {
 
   if (loading || !currentUser) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
         <div className="mobile-container py-8 text-center text-muted-foreground text-sm">
           {loading ? 'Loading...' : 'Redirecting…'}
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
@@ -177,6 +177,6 @@ export const AgencyDashboard = () => {
           </CardContent>
         </Card>
       </div>
-    </PageContainer>
+    </div>
   );
 };

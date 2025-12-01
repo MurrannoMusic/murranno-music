@@ -9,7 +9,7 @@ import { UserTypeDemo } from '@/components/mobile/UserTypeDemo';
 import { ArtistSelector } from '@/components/mobile/ArtistSelector';
 import { StatsGrid } from '@/components/stats/StatsGrid';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
+
 import { useUserType } from '@/hooks/useUserType';
 import { useStats } from '@/hooks/useStats';
 import { useRecentActivity } from '@/hooks/useRecentActivity';
@@ -29,11 +29,11 @@ export const LabelDashboard = () => {
 
   if (loading || !currentUser) {
     return (
-      <PageContainer>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
         <div className="mobile-container py-8 text-center text-muted-foreground text-sm">
           {loading ? 'Loading...' : 'Redirecting…'}
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
@@ -48,7 +48,7 @@ export const LabelDashboard = () => {
     : "Label dashboard - manage all artists";
 
   return (
-    <PageContainer className="smooth-scroll">
+    <div className="smooth-scroll">
       {/* Modern Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
@@ -200,6 +200,6 @@ export const LabelDashboard = () => {
       </div>
 
       <FloatingActionButton />
-    </PageContainer>
+    </div>
   );
 };
