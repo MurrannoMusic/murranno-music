@@ -1,14 +1,19 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { LogIn } from "lucide-react";
+import { LogIn, Menu, X } from "lucide-react";
 import mmLogo from "@/assets/mm_logo.png";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const LandingNav = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+    setIsOpen(false);
   };
 
   return (
@@ -19,6 +24,7 @@ export const LandingNav = () => {
             <img src={mmLogo} alt="Murranno Music" className="h-10" />
           </Link>
           
+          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-10">
             <button onClick={() => scrollToSection('home')} className="text-white hover:text-primary transition-colors font-medium">
               Home
@@ -42,6 +48,55 @@ export const LandingNav = () => {
               </Button>
             </Link>
           </div>
+
+          {/* Mobile Menu */}
+          <Sheet open={isOpen} onOpenChange={setIsOpen}>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="icon" className="text-white">
+                <Menu className="h-6 w-6" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] bg-background">
+              <div className="flex flex-col gap-6 mt-8">
+                <button 
+                  onClick={() => scrollToSection('home')} 
+                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                >
+                  Home
+                </button>
+                <button 
+                  onClick={() => scrollToSection('services')} 
+                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                >
+                  Distribution
+                </button>
+                <button 
+                  onClick={() => scrollToSection('why')} 
+                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                >
+                  Promotions
+                </button>
+                <button 
+                  onClick={() => scrollToSection('testimonials')} 
+                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                >
+                  Blog
+                </button>
+                <button 
+                  onClick={() => scrollToSection('footer')} 
+                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                >
+                  Support
+                </button>
+                <Link to="/login" className="mt-4" onClick={() => setIsOpen(false)}>
+                  <Button className="w-full gap-2">
+                    <LogIn className="h-4 w-4" />
+                    Sign In
+                  </Button>
+                </Link>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </div>
     </nav>
