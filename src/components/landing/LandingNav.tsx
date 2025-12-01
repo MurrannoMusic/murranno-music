@@ -52,44 +52,47 @@ export const LandingNav = () => {
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild className="md:hidden">
-              <Button variant="ghost" size="icon" className="text-white">
+              <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] bg-background">
-              <div className="flex flex-col gap-6 mt-8">
+            <SheetContent 
+              side="right" 
+              className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50 animate-slide-in-right"
+            >
+              <div className="flex flex-col gap-6 mt-8 animate-fade-in">
                 <button 
                   onClick={() => scrollToSection('home')} 
-                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                  className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Home
                 </button>
                 <button 
                   onClick={() => scrollToSection('services')} 
-                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                  className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Distribution
                 </button>
                 <button 
                   onClick={() => scrollToSection('why')} 
-                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                  className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Promotions
                 </button>
                 <button 
                   onClick={() => scrollToSection('testimonials')} 
-                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                  className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Blog
                 </button>
                 <button 
                   onClick={() => scrollToSection('footer')} 
-                  className="text-foreground hover:text-primary transition-colors font-medium text-left text-lg"
+                  className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Support
                 </button>
                 <Link to="/login" className="mt-4" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full gap-2">
+                  <Button className="w-full gap-2 hover-scale">
                     <LogIn className="h-4 w-4" />
                     Sign In
                   </Button>
