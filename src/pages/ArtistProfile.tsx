@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Settings, Edit, Save, X, Music, Music2, Disc3, Share2 } from 'lucide-react';
+import { Settings, Edit, Save, X, Music, Music2, Disc3, Share2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
 import { StreamingPlatformCard } from '@/components/profile/StreamingPlatformCard';
 import { SocialLinkCard } from '@/components/profile/SocialLinkCard';
@@ -14,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { validateImageFile } from '@/utils/fileValidation';
 import { toast } from '@/hooks/use-toast';
 import { useShare } from '@/hooks/useShare';
+import { TwoTierHeader } from '@/components/layout/TwoTierHeader';
 
 export const ArtistProfile = () => {
   const navigate = useNavigate();
@@ -119,34 +119,15 @@ export const ArtistProfile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-dark mobile-safe-top mobile-safe-bottom">
-      <div className="mobile-container py-6 space-y-4">
-        {/* Header */}
-        <div className="bg-gradient-dark backdrop-blur-xl border-b border-border/20 -mx-4 px-4 py-3 mb-2">
-          <div className="flex items-center justify-between">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate(-1)}
-              className="hover:bg-secondary/30"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-
-            <Badge variant="outline">
-              ARTIST PROFILE
-            </Badge>
-
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => navigate('/app/settings')}
-              className="hover:bg-secondary/30"
-            >
-              <Settings className="w-4 h-4" />
-            </Button>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+      <TwoTierHeader 
+        title="ARTIST PROFILE"
+        backTo="/app/dashboard"
+        actionIcon={<Settings className="w-4 h-4" />}
+        onAction={() => navigate('/app/settings')}
+      />
+      
+      <div className="mobile-container pt-[120px] pb-6 space-y-4">{/* Adjusted padding for two-tier header */}
 
         {/* Profile Header */}
         <Card className="bg-card border border-border rounded-[20px] shadow-soft">
