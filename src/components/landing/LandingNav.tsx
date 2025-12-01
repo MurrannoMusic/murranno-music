@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import { LogIn } from "lucide-react";
 import mmLogo from "@/assets/mm_logo.png";
+import { Button } from "@/components/ui/button";
 
 export const LandingNav = () => {
   const scrollToSection = (id: string) => {
@@ -33,6 +35,12 @@ export const LandingNav = () => {
             <button onClick={() => scrollToSection('footer')} className="text-white hover:text-primary transition-colors font-medium">
               Support
             </button>
+            <Link to="/login">
+              <Button className="gap-2">
+                <LogIn className="h-4 w-4" />
+                Sign In
+              </Button>
+            </Link>
           </div>
         </div>
       </div>
