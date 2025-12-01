@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { ArrowLeft, Wallet } from 'lucide-react';
+import { Wallet } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import mmLogo from "@/assets/mm_logo.png";
 import { Badge } from '@/components/ui/badge';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { WalletTabs } from '@/components/wallet/WalletTabs';
 import { BalanceTab } from '@/components/wallet/BalanceTab';
 import { BalanceLoading } from '@/components/wallet/BalanceLoading';
@@ -35,12 +35,12 @@ export const Earnings = () => {
   };
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       {/* Top Bar */}
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           <div className="flex-1 text-center">
@@ -103,6 +103,6 @@ export const Earnings = () => {
           onSuccess={refetchBalance}
         />
       )}
-    </PageContainer>
+    </div>
   );
 };

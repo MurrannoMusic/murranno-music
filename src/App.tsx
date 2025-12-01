@@ -128,15 +128,32 @@ const App = () => (
                 <Route index element={<AgencyDashboard />} />
               </Route>
 
+              <Route path="/app/analytics" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Analytics />} />
+              </Route>
+
+              <Route path="/app/earnings" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Earnings />} />
+              </Route>
+
+              <Route path="/app/profile" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Profile />} />
+              </Route>
+
+              <Route path="/app/settings" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Settings />} />
+              </Route>
+
+              <Route path="/app/promotions" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
+                <Route index element={<Promotions />} />
+              </Route>
+
               <Route path="/app" element={<MobileOnlyRoute><ProtectedRoute><AppLayout /></ProtectedRoute></MobileOnlyRoute>}>
                 <Route index element={<DashboardRedirect />} />
                 <Route path="user-type-selection" element={<UserTypeSelection />} />
                 <Route path="user-type-switcher" element={<UserTypeSwitcher />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="upload" element={<Upload />} />
-                <Route path="promotions" element={<Promotions />} />
-                <Route path="earnings" element={<Earnings />} />
-                <Route path="analytics" element={<Analytics />} />
                 <Route path="label-analytics" element={<LabelAnalytics />} />
                 <Route path="artist-management" element={<ArtistManagement />} />
                 <Route path="artist-management/:artistId" element={<ArtistDetail />} />
@@ -145,9 +162,7 @@ const App = () => (
                 <Route path="campaign-manager" element={<CampaignManager />} />
                 <Route path="payout-manager" element={<PayoutManager />} />
                 <Route path="results" element={<Results />} />
-                <Route path="profile" element={<Profile />} />
                 <Route path="artist-profile" element={<ArtistProfile />} />
-                <Route path="settings" element={<Settings />} />
                 <Route path="releases" element={<Releases />} />
                 <Route path="releases/:id" element={<ReleaseDetail />} />
                 <Route path="news/:id" element={<NewsDetail />} />

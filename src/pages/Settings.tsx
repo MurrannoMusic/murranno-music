@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { ArrowLeft, Moon, Sun, Monitor, Bell, User, Lock, HelpCircle, CreditCard, LogOut, Mail, Fingerprint, RefreshCw } from 'lucide-react';
+import { Moon, Sun, Monitor, Bell, User, Lock, HelpCircle, CreditCard, LogOut, Mail, Fingerprint, RefreshCw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import mmLogo from "@/assets/mm_logo.png";
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Button } from '@/components/ui/button';
 import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
-import { PageContainer } from '@/components/layout/PageContainer';
 import { useTheme } from '@/components/ThemeProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
@@ -60,11 +60,11 @@ export const Settings = () => {
   };
 
   return (
-    <PageContainer>
+    <div className="smooth-scroll">
       <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
         <div className="flex items-center justify-between">
-          <Link to="/app/artist-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
+          <Link to="/" className="flex items-center">
+            <img src={mmLogo} alt="Murranno Music" className="h-8" />
           </Link>
           
           <div className="flex-1 text-center">
@@ -410,6 +410,6 @@ export const Settings = () => {
 
       <ChangeEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} />
       <ChangePasswordDialog open={passwordDialogOpen} onOpenChange={setPasswordDialogOpen} />
-    </PageContainer>
+    </div>
   );
 };
