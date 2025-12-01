@@ -1,66 +1,65 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, TrendingUp, DollarSign, Music, Users } from 'lucide-react';
+import { TrendingUp, DollarSign, Music, Users, Share2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
-import { PageContainer } from '@/components/layout/PageContainer';
-import { AvatarDropdown } from '@/components/layout/AvatarDropdown';
+import { TwoTierHeader } from '@/components/layout/TwoTierHeader';
 import { useArtistDetail } from '@/hooks/useArtistDetail';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useShare } from '@/hooks/useShare';
 
 export default function ArtistDetail() {
   const { artistId } = useParams<{ artistId: string }>();
   const navigate = useNavigate();
   const { artist, releases, labelRelation, payoutHistory, loading } = useArtistDetail(artistId!);
+  const { shareArtist } = useShare();
+
+  const handleShare = () => {
+    if (artist) {
+      shareArtist(artist.stage_name, window.location.href);
+    }
+  };
 
   if (loading) {
     return (
-      <PageContainer>
-        <div className="flex items-center justify-between mb-6">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-10 rounded-full" />
-        </div>
-        <div className="space-y-6">
+      <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+        <TwoTierHeader title="ARTIST DETAILS" backTo="/app/artist-management" />
+        <div className="mobile-container pt-[120px] pb-6 space-y-6">
           <Skeleton className="h-64 w-full rounded-xl" />
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-32 rounded-xl" />)}
           </div>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   if (!artist) {
     return (
-      <PageContainer>
-        <div className="text-center py-12">
+      <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+        <TwoTierHeader title="ARTIST DETAILS" backTo="/app/artist-management" />
+        <div className="mobile-container pt-[120px] pb-6 text-center">
           <p className="text-muted-foreground">Artist not found</p>
           <Button onClick={() => navigate(-1)} className="mt-4">
             Go Back
           </Button>
         </div>
-      </PageContainer>
+      </div>
     );
   }
 
   return (
-    <PageContainer>
-      {/* Top Bar */}
-      <div className="flex items-center justify-between mb-6">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate(-1)}
-          className="gap-2"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back
-        </Button>
-        <AvatarDropdown />
-      </div>
+    <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
+      <TwoTierHeader 
+        title="ARTIST DETAILS" 
+        backTo="/app/artist-management"
+        actionIcon={<Share2 className="w-4 h-4" />}
+        onAction={handleShare}
+      />
 
+      <div className="mobile-container pt-[120px] pb-6 space-y-6">
       {/* Artist Header */}
       <Card className="bg-gradient-to-br from-primary/10 via-background to-background border-primary/20 mb-6">
         <CardContent className="p-6">
@@ -262,6 +261,7 @@ export default function ArtistDetail() {
           )}
         </div>
       </div>
-    </PageContainer>
+      </div>
+    </div>
   );
 }
