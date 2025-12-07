@@ -72,6 +72,7 @@ import CampaignPaymentSuccess from "./pages/CampaignPaymentSuccess";
 import CampaignTracking from "./pages/CampaignTracking";
 import PreflightCheck from "./pages/PreflightCheck";
 import DeveloperSettings from "./pages/DeveloperSettings";
+import DeepLinkTest from "./pages/DeepLinkTest";
 import { DashboardPreviewLayout } from "./components/admin/DashboardPreviewLayout";
 
 const queryClient = new QueryClient();
@@ -114,6 +115,7 @@ const App = () => (
               <Route path="/support" element={<Support />} />
               <Route path="/preflight-check" element={<PreflightCheck />} />
               <Route path="/developer-settings" element={<DeveloperSettings />} />
+              <Route path="/deep-link-test" element={<DeepLinkTest />} />
               
               {/* Pages with custom headers - use layout without default header */}
               <Route path="/app/artist-dashboard" element={<MobileOnlyRoute><ProtectedRoute><AppLayoutNoHeader /></ProtectedRoute></MobileOnlyRoute>}>
