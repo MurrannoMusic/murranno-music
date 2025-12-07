@@ -8,6 +8,19 @@ export const isDevelopment = () => import.meta.env.DEV;
 
 export const isMobileScreen = () => window.innerWidth < 1024;
 
+// Get detailed platform information
+export const getPlatformInfo = () => {
+  const platform = Capacitor.getPlatform();
+  return {
+    platform,
+    isNative: Capacitor.isNativePlatform(),
+    isIOS: platform === 'ios',
+    isAndroid: platform === 'android',
+    isWeb: platform === 'web',
+    userAgent: navigator.userAgent,
+  };
+};
+
 // Get stored device preference from localStorage
 export const getStoredDevicePreference = (): 'mobile' | 'desktop' | null => {
   try {

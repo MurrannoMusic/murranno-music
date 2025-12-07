@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { isNativeApp } from '@/utils/platformDetection';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ExternalLink, AlertCircle } from 'lucide-react';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export const AuthCallback = () => {
   const navigate = useNavigate();
+  const [showManualRedirect, setShowManualRedirect] = useState(false);
+  const [nativeRedirectUrl, setNativeRedirectUrl] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -21,77 +25,137 @@ export const AuthCallback = () => {
         
         const accessToken = params.get('access_token');
         const refreshToken = params.get('refresh_token');
-        const error = params.get('error');
+        const errorParam = params.get('error');
         const errorDescription = params.get('error_description');
 
-        console.log('AuthCallback - Platform:', platform, 'isNativeApp:', isNativeApp());
-        console.log('AuthCallback - Has tokens:', !!accessToken, !!refreshToken);
+        console.log('[AuthCallback] Platform:', platform);
+        console.log('[AuthCallback] isNativeApp:', isNativeApp());
+        console.log('[AuthCallback] Has tokens:', { accessToken: !!accessToken, refreshToken: !!refreshToken });
+        console.log('[AuthCallback] Full URL:', window.location.href);
 
-        if (error) {
-          console.error('OAuth error:', error, errorDescription);
-          toast.error(`Authentication failed: ${errorDescription || error}`);
-          navigate('/login');
+        if (errorParam) {
+          console.error('[AuthCallback] OAuth error:', errorParam, errorDescription);
+          setError(errorDescription || errorParam);
+          toast.error(`Authentication failed: ${errorDescription || errorParam}`);
+          setTimeout(() => navigate('/login'), 3000);
           return;
         }
 
         if (accessToken && refreshToken) {
-          // For native apps, use immediate redirect with window.location.replace
-          // This prevents the auth bridge from intercepting the redirect
-          if (isNativeApp() || platform === 'native') {
-            const nativeCallbackUrl = `murranno://callback#access_token=${accessToken}&refresh_token=${refreshToken}`;
-            console.log('Redirecting to native app immediately with tokens...');
+          const isNative = isNativeApp() || platform === 'native';
+          
+          if (isNative) {
+            // Build native callback URL
+            const callbackUrl = `murranno://callback#access_token=${accessToken}&refresh_token=${refreshToken}`;
+            setNativeRedirectUrl(callbackUrl);
             
-            // Use replace() for immediate redirect without history entry
-            window.location.replace(nativeCallbackUrl);
+            console.log('[AuthCallback] Attempting native redirect...');
             
-            // Fallback timeout in case replace doesn't work
+            // Attempt 1: Immediate redirect with replace
+            try {
+              window.location.replace(callbackUrl);
+              console.log('[AuthCallback] replace() called');
+            } catch (e) {
+              console.warn('[AuthCallback] replace() failed:', e);
+            }
+            
+            // Attempt 2: Delayed href assignment
             setTimeout(() => {
-              console.warn('Fallback redirect triggered');
-              window.location.href = nativeCallbackUrl;
-            }, 500);
+              console.log('[AuthCallback] Attempting href redirect...');
+              window.location.href = callbackUrl;
+            }, 300);
+            
+            // Attempt 3: Show manual button if redirects fail
+            setTimeout(() => {
+              console.log('[AuthCallback] Showing manual redirect button');
+              setShowManualRedirect(true);
+            }, 1500);
             
             return;
           }
 
           // For web: Establish Supabase session directly
+          console.log('[AuthCallback] Web flow - setting session...');
           const { data, error: sessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
           });
 
           if (sessionError) {
-            console.error('Failed to set session:', sessionError);
+            console.error('[AuthCallback] Failed to set session:', sessionError);
+            setError('Failed to complete sign in. Please try again.');
             toast.error('Failed to complete sign in. Please try again.');
-            navigate('/login');
+            setTimeout(() => navigate('/login'), 3000);
             return;
           }
 
-          console.log('OAuth session established:', data.user?.email);
+          console.log('[AuthCallback] Session established:', data.user?.email);
           toast.success('Successfully signed in!');
-
-          // Redirect to dashboard
           navigate('/app/dashboard');
         } else {
-          console.error('No tokens found in callback URL');
+          console.error('[AuthCallback] No tokens found in URL');
+          setError('Authentication incomplete. Please try again.');
           toast.error('Authentication incomplete. Please try again.');
-          navigate('/login');
+          setTimeout(() => navigate('/login'), 3000);
         }
       } catch (error) {
-        console.error('OAuth callback error:', error);
+        console.error('[AuthCallback] Unexpected error:', error);
+        setError('An error occurred during sign in.');
         toast.error('An error occurred during sign in.');
-        navigate('/login');
+        setTimeout(() => navigate('/login'), 3000);
       }
     };
 
     handleCallback();
   }, [navigate]);
 
+  const handleManualRedirect = () => {
+    if (nativeRedirectUrl) {
+      console.log('[AuthCallback] Manual redirect triggered');
+      window.location.href = nativeRedirectUrl;
+    }
+  };
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center space-y-4 p-6">
+          <AlertCircle className="h-12 w-12 mx-auto text-destructive" />
+          <h2 className="text-xl font-semibold text-foreground">Authentication Failed</h2>
+          <p className="text-sm text-muted-foreground">{error}</p>
+          <p className="text-xs text-muted-foreground">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center space-y-4">
+      <div className="text-center space-y-4 p-6">
         <Loader2 className="h-12 w-12 animate-spin mx-auto text-primary" />
         <h2 className="text-xl font-semibold text-foreground">Completing sign in...</h2>
-        <p className="text-sm text-muted-foreground">Please wait while we authenticate your account</p>
+        <p className="text-sm text-muted-foreground">
+          {showManualRedirect 
+            ? 'If the app didn\'t open automatically, tap the button below'
+            : 'Please wait while we authenticate your account'
+          }
+        </p>
+        
+        {showManualRedirect && nativeRedirectUrl && (
+          <div className="space-y-3 pt-4">
+            <Button 
+              onClick={handleManualRedirect}
+              className="gap-2"
+              size="lg"
+            >
+              <ExternalLink className="h-4 w-4" />
+              Open in App
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Having trouble? Make sure the Murranno app is installed
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
