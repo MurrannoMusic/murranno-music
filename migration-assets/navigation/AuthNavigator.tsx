@@ -3,16 +3,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AuthStackParamList } from './types';
 import { colors } from '../theme/colors';
 
-// Screen imports (to be replaced with actual screen components)
+// Screen imports
 import SplashScreen from '../screens/SplashScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
-// Placeholder screens - create these in your project
-// import GetStartedScreen from '../screens/GetStartedScreen';
-// import LoginScreen from '../screens/LoginScreen';
-// import SignupScreen from '../screens/SignupScreen';
-// import VerifyEmailScreen from '../screens/VerifyEmailScreen';
-// import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-// import ResetPasswordScreen from '../screens/ResetPasswordScreen';
+import LoginScreen from '../screens/LoginScreen';
+import SignUpScreen from '../screens/SignUpScreen';
+import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
+import UserTypeSelectionScreen from '../screens/UserTypeSelectionScreen';
 
 const Stack = createNativeStackNavigator<AuthStackParamList>();
 
@@ -48,18 +45,18 @@ export const AuthNavigator: React.FC = () => {
       />
       <Stack.Screen 
         name="GetStarted" 
-        component={PlaceholderScreen}
+        component={UserTypeSelectionScreen}
         options={{
           animation: 'slide_from_bottom',
         }}
       />
       <Stack.Screen 
         name="Login" 
-        component={PlaceholderScreen}
+        component={LoginScreen}
       />
       <Stack.Screen 
         name="Signup" 
-        component={PlaceholderScreen}
+        component={SignUpScreen}
       />
       <Stack.Screen 
         name="VerifyEmail" 
@@ -67,7 +64,7 @@ export const AuthNavigator: React.FC = () => {
       />
       <Stack.Screen 
         name="ForgotPassword" 
-        component={PlaceholderScreen}
+        component={ForgotPasswordScreen}
       />
       <Stack.Screen 
         name="ResetPassword" 
