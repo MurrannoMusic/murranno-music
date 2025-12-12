@@ -7,11 +7,13 @@ This folder contains complete React Native (Expo) templates that match the curre
 ```
 migration-assets/
 ├── theme/                    # Design system tokens
-│   ├── colors.ts            # Color palette (dark/light themes)
+│   ├── colors.ts            # Color palette (dark/light themes) with opacity helpers
 │   ├── typography.ts        # Font styles, sizes, weights
 │   ├── spacing.ts           # Spacing scale, border radius
 │   ├── shadows.ts           # Shadow presets (iOS/Android)
 │   ├── animations.ts        # Animation helpers
+│   ├── gradients.ts         # Gradient definitions for LinearGradient
+│   ├── utilities.ts         # Pre-composed utility styles matching web
 │   └── index.ts             # Central export
 │
 ├── components/
@@ -40,7 +42,11 @@ migration-assets/
 ├── App.tsx.template         # Main app template
 ├── package.json.template    # Dependencies
 ├── supabase-client.ts       # Supabase configuration
-└── tailwind.config.js       # NativeWind configuration
+├── tailwind.config.js       # NativeWind configuration
+├── babel.config.js          # Babel config for NativeWind
+├── metro.config.js          # Metro bundler config
+├── global.css               # Global CSS for NativeWind
+└── nativewind.d.ts          # TypeScript declarations
 ```
 
 ## Setup Instructions
@@ -63,14 +69,28 @@ cp migration-assets/package.json.template package.json
 npm install
 ```
 
-### 3. Copy Theme Files
+### 3. Configure NativeWind (Phase 2)
+
+```bash
+# Copy configuration files
+cp migration-assets/tailwind.config.js tailwind.config.js
+cp migration-assets/babel.config.js babel.config.js
+cp migration-assets/metro.config.js metro.config.js
+cp migration-assets/global.css global.css
+cp migration-assets/nativewind.d.ts nativewind.d.ts
+
+# Import global.css in your App.tsx:
+import './global.css';
+```
+
+### 4. Copy Theme Files
 
 ```bash
 mkdir -p src/theme
 cp migration-assets/theme/* src/theme/
 ```
 
-### 4. Copy Components
+### 5. Copy Components
 
 ```bash
 mkdir -p src/components/{ui,layout,modern}
@@ -79,26 +99,11 @@ cp migration-assets/components/layout/* src/components/layout/
 cp migration-assets/components/modern/* src/components/modern/
 ```
 
-### 5. Copy Screens
+### 6. Copy Screens
 
 ```bash
 mkdir -p src/screens
 cp migration-assets/screens/* src/screens/
-```
-
-### 6. Configure NativeWind
-
-```bash
-cp migration-assets/tailwind.config.js tailwind.config.js
-
-# Add to babel.config.js:
-module.exports = function (api) {
-  api.cache(true);
-  return {
-    presets: ['babel-preset-expo'],
-    plugins: ['nativewind/babel'],
-  };
-};
 ```
 
 ### 7. Configure Supabase
@@ -112,33 +117,98 @@ cp migration-assets/supabase-client.ts src/services/supabase.ts
 
 ## Design System Mapping
 
-### Colors (Web → React Native)
+### Colors (Web CSS → React Native)
 
-| CSS Variable | React Native |
-|--------------|--------------|
-| `hsl(var(--primary))` | `colors.dark.primary` |
-| `hsl(var(--background))` | `colors.dark.background` |
-| `hsl(var(--card))` | `colors.dark.card` |
-| `hsl(var(--muted-foreground))` | `colors.dark.mutedForeground` |
+| CSS Variable | React Native Import |
+|--------------|---------------------|
+| `hsl(var(--primary))` | `colors.primary.DEFAULT` |
+| `hsl(var(--primary-glow))` | `colors.primary.glow` |
+| `hsl(var(--background))` | `colors.background` |
+| `hsl(var(--card))` | `colors.card.DEFAULT` |
+| `hsl(var(--muted-foreground))` | `colors.muted.foreground` |
+| `hsl(var(--success))` | `colors.success.DEFAULT` |
+| `hsl(var(--warning))` | `colors.warning.DEFAULT` |
+
+### Color with Opacity (Web → React Native)
+
+| Web Class | React Native |
+|-----------|--------------|
+| `bg-card/80` | `colorVariants.card[80]` or `withOpacity(colors.card.DEFAULT, 0.8)` |
+| `bg-primary/15` | `colorVariants.primary[15]` |
+| `border-border/30` | `colorVariants.border[30]` |
+| `text-foreground/90` | `colorVariants.foreground[90]` |
+
+### Gradients (Web CSS → React Native)
+
+```tsx
+import { LinearGradient } from 'expo-linear-gradient';
+import { gradients } from '@/theme';
+
+// Web: background: var(--gradient-primary)
+<LinearGradient {...gradients.primary} style={styles.container}>
+
+// Web: background: var(--gradient-mesh)
+<LinearGradient {...gradients.mesh} style={styles.background}>
+
+// Web: background: var(--gradient-accent)
+<LinearGradient {...gradients.accent} style={styles.button}>
+```
+
+### Utility Classes (Web → React Native)
+
+| Web Class | React Native Style Import |
+|-----------|---------------------------|
+| `.modern-card` | `utilityStyles.modernCard` |
+| `.stat-card` | `utilityStyles.statCard` |
+| `.glass-card` | `utilityStyles.glassCard` |
+| `.glass-nav` | `utilityStyles.glassNav` |
+| `.pill-button` | `utilityStyles.pillButton` |
+| `.ghost-button` | `utilityStyles.ghostButton` |
+| `.fab` | `utilityStyles.fab` |
+| `.nav-item` | `utilityStyles.navItem` |
+| `.nav-item.active` | `utilityStyles.navItemActive` |
+| `.heading-xl` | `textStyles.headingXl` |
+| `.heading-lg` | `textStyles.headingLg` |
+| `.body-md` | `textStyles.bodyMd` |
+| `.body-sm` | `textStyles.bodySm` |
+
+### NativeWind Classes (Tailwind-style in RN)
+
+These classes work directly in React Native with NativeWind:
+
+```tsx
+// These work identically to web
+<View className="bg-card/80 border border-border/30 rounded-3xl p-4" />
+<Text className="text-foreground text-xl font-bold" />
+<View className="flex-row items-center gap-4" />
+
+// Custom component classes
+<View className="modern-card" />
+<View className="stat-card" />
+<View className="glass-card" />
+```
+
+### Shadow Mapping (Web → React Native)
+
+| Web Shadow | React Native |
+|------------|--------------|
+| `shadow-primary` | `shadows.primary` |
+| `shadow-secondary` | `shadows.secondary` |
+| `shadow-accent` | `shadows.accent` |
+| `shadow-glow` | `shadows.glow` |
+| `shadow-soft` | `shadows.soft` |
 
 ### Components (Web → React Native)
 
 | Web Component | React Native Component |
 |---------------|------------------------|
 | `<Button variant="pill">` | `<Button variant="pill">` |
+| `<Button variant="glass">` | `<Button variant="glass">` |
 | `<Card>` | `<Card>` |
+| `<Card className="glass-card">` | `<Card variant="glass">` |
 | `<Input>` | `<Input>` |
 | `BottomNavigation` | `BottomNavigation` |
 | `PageContainer` | `PageContainer` |
-
-### Tailwind Classes (Web → NativeWind)
-
-| Web Class | NativeWind Class |
-|-----------|------------------|
-| `bg-card/80` | `bg-card/80` ✅ |
-| `rounded-3xl` | `rounded-3xl` ✅ |
-| `shadow-primary` | Use `shadows.primary` style |
-| `glass-card` | Use `<Card variant="glass">` |
 
 ### Animations
 
@@ -146,8 +216,9 @@ cp migration-assets/supabase-client.ts src/services/supabase.ts
 |---------------|------------------------|
 | `transition-smooth` | `Animated.timing` with `timing.smooth` |
 | `transition-bounce` | `Animated.spring` with `spring.bouncy` |
-| `hover:scale-105` | `onPressIn` → `Animated.spring(scale, 1.05)` |
+| `hover:scale-105` | `onPressIn` → scale animation |
 | `animate-float` | `createFloatAnimation()` |
+| `animate-fade-in` | `createFadeInAnimation()` |
 
 ## Component Usage Examples
 
@@ -180,6 +251,38 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
     <PortfolioCard value="₦125,000" change={12.5} changeType="positive" />
   </CardContent>
 </Card>
+```
+
+### Using Gradients
+
+```tsx
+import { LinearGradient } from 'expo-linear-gradient';
+import { gradients } from '@/theme';
+
+// Mesh background (like PageContainer)
+<LinearGradient 
+  colors={gradients.mesh.colors}
+  locations={gradients.mesh.locations}
+  start={gradients.mesh.start}
+  end={gradients.mesh.end}
+  style={StyleSheet.absoluteFill}
+/>
+
+// Button with gradient
+<LinearGradient {...gradients.primary} style={styles.button}>
+  <Text>Click Me</Text>
+</LinearGradient>
+```
+
+### Using Utility Styles
+
+```tsx
+import { utilityStyles, textStyles } from '@/theme';
+
+<View style={utilityStyles.modernCard}>
+  <Text style={textStyles.headingLg}>Dashboard</Text>
+  <Text style={textStyles.bodySm}>Welcome back</Text>
+</View>
 ```
 
 ### Page Layout
@@ -237,14 +340,16 @@ All existing edge functions work without changes:
 - Same database schema
 - Same RLS policies
 
-## Next Steps
+## Migration Phases
 
-1. **Phase 2**: Migrate remaining UI components
-2. **Phase 3**: Set up React Navigation
-3. **Phase 4**: Convert all screens
-4. **Phase 5**: Implement native features
-5. **Phase 6**: Testing and QA
-6. **Phase 7**: App store submission
+- [x] **Phase 1**: Project setup, dependencies, Supabase config
+- [x] **Phase 2**: NativeWind configuration, complete theme system
+- [ ] **Phase 3**: Additional UI components
+- [ ] **Phase 4**: Navigation setup with React Navigation
+- [ ] **Phase 5**: Screen templates
+- [ ] **Phase 6**: Native features integration
+- [ ] **Phase 7**: Testing and QA
+- [ ] **Phase 8**: App store submission
 
 ## Support
 
