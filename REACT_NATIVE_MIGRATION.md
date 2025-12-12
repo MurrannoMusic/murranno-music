@@ -2,7 +2,22 @@
 
 > **Important**: This migration must be done outside Lovable as React Native is not supported.
 
-## Phase 1: Project Setup
+## Migration Progress
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| Phase 1 | Project Setup & Configuration | ✅ Complete |
+| Phase 2 | Theme System & Design Tokens | ✅ Complete |
+| Phase 3 | Core UI Components | ✅ Complete |
+| Phase 4 | Navigation Setup | ✅ Complete |
+| Phase 5 | Screen Templates | ✅ Complete |
+| Phase 6 | Native Features Integration | 🔲 Pending |
+| Phase 7 | Testing & QA | 🔲 Pending |
+| Phase 8 | Deployment with EAS Build | 🔲 Pending |
+
+---
+
+## Phase 1: Project Setup ✅
 
 ### 1.1 Create New Expo Project
 
@@ -40,6 +55,10 @@ npm install date-fns
 
 # Toast notifications
 npm install react-native-toast-message
+
+# Animations & UI
+npx expo install expo-blur expo-haptics expo-linear-gradient
+npm install react-native-reanimated
 ```
 
 ### 1.3 Install Native Modules
@@ -54,6 +73,7 @@ npx expo install expo-clipboard expo-web-browser expo-linking
 npx expo install expo-av expo-document-picker
 npx expo install expo-secure-store expo-auth-session expo-crypto
 npx expo install @react-native-community/netinfo
+npx expo install expo-splash-screen
 
 # Charts
 npm install react-native-chart-kit react-native-svg
@@ -63,40 +83,62 @@ npm install react-native-chart-kit react-native-svg
 
 ## Phase 1.4: Project Structure
 
-Create the following folder structure:
-
 ```
 murranno-music-rn/
 ├── app.json
 ├── App.tsx
 ├── src/
 │   ├── components/
-│   │   ├── ui/                 # Base UI components
-│   │   ├── cards/              # Card components
-│   │   ├── forms/              # Form components
+│   │   ├── ui/                 # Base UI components (14 components)
 │   │   ├── layout/             # Layout components
-│   │   └── audio/              # Audio player
+│   │   └── modern/             # Modern card components
 │   ├── contexts/
 │   │   ├── AuthContext.tsx
 │   │   └── CartContext.tsx
 │   ├── hooks/
-│   │   ├── data/               # Data fetching hooks
-│   │   └── native/             # Native feature hooks
+│   │   ├── useAppNavigation.ts
+│   │   ├── useAuth.ts
+│   │   └── useNativeFeatures.ts
 │   ├── navigation/
-│   │   ├── AppNavigator.tsx
-│   │   ├── AuthStack.tsx
-│   │   ├── MainTabs.tsx
-│   │   └── AdminStack.tsx
+│   │   ├── types.ts            # All navigation types
+│   │   ├── AuthNavigator.tsx
+│   │   ├── MainTabNavigator.tsx
+│   │   ├── RootNavigator.tsx
+│   │   ├── index.ts
+│   │   └── stacks/
+│   │       ├── DashboardNavigator.tsx
+│   │       ├── ReleasesNavigator.tsx
+│   │       ├── PromotionsNavigator.tsx
+│   │       ├── EarningsNavigator.tsx
+│   │       ├── ProfileNavigator.tsx
+│   │       └── AdminNavigator.tsx
 │   ├── screens/
-│   │   ├── auth/
-│   │   ├── main/
-│   │   └── admin/
+│   │   ├── LoginScreen.tsx
+│   │   ├── SignupScreen.tsx
+│   │   ├── ArtistDashboardScreen.tsx
+│   │   ├── ReleasesScreen.tsx
+│   │   ├── PromotionsScreen.tsx
+│   │   ├── EarningsScreen.tsx
+│   │   ├── ProfileScreen.tsx
+│   │   ├── SplashScreen.tsx
+│   │   ├── WelcomeScreen.tsx
+│   │   ├── NotFoundScreen.tsx
+│   │   └── index.ts
 │   ├── services/
 │   │   └── supabase.ts
+│   ├── theme/
+│   │   ├── colors.ts
+│   │   ├── typography.ts
+│   │   ├── spacing.ts
+│   │   ├── shadows.ts
+│   │   ├── gradients.ts
+│   │   ├── animations.ts
+│   │   ├── utilities.ts
+│   │   └── index.ts
 │   ├── types/
-│   │   └── *.ts                # Copy from current project
+│   │   └── *.ts
 │   └── utils/
-│       └── *.ts                # Copy from current project
+│       └── *.ts
 ├── assets/
 └── tailwind.config.js
 ```
@@ -120,7 +162,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
     storage: AsyncStorage,
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false, // Important for React Native
+    detectSessionInUrl: false,
   },
 });
 ```
@@ -128,8 +170,6 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_ANON_KEY, 
 ---
 
 ## Phase 1.6: Configure app.json
-
-Update `app.json` with deep linking and native configuration:
 
 ```json
 {
@@ -179,9 +219,7 @@ Update `app.json` with deep linking and native configuration:
           "action": "VIEW",
           "autoVerify": true,
           "data": [
-            {
-              "scheme": "murranno"
-            },
+            { "scheme": "murranno" },
             {
               "scheme": "https",
               "host": "nqfltvbzqxdxsobhedci.supabase.co",
@@ -194,19 +232,8 @@ Update `app.json` with deep linking and native configuration:
     },
     "plugins": [
       "expo-secure-store",
-      [
-        "expo-notifications",
-        {
-          "icon": "./assets/notification-icon.png",
-          "color": "#ffffff"
-        }
-      ],
-      [
-        "expo-local-authentication",
-        {
-          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
-        }
-      ]
+      ["expo-notifications", { "icon": "./assets/notification-icon.png", "color": "#ffffff" }],
+      ["expo-local-authentication", { "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID." }]
     ]
   }
 }
@@ -214,61 +241,189 @@ Update `app.json` with deep linking and native configuration:
 
 ---
 
-## Phase 1.7: Configure NativeWind (Tailwind)
+## Phase 2: Theme System ✅
 
-Create `tailwind.config.js`:
+All theme files are located in `migration-assets/theme/`:
 
-```javascript
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./App.{js,jsx,ts,tsx}",
-    "./src/**/*.{js,jsx,ts,tsx}"
-  ],
-  theme: {
-    extend: {
-      colors: {
-        background: 'hsl(0, 0%, 3.9%)',
-        foreground: 'hsl(0, 0%, 98%)',
-        primary: {
-          DEFAULT: 'hsl(262.1, 83.3%, 57.8%)',
-          foreground: 'hsl(210, 20%, 98%)',
-        },
-        secondary: {
-          DEFAULT: 'hsl(0, 0%, 14.9%)',
-          foreground: 'hsl(0, 0%, 98%)',
-        },
-        muted: {
-          DEFAULT: 'hsl(0, 0%, 14.9%)',
-          foreground: 'hsl(0, 0%, 63.9%)',
-        },
-        accent: {
-          DEFAULT: 'hsl(0, 0%, 14.9%)',
-          foreground: 'hsl(0, 0%, 98%)',
-        },
-        destructive: {
-          DEFAULT: 'hsl(0, 62.8%, 30.6%)',
-          foreground: 'hsl(0, 0%, 98%)',
-        },
-        border: 'hsl(0, 0%, 14.9%)',
-        input: 'hsl(0, 0%, 14.9%)',
-        ring: 'hsl(263.4, 70%, 50.4%)',
-        card: {
-          DEFAULT: 'hsl(0, 0%, 3.9%)',
-          foreground: 'hsl(0, 0%, 98%)',
-        },
-      },
-    },
-  },
-  plugins: [],
-}
+| File | Description |
+|------|-------------|
+| `colors.ts` | Complete color palette matching web HSL values |
+| `typography.ts` | Font families, sizes, weights, line heights |
+| `spacing.ts` | Consistent spacing scale (0-20) |
+| `shadows.ts` | Shadow presets (sm, md, lg, xl, glow) |
+| `gradients.ts` | Gradient configurations for LinearGradient |
+| `animations.ts` | Spring configs, timing presets, keyframes |
+| `utilities.ts` | Helper functions (hexToRgba, createShadow, etc.) |
+| `index.ts` | Unified export of all theme modules |
+
+### Usage Example
+
+```typescript
+import { colors, typography, spacing, shadows, gradients } from '../theme';
+import { LinearGradient } from 'expo-linear-gradient';
+
+<LinearGradient colors={gradients.primary.colors} style={styles.container}>
+  <Text style={[typography.h1, { color: colors.foreground }]}>
+    Hello World
+  </Text>
+</LinearGradient>
+```
+
+---
+
+## Phase 3: Core UI Components ✅
+
+14 components built in `migration-assets/components/ui/`:
+
+| Component | Features |
+|-----------|----------|
+| `Button` | 6 variants, 3 sizes, loading state, haptics |
+| `Card` | Glass morphism, blur, variants |
+| `Input` | Icons, error states, labels |
+| `Badge` | 6 variants matching web |
+| `Avatar` | Image/fallback, sizes |
+| `Progress` | Animated progress bar |
+| `Switch` | Animated toggle with haptics |
+| `Checkbox` | Animated with haptics |
+| `Separator` | Horizontal/vertical |
+| `Skeleton` | Loading states with presets |
+| `Tabs` | Default and pills variants |
+| `Toast` | Success/error/info variants |
+| `Sheet` | Bottom sheet modal |
+| `Dialog` | Dialog and AlertDialog |
+
+### Usage Example
+
+```typescript
+import { Button, Card, Input, Badge } from '../components/ui';
+
+<Card variant="glass">
+  <Input label="Email" placeholder="Enter email" />
+  <Button variant="primary" onPress={handleSubmit}>
+    Submit
+  </Button>
+  <Badge variant="success">Active</Badge>
+</Card>
+```
+
+---
+
+## Phase 4: Navigation Setup ✅
+
+Complete navigation architecture in `migration-assets/navigation/`:
+
+### Navigation Structure
+
+```
+RootNavigator
+├── AuthNavigator (when not authenticated)
+│   ├── Splash
+│   ├── Welcome
+│   ├── Login
+│   ├── Signup
+│   ├── ForgotPassword
+│   └── ResetPassword
+│
+├── MainTabNavigator (when authenticated)
+│   ├── DashboardStack
+│   │   ├── ArtistDashboard / LabelDashboard / AgencyDashboard
+│   │   ├── Notifications
+│   │   └── NewsDetail
+│   ├── ReleasesStack
+│   │   ├── Releases
+│   │   ├── ReleaseDetail
+│   │   └── Upload
+│   ├── PromotionsStack
+│   │   ├── Promotions
+│   │   ├── CampaignTracking
+│   │   └── CampaignPaymentSuccess
+│   ├── EarningsStack
+│   │   ├── Earnings
+│   │   └── TransactionDetail
+│   └── ProfileStack
+│       ├── Profile
+│       ├── ArtistProfile
+│       ├── Settings
+│       └── SubscriptionPlans
+│
+└── AdminNavigator (when admin)
+    ├── AdminDashboard
+    ├── AdminUsers
+    ├── AdminContent
+    ├── AdminCampaigns
+    └── AdminSettings
+```
+
+### Features
+- Type-safe navigation with full TypeScript support
+- Deep linking (murranno://, https://supabase.co)
+- Custom navigation hook with haptic feedback
+- Glass blur effect on tab bar
+- Platform-specific styling
+
+### Usage Example
+
+```typescript
+import { useAppNavigation } from '../hooks/useAppNavigation';
+
+const Component = () => {
+  const { goToReleaseDetail, goBack, navigateToTab } = useAppNavigation();
+  
+  return (
+    <Button onPress={() => goToReleaseDetail('release-123')}>
+      View Release
+    </Button>
+  );
+};
+```
+
+---
+
+## Phase 5: Screen Templates ✅
+
+7 main screens built in `migration-assets/screens/`:
+
+| Screen | Features |
+|--------|----------|
+| `LoginScreen` | Glass card, social login, biometric auth |
+| `SignupScreen` | Multi-step form, email verification |
+| `ArtistDashboardScreen` | Stats carousel, recent activity, quick actions |
+| `ReleasesScreen` | Filter tabs, status badges, FAB |
+| `PromotionsScreen` | Service grid, cart, bundles |
+| `EarningsScreen` | Wallet tabs, withdraw sheet, history |
+| `ProfileScreen` | Avatar upload, streaming links, settings |
+
+### Screen Features
+- Matches web app design exactly
+- Uses theme system consistently
+- Haptic feedback on interactions
+- Pull-to-refresh support
+- Proper keyboard handling
+
+---
+
+## Phase 6: Native Features Integration 🔲
+
+### Planned Integrations
+
+```typescript
+// Hooks to create in src/hooks/native/
+useCamera()           // expo-camera, expo-image-picker
+useBiometricAuth()    // expo-local-authentication
+usePushNotifications() // expo-notifications
+useHaptics()          // expo-haptics
+useShare()            // expo-sharing
+useClipboard()        // expo-clipboard
+useLocation()         // expo-location
+useFileSystem()       // expo-file-system, expo-document-picker
+useAudio()            // expo-av
+useSecureStorage()    // expo-secure-store
+useNetwork()          // @react-native-community/netinfo
 ```
 
 ---
 
 ## Files to Copy Directly
-
-These files can be copied with minimal changes:
 
 ### Types (copy entire folder)
 - `src/types/analytics.ts`
@@ -290,7 +445,6 @@ These files can be copied with minimal changes:
 - `src/contexts/AuthContext.tsx` - Update supabase import, replace toast
 
 ### Data Hooks (update imports)
-These hooks primarily use Supabase and can be adapted:
 - `useArtists.ts`, `useAnalytics.ts`, `useCampaigns.ts`
 - `useReleases.ts`, `useWallet.ts`, `usePayouts.ts`
 - `useNotifications.ts`, `useStats.ts`, `useTopTracks.ts`
@@ -303,17 +457,37 @@ All 80+ edge functions work unchanged - they're backend code that doesn't depend
 
 ---
 
-## Next Steps
+## Migration Assets Location
 
-After completing Phase 1 setup:
+All pre-built migration assets are in `migration-assets/`:
 
-1. **Phase 2**: Migrate core utilities and create data hooks
-2. **Phase 3**: Build navigation architecture
-3. **Phase 4**: Create UI component library
-4. **Phase 5**: Implement all screens
-5. **Phase 6**: Integrate native features
-6. **Phase 7**: Testing & QA
-7. **Phase 8**: Deployment with EAS Build
+```
+migration-assets/
+├── theme/              # Complete theme system
+├── components/
+│   ├── ui/             # 14 UI components
+│   ├── layout/         # Layout components
+│   └── modern/         # Modern cards
+├── navigation/         # Full navigation setup
+│   └── stacks/         # Stack navigators
+├── screens/            # 10 screen templates
+├── hooks/              # Custom hooks
+└── README.md           # Detailed component docs
+```
+
+---
+
+## Quick Start
+
+1. Create Expo project and install dependencies (Phase 1)
+2. Copy `migration-assets/theme/` to `src/theme/`
+3. Copy `migration-assets/components/` to `src/components/`
+4. Copy `migration-assets/navigation/` to `src/navigation/`
+5. Copy `migration-assets/screens/` to `src/screens/`
+6. Copy `migration-assets/hooks/` to `src/hooks/`
+7. Copy types from `src/types/` (web project)
+8. Update imports to use new paths
+9. Wire up App.tsx with RootNavigator
 
 ---
 
