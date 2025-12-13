@@ -318,4 +318,29 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 - [React Navigation](https://reactnavigation.org)
 - [NativeWind](https://nativewind.dev)
 - [Supabase React Native](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native)
+
+---
+
+## Phase 8: App Store Preparation
+
+### iOS App Store Assets
+- [ ] Prepare 6.7" iPhone screenshots (1290 × 2796) - minimum 3
+- [ ] Prepare 6.5" iPhone screenshots (1242 × 2688) - minimum 3
+- [ ] Prepare 5.5" iPhone screenshots (1242 × 2208) - minimum 3
+- [ ] Create app preview video (15-30 sec, optional)
+- [ ] Write app description (4000 chars max)
+- [ ] Define keywords (100 chars max)
+- [ ] Set up privacy policy URL
+- [ ] Complete age rating questionnaire
+
+### Google Play Store Assets
+- [ ] Prepare phone screenshots (1080 × 1920) - 2-8 required
+- [ ] Create feature graphic (1024 × 500)
+- [ ] Write short description (80 chars)
+- [ ] Write full description (4000 chars)
+- [ ] Complete data safety form
+- [ ] Complete content rating questionnaire
+
+### Reference
+See `APP_STORE_ASSETS_GUIDE.md` for complete requirements and templates.
 - [EAS Build](https://docs.expo.dev/build/introduction/)
