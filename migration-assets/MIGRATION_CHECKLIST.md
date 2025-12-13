@@ -176,7 +176,9 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ### 4.1 Root Navigator
 - [ ] Configure AuthNavigator
 - [ ] Configure MainTabNavigator
-- [ ] Setup deep linking
+- [ ] Setup deep linking (custom scheme `murranno://`)
+- [ ] Configure iOS Universal Links
+- [ ] Configure Android App Links
 - [ ] Add navigation theme
 
 ### 4.2 Tab Navigator
@@ -216,6 +218,24 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 - [ ] Test offline data access
 - [ ] Test mutation queuing
 - [ ] Test sync on reconnect
+
+### 5.5 Deep Linking
+- [ ] Configure custom URL scheme (`murranno://`)
+- [ ] Set up iOS Universal Links
+  - [ ] Create AASA file on server
+  - [ ] Add associated domains to app config
+  - [ ] Validate with Apple's tool
+- [ ] Set up Android App Links
+  - [ ] Create assetlinks.json on server
+  - [ ] Add intent filters to app config
+  - [ ] Get SHA256 fingerprints from EAS
+  - [ ] Validate with Google's tool
+- [ ] Implement DeepLinkingService
+- [ ] Implement useDeepLinking hook
+- [ ] Test OAuth callback handling
+- [ ] Test deferred deep linking (auth-required routes)
+- [ ] Test cold start deep links
+- [ ] Test warm start deep links
 
 ---
 

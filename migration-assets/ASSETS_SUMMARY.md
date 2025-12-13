@@ -176,7 +176,10 @@ migration-assets/
 |------|---------|
 | `supabase.ts` | Supabase client with AsyncStorage |
 | `nativewind.ts` | NativeWind/Tailwind setup |
-| `app.config.ts` | Expo app configuration with splash/icons |
+| `app.config.ts` | Expo app configuration with splash/icons/deep links |
+| `deepLinkingConfig.ts` | Centralized deep link route configuration |
+| `apple-app-site-association.json` | iOS Universal Links AASA file template |
+| `assetlinks.json` | Android App Links Digital Asset Links template |
 
 ## 📚 Documentation
 
@@ -187,6 +190,15 @@ migration-assets/
 | `SPLASH_AND_ICONS_GUIDE.md` | Splash screen & app icon setup guide |
 | `APP_STORE_ASSETS_GUIDE.md` | App Store & Play Store submission assets guide |
 | `DEPLOYMENT.md` | EAS Build & deployment guide |
+| `DEEP_LINKING_GUIDE.md` | iOS Universal Links & Android App Links setup guide |
+
+## 🔗 Deep Linking
+
+| Component/File | Purpose |
+|----------------|---------|
+| `DeepLinkingService.ts` | URL parsing, route matching, OAuth token extraction |
+| `useDeepLinking.ts` | Hook for handling deep links with deferred auth support |
+| `deepLinkingConfig.ts` | Centralized route definitions and helpers |
 
 ## 🔌 Offline Support
 
