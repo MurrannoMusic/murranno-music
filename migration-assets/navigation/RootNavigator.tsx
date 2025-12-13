@@ -6,6 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { RootStackParamList } from './types';
 import { colors } from '../theme/colors';
 import { useAuth } from '../hooks/useAuth';
+import { getNavigationLinkingConfig, URL_SCHEME, WEB_DOMAIN } from '../config/deepLinkingConfig';
 
 // Navigators
 import AuthNavigator from './AuthNavigator';
@@ -29,11 +30,17 @@ const NavigationTheme = {
   },
 };
 
-// Deep linking configuration
+// Deep linking configuration with Universal Links and App Links support
 const prefix = Linking.createURL('/');
+const navigationLinkingConfig = getNavigationLinkingConfig();
 
 const linking: LinkingOptions<RootStackParamList> = {
-  prefixes: [prefix, 'murranno://'],
+  prefixes: [
+    prefix,
+    `${URL_SCHEME}://`,
+    `https://${WEB_DOMAIN}`,
+    `https://www.${WEB_DOMAIN}`,
+  ],
   config: {
     screens: {
       Auth: {
@@ -46,43 +53,47 @@ const linking: LinkingOptions<RootStackParamList> = {
           VerifyEmail: 'verify-email',
           ForgotPassword: 'forgot-password',
           ResetPassword: 'reset-password',
+          Callback: 'callback',
         },
       },
       Main: {
         screens: {
           DashboardTab: {
             screens: {
-              ArtistDashboard: 'app/artist-dashboard',
-              LabelDashboard: 'app/label-dashboard',
-              AgencyDashboard: 'app/agency-dashboard',
-              NewsDetail: 'app/news/:id',
+              ArtistDashboard: 'dashboard',
+              LabelDashboard: 'label/dashboard',
+              AgencyDashboard: 'agency/dashboard',
+              NewsDetail: 'news/:id',
             },
           },
           ReleasesTab: {
             screens: {
-              ReleasesList: 'app/releases',
-              ReleaseDetail: 'app/releases/:id',
-              Upload: 'app/upload',
+              ReleasesList: 'releases',
+              ReleaseDetail: 'release/:id',
+              Upload: 'upload',
             },
           },
           PromotionsTab: {
             screens: {
-              PromotionsList: 'app/promotions',
-              CampaignTracking: 'app/campaign-tracking',
-              CampaignPaymentSuccess: 'app/campaign-payment-success',
+              PromotionsList: 'promotions',
+              PromotionDetail: 'promotions/:id',
+              CampaignTracking: 'campaign/:id',
+              CampaignsList: 'campaigns',
             },
           },
           EarningsTab: {
             screens: {
-              EarningsOverview: 'app/earnings',
-              Analytics: 'app/analytics',
+              EarningsOverview: 'earnings',
+              Wallet: 'wallet',
+              Analytics: 'analytics',
             },
           },
           ProfileTab: {
             screens: {
-              ProfileOverview: 'app/profile',
-              Settings: 'app/settings',
-              SubscriptionPlans: 'app/subscription/plans',
+              ProfileOverview: 'profile',
+              Settings: 'settings',
+              Notifications: 'notifications',
+              SubscriptionPlans: 'subscription',
             },
           },
         },

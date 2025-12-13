@@ -21,6 +21,12 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ios: {
     bundleIdentifier: 'com.murranno.music',
     supportsTablet: true,
+    // Universal Links configuration
+    associatedDomains: [
+      'applinks:murranno.com',
+      'applinks:www.murranno.com',
+      'webcredentials:murranno.com',
+    ],
     infoPlist: {
       NSCameraUsageDescription: 'Used to take photos for cover art',
       NSPhotoLibraryUsageDescription: 'Used to select photos for cover art',
@@ -46,6 +52,26 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       foregroundImage: './assets/adaptive-icon.png',
       backgroundColor: '#1A1F2E',
     },
+    // App Links configuration
+    intentFilters: [
+      {
+        action: 'VIEW',
+        autoVerify: true,
+        data: [
+          {
+            scheme: 'https',
+            host: 'murranno.com',
+            pathPrefix: '/',
+          },
+          {
+            scheme: 'https',
+            host: 'www.murranno.com',
+            pathPrefix: '/',
+          },
+        ],
+        category: ['BROWSABLE', 'DEFAULT'],
+      },
+    ],
     permissions: [
       'android.permission.CAMERA',
       'android.permission.READ_EXTERNAL_STORAGE',
