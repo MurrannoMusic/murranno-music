@@ -35,3 +35,14 @@ export { default as SettingsScreen } from './SettingsScreen';
 // Dashboard Screens (Role-based)
 export { default as LabelDashboardScreen } from './LabelDashboardScreen';
 export { default as AgencyDashboardScreen } from './AgencyDashboardScreen';
+
+// Label Screens
+export { ArtistRosterScreen } from './ArtistRosterScreen';
+export { PayoutManagerScreen } from './PayoutManagerScreen';
+
+// Agency Screens
+export { ClientsScreen } from './ClientsScreen';
+export { CampaignResultsScreen } from './CampaignResultsScreen';
+
+// Notifications
+export { NotificationsScreen } from './NotificationsScreen';
