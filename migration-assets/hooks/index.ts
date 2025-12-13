@@ -43,3 +43,12 @@ export { useAppNavigation } from './useAppNavigation';
 // Toast Notifications
 export { useToast, toast, setGlobalToast } from './useToast';
 export type { Toast, ToastType, ToastOptions } from './useToast';
+
+// Supabase Data Hooks
+export { useSupabaseAuth } from './useSupabaseAuth';
+export { useUserRole } from './useUserRole';
+export { useReleases } from './useReleases';
+export { useWallet } from './useWallet';
+export { useCampaigns } from './useCampaigns';
+export { useEarnings } from './useEarnings';
+export { useNotifications } from './useNotifications';
