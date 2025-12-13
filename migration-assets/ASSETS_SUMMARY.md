@@ -185,6 +185,8 @@ migration-assets/
 | `MIGRATION_CHECKLIST.md` | Step-by-step migration guide |
 | `ASSETS_SUMMARY.md` | This file - asset inventory |
 | `SPLASH_AND_ICONS_GUIDE.md` | Splash screen & app icon setup guide |
+| `APP_STORE_ASSETS_GUIDE.md` | App Store & Play Store submission assets guide |
+| `DEPLOYMENT.md` | EAS Build & deployment guide |
 
 ## 🔌 Offline Support
 
