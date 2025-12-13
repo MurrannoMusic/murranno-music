@@ -167,6 +167,8 @@ migration-assets/
 |---------|---------|
 | `FileUploadService.ts` | Audio/image upload to Supabase |
 | `PushNotificationService.tsx` | Push notification handling |
+| `OfflineStorageService.ts` | MMKV/AsyncStorage adapter for offline data |
+| `QueryPersister.ts` | React Query cache persistence configuration |
 
 ## ⚙️ Configuration
 
@@ -174,6 +176,7 @@ migration-assets/
 |------|---------|
 | `supabase.ts` | Supabase client with AsyncStorage |
 | `nativewind.ts` | NativeWind/Tailwind setup |
+| `app.config.ts` | Expo app configuration with splash/icons |
 
 ## 📚 Documentation
 
@@ -181,6 +184,15 @@ migration-assets/
 |------|---------|
 | `MIGRATION_CHECKLIST.md` | Step-by-step migration guide |
 | `ASSETS_SUMMARY.md` | This file - asset inventory |
+| `SPLASH_AND_ICONS_GUIDE.md` | Splash screen & app icon setup guide |
+
+## 🔌 Offline Support
+
+| Component/Hook | Purpose |
+|----------------|---------|
+| `OfflineIndicator.tsx` | Visual indicator for offline/syncing status |
+| `useNetworkStatus.ts` | Network connectivity monitoring hook |
+| `QueryProvider.tsx` | React Query provider with persistence |
 
 ## 🔗 Web to Native Mapping
 
