@@ -44,6 +44,12 @@ npm install expo-blur expo-linear-gradient
 
 # Utilities
 npm install date-fns clsx
+
+# Offline Support & Persistence
+npm install react-native-mmkv @react-native-community/netinfo
+npm install @tanstack/query-sync-storage-persister @tanstack/query-async-storage-persister
+npm install @tanstack/react-query-persist-client
+npm install @react-native-async-storage/async-storage
 ```
 
 ### 1.3 Install Native Modules
@@ -201,6 +207,15 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 - [ ] Add to button presses
 - [ ] Add to navigation
 - [ ] Add to success/error states
+
+### 5.4 Offline Support
+- [ ] Setup MMKV storage (or AsyncStorage fallback)
+- [ ] Configure React Query persistence
+- [ ] Setup network status monitoring
+- [ ] Add OfflineIndicator component
+- [ ] Test offline data access
+- [ ] Test mutation queuing
+- [ ] Test sync on reconnect
 
 ---
 
