@@ -1,5 +1,5 @@
 /**
- * Babel Configuration for NativeWind
+ * Babel Configuration for NativeWind v4 + Expo SDK 54
  * Required for Tailwind CSS support in React Native
  */
 
@@ -8,13 +8,9 @@ module.exports = function (api) {
   return {
     presets: [
       ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
-      'nativewind/babel',
     ],
     plugins: [
-      // Required for expo-router if using file-based routing
-      // 'expo-router/babel',
-      
-      // Enable reanimated if using react-native-reanimated
+      // Required for react-native-reanimated - MUST be last
       'react-native-reanimated/plugin',
     ],
   };
