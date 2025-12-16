@@ -16,6 +16,48 @@
 
 ---
 
+## Migration Assets Status
+
+### ✅ Completed Templates
+- [x] `App.tsx.template` - Main app entry point with:
+  - [x] NativeWind v4 CSS import (`import './global.css'`)
+  - [x] GestureHandlerRootView wrapper for React Navigation
+  - [x] SafeAreaProvider
+  - [x] QueryClientProvider for React Query
+  - [x] NavigationContainer with deep linking config
+  - [x] Toast notifications
+  - [x] Splash screen handling
+- [x] `global.css` - NativeWind v4 styles with custom utility classes
+- [x] `babel.config.js` - NativeWind v4 + Expo SDK 54 configuration
+- [x] `metro.config.js` - Metro bundler with NativeWind CSS support
+- [x] `tailwind.config.js` - Tailwind configuration for React Native
+- [x] `nativewind.d.ts` - TypeScript declarations for NativeWind
+- [x] `lib/supabase.ts` - Supabase client with SecureStore adapter
+- [x] `contexts/AuthContext.tsx` - Authentication context and provider
+
+### 📁 Directory Structure
+```
+migration-assets/
+├── App.tsx.template
+├── babel.config.js
+├── metro.config.js
+├── tailwind.config.js
+├── global.css
+├── nativewind.d.ts
+├── MIGRATION_CHECKLIST.md
+├── contexts/
+│   └── AuthContext.tsx
+├── lib/
+│   └── supabase.ts
+├── navigation/
+│   └── RootNavigator.tsx
+└── __tests__/
+    └── navigation/
+        └── NavigationFlow.test.tsx
+```
+
+---
+
 ## Phase 1: Project Setup
 
 ### 1.1 Create Expo Project
@@ -30,6 +72,9 @@ cd murranno-mobile
 npm install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs
 npm install react-native-screens react-native-safe-area-context
 
+# Gestures (required for navigation)
+npm install react-native-gesture-handler
+
 # State & Data
 npm install @tanstack/react-query @supabase/supabase-js
 npm install zustand # optional for global state
@@ -37,9 +82,9 @@ npm install zustand # optional for global state
 # Forms
 npm install react-hook-form @hookform/resolvers zod
 
-# UI & Styling
+# UI & Styling (NativeWind v4)
 npm install nativewind tailwindcss
-npm install react-native-reanimated react-native-gesture-handler
+npm install react-native-reanimated
 npm install expo-blur expo-linear-gradient
 
 # Utilities
@@ -50,6 +95,9 @@ npm install react-native-mmkv @react-native-community/netinfo
 npm install @tanstack/query-sync-storage-persister @tanstack/query-async-storage-persister
 npm install @tanstack/react-query-persist-client
 npm install @react-native-async-storage/async-storage
+
+# Toast notifications
+npm install react-native-toast-message
 ```
 
 ### 1.3 Install Native Modules
@@ -63,55 +111,38 @@ npm install expo-network expo-location
 npm install expo-secure-store expo-file-system
 npm install expo-av # for audio playback
 npm install expo-application expo-constants
+npm install expo-splash-screen expo-linking
 ```
 
-### 1.4 Configure NativeWind
+### 1.4 Configure NativeWind v4
 ```bash
 npx tailwindcss init
 ```
 
-Update `tailwind.config.js`:
-```js
-module.exports = {
-  content: ["./App.{js,jsx,ts,tsx}", "./src/**/*.{js,jsx,ts,tsx}"],
-  theme: { extend: {} },
-  plugins: [],
-}
-```
-
 ### 1.5 Copy Migration Assets
 ```bash
-# Copy from web project
-cp -r migration-assets/theme src/
-cp -r migration-assets/components src/
-cp -r migration-assets/screens src/
-cp -r migration-assets/navigation src/
-cp -r migration-assets/hooks src/
+# Copy configuration files
+cp migration-assets/babel.config.js ./
+cp migration-assets/metro.config.js ./
+cp migration-assets/tailwind.config.js ./
+cp migration-assets/global.css ./
+cp migration-assets/nativewind.d.ts ./
+
+# Copy App.tsx template
+cp migration-assets/App.tsx.template ./App.tsx
+
+# Copy source files
+mkdir -p src/lib src/contexts src/navigation
+cp migration-assets/lib/supabase.ts src/lib/
+cp migration-assets/contexts/AuthContext.tsx src/contexts/
+cp migration-assets/navigation/RootNavigator.tsx src/navigation/
 ```
 
-### 1.6 Setup Supabase Client
-Create `src/lib/supabase.ts`:
-```typescript
-import { createClient } from '@supabase/supabase-js';
-import * as SecureStore from 'expo-secure-store';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-
-const ExpoSecureStoreAdapter = {
-  getItem: (key: string) => SecureStore.getItemAsync(key),
-  setItem: (key: string, value: string) => SecureStore.setItemAsync(key, value),
-  removeItem: (key: string) => SecureStore.deleteItemAsync(key),
-};
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: ExpoSecureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+### 1.6 Clean Install
+```bash
+rm -rf node_modules
+npm install
+npx expo start --clear
 ```
 
 ---
@@ -124,7 +155,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 - [ ] `src/integrations/supabase/types.ts`
 
 ### Contexts (adapt for React Native)
-- [ ] `src/contexts/AuthContext.tsx` → adapt storage
+- [x] `src/contexts/AuthContext.tsx` → ✅ Created with SecureStore
 - [ ] `src/contexts/ToastContext.tsx` → use native toast
 
 ### Data Hooks (copy with minor edits)
@@ -174,12 +205,12 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 ## Phase 4: Navigation Setup
 
 ### 4.1 Root Navigator
+- [x] Configure deep linking (custom scheme `murranno://`)
 - [ ] Configure AuthNavigator
 - [ ] Configure MainTabNavigator
-- [ ] Setup deep linking (custom scheme `murranno://`)
 - [ ] Configure iOS Universal Links
 - [ ] Configure Android App Links
-- [ ] Add navigation theme
+- [x] Add navigation theme
 
 ### 4.2 Tab Navigator
 - [ ] Artist tabs (Home, Releases, Promotions, Earnings, Profile)
@@ -220,7 +251,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
 - [ ] Test sync on reconnect
 
 ### 5.5 Deep Linking
-- [ ] Configure custom URL scheme (`murranno://`)
+- [x] Configure custom URL scheme (`murranno://`)
 - [ ] Set up iOS Universal Links
   - [ ] Create AASA file on server
   - [ ] Add associated domains to app config
@@ -247,7 +278,7 @@ npm install --save-dev jest @testing-library/react-native
 ```
 - [ ] Test hooks
 - [ ] Test utilities
-- [ ] Test navigation
+- [x] Test navigation (NavigationFlow.test.tsx created)
 
 ### 6.2 Device Testing
 - [ ] Test on iOS simulator
@@ -296,6 +327,9 @@ eas submit --platform android
 # Start development
 npx expo start
 
+# Start with clear cache
+npx expo start --clear
+
 # Run on iOS
 npx expo run:ios
 
@@ -332,11 +366,18 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 2. **iOS pod issues**: `cd ios && pod install --repo-update`
 3. **Android gradle issues**: `cd android && ./gradlew clean`
 4. **Type errors**: Check `tsconfig.json` paths
+5. **NativeWind not working**: Ensure `import './global.css'` is at top of App.tsx
+
+### NativeWind v4 Specific Issues
+
+1. **Styles not applying**: Check that `global.css` is imported in App.tsx
+2. **Metro errors**: Ensure `metro.config.js` has `withNativeWind` wrapper
+3. **TypeScript errors**: Add `nativewind.d.ts` to project root
 
 ### Useful Resources
 - [Expo Documentation](https://docs.expo.dev)
 - [React Navigation](https://reactnavigation.org)
-- [NativeWind](https://nativewind.dev)
+- [NativeWind v4](https://www.nativewind.dev/v4/overview)
 - [Supabase React Native](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native)
 
 ---
