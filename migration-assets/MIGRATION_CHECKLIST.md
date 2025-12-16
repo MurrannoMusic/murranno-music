@@ -1,5 +1,7 @@
 # React Native Migration Checklist
 
+> **Note:** This checklist is for tracking YOUR migration progress. All screen templates and components are already created in `migration-assets/`. Check off items as you implement them in your new Expo project.
+
 ## Pre-Migration Requirements
 
 ### Developer Environment
@@ -16,24 +18,69 @@
 
 ---
 
-## Migration Assets Status
+## ✅ Pre-Built Templates (Ready to Use)
 
-### ✅ Completed Templates
-- [x] `App.tsx.template` - Main app entry point with:
-  - [x] NativeWind v4 CSS import (`import './global.css'`)
-  - [x] GestureHandlerRootView wrapper for React Navigation
-  - [x] SafeAreaProvider
-  - [x] QueryClientProvider for React Query
-  - [x] NavigationContainer with deep linking config
-  - [x] Toast notifications
-  - [x] Splash screen handling
+All templates below are complete and ready to copy. **You don't need to create these—just copy them to your project.**
+
+### Configuration Files
+- [x] `App.tsx.template` - Main app entry point with NativeWind v4, navigation, React Query
 - [x] `global.css` - NativeWind v4 styles with custom utility classes
 - [x] `babel.config.js` - NativeWind v4 + Expo SDK 54 configuration
 - [x] `metro.config.js` - Metro bundler with NativeWind CSS support
 - [x] `tailwind.config.js` - Tailwind configuration for React Native
 - [x] `nativewind.d.ts` - TypeScript declarations for NativeWind
+
+### Core Files
 - [x] `lib/supabase.ts` - Supabase client with SecureStore adapter
 - [x] `contexts/AuthContext.tsx` - Authentication context and provider
+- [x] `navigation/RootNavigator.tsx` - Root navigation with deep linking
+
+### Screen Templates (27 Total)
+
+#### Auth Screens (5)
+- [x] `screens/SplashScreen.tsx`
+- [x] `screens/WelcomeScreen.tsx`
+- [x] `screens/LoginScreen.tsx`
+- [x] `screens/SignupScreen.tsx`
+- [x] `screens/ForgotPasswordScreen.tsx`
+
+#### Artist Screens (12)
+- [x] `screens/artist/ArtistDashboardScreen.tsx`
+- [x] `screens/artist/ReleasesScreen.tsx`
+- [x] `screens/artist/ReleaseDetailScreen.tsx`
+- [x] `screens/artist/UploadScreen.tsx`
+- [x] `screens/artist/PromotionsScreen.tsx`
+- [x] `screens/artist/PromotionDetailScreen.tsx`
+- [x] `screens/artist/EarningsScreen.tsx`
+- [x] `screens/artist/AnalyticsScreen.tsx`
+- [x] `screens/artist/WalletScreen.tsx`
+- [x] `screens/artist/ProfileScreen.tsx`
+- [x] `screens/artist/SettingsScreen.tsx`
+- [x] `screens/artist/NotificationsScreen.tsx`
+
+#### Label Screens (3)
+- [x] `screens/label/LabelDashboardScreen.tsx`
+- [x] `screens/label/ArtistRosterScreen.tsx`
+- [x] `screens/label/PayoutManagerScreen.tsx`
+
+#### Agency Screens (3)
+- [x] `screens/agency/AgencyDashboardScreen.tsx`
+- [x] `screens/agency/ClientsScreen.tsx`
+- [x] `screens/agency/CampaignResultsScreen.tsx`
+
+#### Shared Screens (4)
+- [x] `screens/shared/SupportScreen.tsx`
+- [x] `screens/shared/FAQScreen.tsx`
+- [x] `screens/shared/PrivacyPolicyScreen.tsx`
+- [x] `screens/shared/TermsScreen.tsx`
+
+### Assets
+- [x] `assets/mm_logo.png` - App logo
+- [x] `assets/musician-background.jpg` - Background image
+- [x] `assets/favicon.png` - App icon
+- [x] `assets/carousel-1.jpg` - Welcome screen carousel
+- [x] `assets/carousel-2.jpg` - Welcome screen carousel
+- [x] `assets/carousel-3.jpg` - Welcome screen carousel
 
 ### 📁 Directory Structure
 ```
@@ -45,12 +92,26 @@ migration-assets/
 ├── global.css
 ├── nativewind.d.ts
 ├── MIGRATION_CHECKLIST.md
+├── ASSETS_README.md
+├── assets/
+│   ├── mm_logo.png
+│   ├── musician-background.jpg
+│   ├── favicon.png
+│   ├── carousel-1.jpg
+│   ├── carousel-2.jpg
+│   └── carousel-3.jpg
 ├── contexts/
 │   └── AuthContext.tsx
 ├── lib/
 │   └── supabase.ts
 ├── navigation/
 │   └── RootNavigator.tsx
+├── screens/
+│   ├── auth/
+│   ├── artist/
+│   ├── label/
+│   ├── agency/
+│   └── shared/
 └── __tests__/
     └── navigation/
         └── NavigationFlow.test.tsx
@@ -58,15 +119,19 @@ migration-assets/
 
 ---
 
-## Phase 1: Project Setup
+## Your Migration Progress
 
-### 1.1 Create Expo Project
+Use the checkboxes below to track what you've implemented in your new Expo project.
+
+### Phase 1: Project Setup
+
+#### 1.1 Create Expo Project
 ```bash
 npx create-expo-app murranno-mobile --template blank-typescript
 cd murranno-mobile
 ```
 
-### 1.2 Install Core Dependencies
+#### 1.2 Install Core Dependencies
 ```bash
 # Navigation
 npm install @react-navigation/native @react-navigation/native-stack @react-navigation/bottom-tabs
@@ -100,7 +165,7 @@ npm install @react-native-async-storage/async-storage
 npm install react-native-toast-message
 ```
 
-### 1.3 Install Native Modules
+#### 1.3 Install Native Modules
 ```bash
 # Core Native Features
 npm install expo-haptics expo-local-authentication
@@ -114,12 +179,12 @@ npm install expo-application expo-constants
 npm install expo-splash-screen expo-linking
 ```
 
-### 1.4 Configure NativeWind v4
+#### 1.4 Configure NativeWind v4
 ```bash
 npx tailwindcss init
 ```
 
-### 1.5 Copy Migration Assets
+#### 1.5 Copy Migration Assets
 ```bash
 # Copy configuration files
 cp migration-assets/babel.config.js ./
@@ -131,14 +196,18 @@ cp migration-assets/nativewind.d.ts ./
 # Copy App.tsx template
 cp migration-assets/App.tsx.template ./App.tsx
 
+# Copy assets
+cp -r migration-assets/assets ./
+
 # Copy source files
-mkdir -p src/lib src/contexts src/navigation
+mkdir -p src/lib src/contexts src/navigation src/screens
 cp migration-assets/lib/supabase.ts src/lib/
 cp migration-assets/contexts/AuthContext.tsx src/contexts/
 cp migration-assets/navigation/RootNavigator.tsx src/navigation/
+cp -r migration-assets/screens/* src/screens/
 ```
 
-### 1.6 Clean Install
+#### 1.6 Clean Install
 ```bash
 rm -rf node_modules
 npm install
@@ -147,18 +216,18 @@ npx expo start --clear
 
 ---
 
-## Phase 2: File Copying Checklist
+### Phase 2: File Copying Progress
 
-### Types (copy directly)
+#### Types (copy directly)
 - [ ] `src/types/wallet.ts`
 - [ ] `src/types/release.ts` (if exists)
 - [ ] `src/integrations/supabase/types.ts`
 
-### Contexts (adapt for React Native)
-- [x] `src/contexts/AuthContext.tsx` → ✅ Created with SecureStore
+#### Contexts (adapt for React Native)
+- [ ] `src/contexts/AuthContext.tsx` copied
 - [ ] `src/contexts/ToastContext.tsx` → use native toast
 
-### Data Hooks (copy with minor edits)
+#### Data Hooks (copy with minor edits)
 - [ ] `src/hooks/useArtist.ts`
 - [ ] `src/hooks/useReleases.ts`
 - [ ] `src/hooks/useEarnings.ts`
@@ -167,22 +236,24 @@ npx expo start --clear
 
 ---
 
-## Phase 3: Screen Implementation Checklist
+### Phase 3: Screen Implementation Progress
 
-### Auth Screens
+Track which screens you've integrated and tested in your project:
+
+#### Auth Screens
 - [ ] SplashScreen
 - [ ] WelcomeScreen
 - [ ] LoginScreen
 - [ ] SignupScreen
 - [ ] ForgotPasswordScreen
 
-### Artist Screens
+#### Artist Screens
 - [ ] ArtistDashboardScreen
 - [ ] ReleasesScreen
 - [ ] ReleaseDetailScreen
 - [ ] UploadScreen
 - [ ] PromotionsScreen
-- [ ] PromotionsDetailScreen
+- [ ] PromotionDetailScreen
 - [ ] EarningsScreen
 - [ ] AnalyticsScreen
 - [ ] WalletScreen
@@ -190,58 +261,64 @@ npx expo start --clear
 - [ ] SettingsScreen
 - [ ] NotificationsScreen
 
-### Label Screens
+#### Label Screens
 - [ ] LabelDashboardScreen
 - [ ] ArtistRosterScreen
 - [ ] PayoutManagerScreen
 
-### Agency Screens
+#### Agency Screens
 - [ ] AgencyDashboardScreen
 - [ ] ClientsScreen
 - [ ] CampaignResultsScreen
 
+#### Shared Screens
+- [ ] SupportScreen
+- [ ] FAQScreen
+- [ ] PrivacyPolicyScreen
+- [ ] TermsScreen
+
 ---
 
-## Phase 4: Navigation Setup
+### Phase 4: Navigation Setup
 
-### 4.1 Root Navigator
-- [x] Configure deep linking (custom scheme `murranno://`)
-- [ ] Configure AuthNavigator
-- [ ] Configure MainTabNavigator
-- [ ] Configure iOS Universal Links
-- [ ] Configure Android App Links
-- [x] Add navigation theme
+#### 4.1 Root Navigator
+- [ ] Deep linking configured (custom scheme `murranno://`)
+- [ ] AuthNavigator configured
+- [ ] MainTabNavigator configured
+- [ ] iOS Universal Links configured
+- [ ] Android App Links configured
+- [ ] Navigation theme applied
 
-### 4.2 Tab Navigator
+#### 4.2 Tab Navigator
 - [ ] Artist tabs (Home, Releases, Promotions, Earnings, Profile)
 - [ ] Label tabs (Dashboard, Artists, Releases, Wallet, Settings)
 - [ ] Agency tabs (Dashboard, Campaigns, Clients, Analytics, Settings)
 
-### 4.3 Stack Navigators
+#### 4.3 Stack Navigators
 - [ ] ArtistStackNavigator
 - [ ] LabelStackNavigator
 - [ ] AgencyStackNavigator
 
 ---
 
-## Phase 5: Native Features Integration
+### Phase 5: Native Features Integration
 
-### 5.1 Push Notifications
+#### 5.1 Push Notifications
 - [ ] Configure expo-notifications
 - [ ] Request permissions
 - [ ] Save token to database
 - [ ] Handle incoming notifications
 
-### 5.2 Biometric Authentication
+#### 5.2 Biometric Authentication
 - [ ] Check device support
 - [ ] Implement secure login
 
-### 5.3 Haptic Feedback
+#### 5.3 Haptic Feedback
 - [ ] Add to button presses
 - [ ] Add to navigation
 - [ ] Add to success/error states
 
-### 5.4 Offline Support
+#### 5.4 Offline Support
 - [ ] Setup MMKV storage (or AsyncStorage fallback)
 - [ ] Configure React Query persistence
 - [ ] Setup network status monitoring
@@ -250,8 +327,8 @@ npx expo start --clear
 - [ ] Test mutation queuing
 - [ ] Test sync on reconnect
 
-### 5.5 Deep Linking
-- [x] Configure custom URL scheme (`murranno://`)
+#### 5.5 Deep Linking
+- [ ] Configure custom URL scheme (`murranno://`)
 - [ ] Set up iOS Universal Links
   - [ ] Create AASA file on server
   - [ ] Add associated domains to app config
@@ -270,17 +347,17 @@ npx expo start --clear
 
 ---
 
-## Phase 6: Testing
+### Phase 6: Testing
 
-### 6.1 Unit Tests
+#### 6.1 Unit Tests
 ```bash
 npm install --save-dev jest @testing-library/react-native
 ```
 - [ ] Test hooks
 - [ ] Test utilities
-- [x] Test navigation (NavigationFlow.test.tsx created)
+- [ ] Test navigation
 
-### 6.2 Device Testing
+#### 6.2 Device Testing
 - [ ] Test on iOS simulator
 - [ ] Test on Android emulator
 - [ ] Test on physical iOS device
@@ -288,21 +365,21 @@ npm install --save-dev jest @testing-library/react-native
 
 ---
 
-## Phase 7: Build & Deployment
+### Phase 7: Build & Deployment
 
-### 7.1 Configure EAS
+#### 7.1 Configure EAS
 ```bash
 eas login
 eas build:configure
 ```
 
-### 7.2 Update app.json
+#### 7.2 Update app.json
 - [ ] Set correct bundle identifier
 - [ ] Configure splash screen
 - [ ] Configure app icons
 - [ ] Set version numbers
 
-### 7.3 Build Commands
+#### 7.3 Build Commands
 ```bash
 # Development builds
 eas build --profile development --platform ios
@@ -313,11 +390,33 @@ eas build --profile production --platform ios
 eas build --profile production --platform android
 ```
 
-### 7.4 Submit to Stores
+#### 7.4 Submit to Stores
 ```bash
 eas submit --platform ios
 eas submit --platform android
 ```
+
+---
+
+### Phase 8: App Store Preparation
+
+#### iOS App Store Assets
+- [ ] Prepare 6.7" iPhone screenshots (1290 × 2796) - minimum 3
+- [ ] Prepare 6.5" iPhone screenshots (1242 × 2688) - minimum 3
+- [ ] Prepare 5.5" iPhone screenshots (1242 × 2208) - minimum 3
+- [ ] Create app preview video (15-30 sec, optional)
+- [ ] Write app description (4000 chars max)
+- [ ] Define keywords (100 chars max)
+- [ ] Set up privacy policy URL
+- [ ] Complete age rating questionnaire
+
+#### Google Play Store Assets
+- [ ] Prepare phone screenshots (1080 × 1920) - 2-8 required
+- [ ] Create feature graphic (1024 × 500)
+- [ ] Write short description (80 chars)
+- [ ] Write full description (4000 chars)
+- [ ] Complete data safety form
+- [ ] Complete content rating questionnaire
 
 ---
 
@@ -379,29 +478,4 @@ EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 - [React Navigation](https://reactnavigation.org)
 - [NativeWind v4](https://www.nativewind.dev/v4/overview)
 - [Supabase React Native](https://supabase.com/docs/guides/getting-started/tutorials/with-expo-react-native)
-
----
-
-## Phase 8: App Store Preparation
-
-### iOS App Store Assets
-- [ ] Prepare 6.7" iPhone screenshots (1290 × 2796) - minimum 3
-- [ ] Prepare 6.5" iPhone screenshots (1242 × 2688) - minimum 3
-- [ ] Prepare 5.5" iPhone screenshots (1242 × 2208) - minimum 3
-- [ ] Create app preview video (15-30 sec, optional)
-- [ ] Write app description (4000 chars max)
-- [ ] Define keywords (100 chars max)
-- [ ] Set up privacy policy URL
-- [ ] Complete age rating questionnaire
-
-### Google Play Store Assets
-- [ ] Prepare phone screenshots (1080 × 1920) - 2-8 required
-- [ ] Create feature graphic (1024 × 500)
-- [ ] Write short description (80 chars)
-- [ ] Write full description (4000 chars)
-- [ ] Complete data safety form
-- [ ] Complete content rating questionnaire
-
-### Reference
-See `APP_STORE_ASSETS_GUIDE.md` for complete requirements and templates.
 - [EAS Build](https://docs.expo.dev/build/introduction/)
