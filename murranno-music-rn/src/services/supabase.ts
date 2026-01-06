@@ -9,7 +9,7 @@ import Constants from 'expo-constants';
 // Get environment variables
 // Get environment variables
 const SUPABASE_URL = Constants.expoConfig?.extra?.supabaseUrl || process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://xxpwdtefpifbzaavxytz.supabase.co';
-const SUPABASE_ANON_KEY = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'sb_publishable_f7ldyROzoQkGAYuQ7ziIcg_8L_34PFZ';
+const SUPABASE_ANON_KEY = Constants.expoConfig?.extra?.supabaseAnonKey || process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inh4cHdkdGVmcGlmYnphYXZ4eXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc2ODg0MTIsImV4cCI6MjA4MzI2NDQxMn0.I6I3Ee6q3W6VsbX0Djga-PR7xyiPHhQ52WpjS3ss4iA';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   auth: {
