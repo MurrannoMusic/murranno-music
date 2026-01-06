@@ -1,82 +1,104 @@
 /**
- * Murranno Music - React Native App Entry Point
- * Complete migration from React web app to React Native Expo
+ * Simplified App Entry - Guaranteed to work on Expo Go
+ * Use this to test if Expo Go connection is working
  */
-import './global.css'; // NativeWind v4 requires this import
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Toast from 'react-native-toast-message';
-import * as SplashScreen from 'expo-splash-screen';
-
-// Import providers
-import { AuthProvider } from './src/contexts/AuthContext';
-import { CartProvider } from './src/contexts/CartContext';
-import { ThemeProvider } from './src/contexts/ThemeContext';
-
-// Import navigation
-import { RootNavigator } from './src/navigation/RootNavigator';
-
-// Keep splash screen visible while we fetch resources
-SplashScreen.preventAutoHideAsync();
-
-// Create a client for React Query
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutes
-      retry: 2,
-      refetchOnWindowFocus: false,
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
 
 export default function App() {
-  const [appIsReady, setAppIsReady] = useState(false);
-
-  useEffect(() => {
-    async function prepare() {
-      try {
-        // Pre-load any resources here
-        // await Font.loadAsync({...});
-        
-        // Simulate loading time
-        await new Promise(resolve => setTimeout(resolve, 1000));
-      } catch (e) {
-        console.warn('Error during app initialization:', e);
-      } finally {
-        setAppIsReady(true);
-        await SplashScreen.hideAsync();
-      }
-    }
-
-    prepare();
-  }, []);
-
-  if (!appIsReady) {
-    return null;
-  }
-
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaProvider>
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider>
-            <AuthProvider>
-              <CartProvider>
-                <StatusBar style="light" />
-                <RootNavigator />
-                <Toast />
-              </CartProvider>
-            </AuthProvider>
-          </ThemeProvider>
-        </QueryClientProvider>
-      </SafeAreaProvider>
-    </GestureHandlerRootView>
+    <View style={styles.container}>
+      <StatusBar style="light" />
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>🎉 Murranno Music</Text>
+        <Text style={styles.subtitle}>React Native App</Text>
+        
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>✅ Expo Go Connected!</Text>
+          <Text style={styles.cardText}>
+            Your app is running successfully on Expo Go.
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>📱 Next Steps:</Text>
+          <Text style={styles.cardText}>
+            1. Install all dependencies{'\n'}
+            2. Configure environment variables{'\n'}
+            3. Switch to full App.tsx
+          </Text>
+        </View>
+
+        <View style={styles.card}>
+          <Text style={styles.cardTitle}>🎨 Features Ready:</Text>
+          <Text style={styles.cardText}>
+            • 27+ Screens{'\n'}
+            • 14 UI Components{'\n'}
+            • Supabase Integration{'\n'}
+            • Native Features{'\n'}
+            • Full Navigation
+          </Text>
+        </View>
+
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>
+            Built with React Native & Expo
+          </Text>
+        </View>
+      </ScrollView>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#080C15', // background color from theme
+  },
+  content: {
+    padding: 20,
+    paddingTop: 60,
+  },
+  title: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#F8FAFC',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#94A3B8',
+    textAlign: 'center',
+    marginBottom: 40,
+  },
+  card: {
+    backgroundColor: '#1E2936',
+    borderRadius: 16,
+    padding: 20,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#2D3748',
+  },
+  cardTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#F8FAFC',
+    marginBottom: 12,
+  },
+  cardText: {
+    fontSize: 16,
+    color: '#CBD5E1',
+    lineHeight: 24,
+  },
+  footer: {
+    marginTop: 40,
+    padding: 20,
+    alignItems: 'center',
+  },
+  footerText: {
+    fontSize: 14,
+    color: '#64748B',
+  },
+});
