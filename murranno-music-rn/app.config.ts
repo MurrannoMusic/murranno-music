@@ -112,21 +112,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   ],
   
   extra: {
-    eas: {
-      projectId: 'your-eas-project-id',
-    },
     supabaseUrl: 'https://nqfltvbzqxdxsobhedci.supabase.co',
     supabaseAnonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5xZmx0dmJ6cXhkeHNvYmhlZGNpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5NzQ2MDUsImV4cCI6MjA3NTU1MDYwNX0.aEQ0gFX0hmC5yhpzCisd5l0GqJKHbFtqfVB0xpzCqcY',
-  },
-  
-  owner: 'murranno',
-  
-  updates: {
-    fallbackToCacheTimeout: 0,
-    url: 'https://u.expo.dev/your-eas-project-id',
-  },
-  
-  runtimeVersion: {
-    policy: 'appVersion',
   },
 });
