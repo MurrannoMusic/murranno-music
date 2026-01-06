@@ -16,6 +16,11 @@
     },
     "android": {
       "package": "com.murranno.music"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store",
+      "expo-web-browser"
+    ]
   }
 }
