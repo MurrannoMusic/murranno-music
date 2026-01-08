@@ -1,34 +1,38 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ReleasesStackParamList } from '../types';
-import { colors } from '../../theme/colors';
+import { darkColors } from '../../theme/colors';
 
-const PlaceholderScreen = () => null;
+// Screens
+import ReleasesScreen from '../../screens/ReleasesScreen';
+import ReleaseDetailScreen from '../../screens/ReleaseDetailScreen';
+import UploadScreen from '../../screens/UploadScreen';
 
 const Stack = createNativeStackNavigator<ReleasesStackParamList>();
 
 export const ReleasesNavigator: React.FC = () => {
   return (
     <Stack.Navigator
+      initialRouteName="ReleasesList"
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: darkColors.background,
         },
         animation: 'slide_from_right',
       }}
     >
       <Stack.Screen 
         name="ReleasesList" 
-        component={PlaceholderScreen}
+        component={ReleasesScreen}
       />
       <Stack.Screen 
         name="ReleaseDetail" 
-        component={PlaceholderScreen}
+        component={ReleaseDetailScreen}
       />
       <Stack.Screen 
         name="Upload" 
-        component={PlaceholderScreen}
+        component={UploadScreen}
         options={{
           animation: 'slide_from_bottom',
           presentation: 'fullScreenModal',
