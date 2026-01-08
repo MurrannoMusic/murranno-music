@@ -1,58 +1,46 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { DashboardStackParamList } from '../types';
-import { colors } from '../../theme/colors';
-import { typography } from '../../theme/typography';
+import { darkColors } from '../../theme/colors';
 
-// Placeholder - replace with actual screen imports
-const PlaceholderScreen = () => null;
+// Screens
+import ArtistDashboardScreen from '../../screens/ArtistDashboardScreen';
+import LabelDashboardScreen from '../../screens/LabelDashboardScreen';
+import AgencyDashboardScreen from '../../screens/AgencyDashboardScreen';
+import UserTypeSelectionScreen from '../../screens/UserTypeSelectionScreen';
 
 const Stack = createNativeStackNavigator<DashboardStackParamList>();
 
 export const DashboardNavigator: React.FC = () => {
   return (
     <Stack.Navigator
+      initialRouteName="ArtistDashboard"
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: darkColors.background,
         },
         animation: 'slide_from_right',
       }}
     >
       <Stack.Screen 
         name="ArtistDashboard" 
-        component={PlaceholderScreen}
+        component={ArtistDashboardScreen}
       />
       <Stack.Screen 
         name="LabelDashboard" 
-        component={PlaceholderScreen}
+        component={LabelDashboardScreen}
       />
       <Stack.Screen 
         name="AgencyDashboard" 
-        component={PlaceholderScreen}
+        component={AgencyDashboardScreen}
       />
       <Stack.Screen 
         name="UserTypeSelection" 
-        component={PlaceholderScreen}
+        component={UserTypeSelectionScreen}
         options={{
           animation: 'slide_from_bottom',
           presentation: 'modal',
-        }}
-      />
-      <Stack.Screen 
-        name="UserTypeSwitcher" 
-        component={PlaceholderScreen}
-        options={{
-          animation: 'slide_from_bottom',
-          presentation: 'modal',
-        }}
-      />
-      <Stack.Screen 
-        name="NewsDetail" 
-        component={PlaceholderScreen}
-        options={{
-          animation: 'slide_from_right',
         }}
       />
     </Stack.Navigator>
