@@ -15,7 +15,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { Music, Radio, Disc3, Mic2, Headphones } from 'lucide-react-native';
-import { colors, gradients } from '../theme/colors';
+import { colors } from '../theme/colors';
+import { gradients } from '../theme/gradients';
 import { spacing } from '../theme/spacing';
 import { textStyles, fontSize, fontWeight } from '../theme/typography';
 import { timing, createFloatAnimation, createSpinAnimation } from '../theme/animations';
