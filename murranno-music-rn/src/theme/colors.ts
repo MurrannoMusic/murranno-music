@@ -206,37 +206,37 @@ export const withOpacity = (color: string, opacity: number): string => {
 // Common opacity variations
 export const colorVariants = {
   primary: {
-    10: withOpacity(colors.primary.DEFAULT, 0.1),
-    15: withOpacity(colors.primary.DEFAULT, 0.15),
-    20: withOpacity(colors.primary.DEFAULT, 0.2),
-    30: withOpacity(colors.primary.DEFAULT, 0.3),
-    40: withOpacity(colors.primary.DEFAULT, 0.4),
-    50: withOpacity(colors.primary.DEFAULT, 0.5),
+    10: withOpacity(darkColors.primary.DEFAULT, 0.1),
+    15: withOpacity(darkColors.primary.DEFAULT, 0.15),
+    20: withOpacity(darkColors.primary.DEFAULT, 0.2),
+    30: withOpacity(darkColors.primary.DEFAULT, 0.3),
+    40: withOpacity(darkColors.primary.DEFAULT, 0.4),
+    50: withOpacity(darkColors.primary.DEFAULT, 0.5),
   },
   card: {
-    40: withOpacity(colors.card.DEFAULT, 0.4),
-    60: withOpacity(colors.card.DEFAULT, 0.6),
-    80: withOpacity(colors.card.DEFAULT, 0.8),
-    90: withOpacity(colors.card.DEFAULT, 0.9),
+    40: withOpacity(darkColors.card.DEFAULT, 0.4),
+    60: withOpacity(darkColors.card.DEFAULT, 0.6),
+    80: withOpacity(darkColors.card.DEFAULT, 0.8),
+    90: withOpacity(darkColors.card.DEFAULT, 0.9),
   },
   background: {
-    80: withOpacity(colors.background, 0.8),
-    90: withOpacity(colors.background, 0.9),
-    95: withOpacity(colors.background, 0.95),
+    80: withOpacity(darkColors.background, 0.8),
+    90: withOpacity(darkColors.background, 0.9),
+    95: withOpacity(darkColors.background, 0.95),
   },
   border: {
-    20: withOpacity(colors.border, 0.2),
-    30: withOpacity(colors.border, 0.3),
-    50: withOpacity(colors.border, 0.5),
+    20: withOpacity(darkColors.border, 0.2),
+    30: withOpacity(darkColors.border, 0.3),
+    50: withOpacity(darkColors.border, 0.5),
   },
   secondary: {
-    30: withOpacity(colors.secondary.DEFAULT, 0.3),
-    50: withOpacity(colors.secondary.DEFAULT, 0.5),
+    30: withOpacity(darkColors.secondary.DEFAULT, 0.3),
+    50: withOpacity(darkColors.secondary.DEFAULT, 0.5),
   },
   foreground: {
-    70: withOpacity(colors.foreground, 0.7),
-    80: withOpacity(colors.foreground, 0.8),
-    90: withOpacity(colors.foreground, 0.9),
+    70: withOpacity(darkColors.foreground, 0.7),
+    80: withOpacity(darkColors.foreground, 0.8),
+    90: withOpacity(darkColors.foreground, 0.9),
   },
 };
 
