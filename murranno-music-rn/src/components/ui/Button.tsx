@@ -81,22 +81,22 @@ export const Button: React.FC<ButtonProps> = ({
     switch (variant) {
       case 'default':
         return {
-          backgroundColor: colors.dark.primary,
+          backgroundColor: darkColors.primary.DEFAULT,
           ...shadows.primary,
         };
       case 'destructive':
         return {
-          backgroundColor: colors.dark.destructive,
+          backgroundColor: darkColors.destructive.DEFAULT,
         };
       case 'outline':
         return {
           backgroundColor: 'transparent',
           borderWidth: 1,
-          borderColor: colors.dark.border,
+          borderColor: darkColors.border,
         };
       case 'secondary':
         return {
-          backgroundColor: colors.dark.secondary,
+          backgroundColor: darkColors.secondary.DEFAULT,
         };
       case 'ghost':
         return {
@@ -108,7 +108,7 @@ export const Button: React.FC<ButtonProps> = ({
         };
       case 'pill':
         return {
-          backgroundColor: colors.dark.primary,
+          backgroundColor: darkColors.primary.DEFAULT,
           ...shadows.primary,
         };
       case 'glass':
