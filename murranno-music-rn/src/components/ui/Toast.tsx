@@ -141,7 +141,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ data, onRemove }) => {
           <Ionicons
             name="close"
             size={18}
-            color={isDefaultVariant ? colors.mutedForeground : 'rgba(255,255,255,0.8)'}
+            color={isDefaultVariant ? darkColors.muted.foreground : 'rgba(255,255,255,0.8)'}
           />
         </TouchableOpacity>
       </View>
