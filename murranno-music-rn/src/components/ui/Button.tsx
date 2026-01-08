@@ -160,22 +160,22 @@ export const Button: React.FC<ButtonProps> = ({
 
   const getTextColor = (): string => {
     if (disabled) {
-      return colors.dark.mutedForeground;
+      return darkColors.muted.foreground;
     }
     switch (variant) {
       case 'default':
       case 'destructive':
       case 'pill':
-        return colors.dark.primaryForeground;
+        return darkColors.primary.foreground;
       case 'outline':
       case 'secondary':
       case 'ghost':
       case 'glass':
-        return colors.dark.foreground;
+        return darkColors.foreground;
       case 'link':
-        return colors.dark.primary;
+        return darkColors.primary.DEFAULT;
       default:
-        return colors.dark.primaryForeground;
+        return darkColors.primary.foreground;
     }
   };
 
