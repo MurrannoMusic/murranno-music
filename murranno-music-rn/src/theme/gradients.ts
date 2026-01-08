@@ -17,28 +17,28 @@ export interface GradientConfig {
 
 // Primary gradient: linear-gradient(135deg, primary, accent)
 export const gradientPrimary: GradientConfig = {
-  colors: [colors.primary.DEFAULT, colors.accent.DEFAULT],
+  colors: [darkColors.primary.DEFAULT, darkColors.accent.DEFAULT],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 1 },
 };
 
 // Secondary gradient: linear-gradient(135deg, secondary, card)
 export const gradientSecondary: GradientConfig = {
-  colors: [colors.secondary.DEFAULT, colors.card.DEFAULT],
+  colors: [darkColors.secondary.DEFAULT, darkColors.card.DEFAULT],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 1 },
 };
 
 // Accent gradient: linear-gradient(135deg, accent, primary-glow)
 export const gradientAccent: GradientConfig = {
-  colors: [colors.accent.DEFAULT, colors.primary.glow],
+  colors: [darkColors.accent.DEFAULT, darkColors.primary.glow],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 1 },
 };
 
 // Dark gradient: linear-gradient(135deg, background, muted)
 export const gradientDark: GradientConfig = {
-  colors: [colors.background, colors.muted.DEFAULT],
+  colors: [darkColors.background, darkColors.muted.DEFAULT],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 1 },
 };
