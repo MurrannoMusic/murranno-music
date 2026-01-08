@@ -1,42 +1,38 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { ProfileStackParamList } from '../types';
-import { colors } from '../../theme/colors';
+import { darkColors } from '../../theme/colors';
 
-const PlaceholderScreen = () => null;
+// Screens
+import ProfileScreen from '../../screens/ProfileScreen';
+import ArtistProfileScreen from '../../screens/ArtistProfileScreen';
+import SettingsScreen from '../../screens/SettingsScreen';
 
 const Stack = createNativeStackNavigator<ProfileStackParamList>();
 
 export const ProfileNavigator: React.FC = () => {
   return (
     <Stack.Navigator
+      initialRouteName="ProfileOverview"
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: darkColors.background,
         },
         animation: 'slide_from_right',
       }}
     >
       <Stack.Screen 
         name="ProfileOverview" 
-        component={PlaceholderScreen}
+        component={ProfileScreen}
       />
       <Stack.Screen 
         name="ArtistProfile" 
-        component={PlaceholderScreen}
+        component={ArtistProfileScreen}
       />
       <Stack.Screen 
         name="Settings" 
-        component={PlaceholderScreen}
-      />
-      <Stack.Screen 
-        name="SubscriptionPlans" 
-        component={PlaceholderScreen}
-        options={{
-          animation: 'slide_from_bottom',
-          presentation: 'modal',
-        }}
+        component={SettingsScreen}
       />
     </Stack.Navigator>
   );
