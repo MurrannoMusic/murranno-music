@@ -71,7 +71,7 @@ export const gradientCardOverlay: GradientConfig = {
 
 // Button gradient
 export const gradientButton: GradientConfig = {
-  colors: [colors.primary.DEFAULT, colors.accent.DEFAULT],
+  colors: [darkColors.primary.DEFAULT, darkColors.accent.DEFAULT],
   start: { x: 0, y: 0 },
   end: { x: 1, y: 0 },
 };
