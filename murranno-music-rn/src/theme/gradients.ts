@@ -6,7 +6,7 @@
  * <LinearGradient colors={gradients.primary.colors} start={gradients.primary.start} end={gradients.primary.end} />
  */
 
-import { colors } from './colors';
+import { colors, darkColors } from './colors';
 
 export interface GradientConfig {
   colors: string[];
