@@ -278,6 +278,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     session,
     profile,
     loading,
+    isAdmin,
     signIn,
     signUp,
     signOut,
