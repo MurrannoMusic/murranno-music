@@ -161,7 +161,15 @@ export const lightColors = {
 };
 
 // Default export uses dark theme
-export const colors = darkColors;
+export const colors = {
+  ...darkColors,
+  primary: darkColors.primary.DEFAULT,
+  card: darkColors.card.DEFAULT,
+  success: darkColors.success.DEFAULT,
+  destructive: darkColors.destructive.DEFAULT,
+  warning: darkColors.warning.DEFAULT,
+  mutedForeground: darkColors.muted.foreground,
+};
 
 // Color with opacity helpers
 export const withOpacity = (color: string, opacity: number): string => {
