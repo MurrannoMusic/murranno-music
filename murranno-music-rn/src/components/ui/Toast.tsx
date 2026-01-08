@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
   },
   toastDefault: {
     borderWidth: 1,
-    borderColor: `${colors.border}33`,
+    borderColor: `${darkColors.border}33`,
   },
   toastContent: {
     flexDirection: 'row',
@@ -221,13 +221,13 @@ const styles = StyleSheet.create({
   },
   toastTitle: {
     fontSize: typography.fontSizes.sm,
-    fontFamily: typography.fontFamily.semibold,
-    color: colors.foreground,
+    fontWeight: '600',
+    color: darkColors.foreground,
   },
   toastDescription: {
     fontSize: typography.fontSizes.xs,
-    fontFamily: typography.fontFamily.regular,
-    color: colors.mutedForeground,
+    fontWeight: '400',
+    color: darkColors.muted.foreground,
     marginTop: spacing[1],
   },
 });
