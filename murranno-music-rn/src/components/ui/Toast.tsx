@@ -88,13 +88,13 @@ const ToastItem: React.FC<ToastItemProps> = ({ data, onRemove }) => {
   const getVariantStyles = (): { bg: string; icon: keyof typeof Ionicons.glyphMap; iconColor: string } => {
     switch (data.variant) {
       case 'success':
-        return { bg: colors.success, icon: 'checkmark-circle', iconColor: '#FFFFFF' };
+        return { bg: darkColors.success.DEFAULT, icon: 'checkmark-circle', iconColor: '#FFFFFF' };
       case 'error':
-        return { bg: colors.destructive, icon: 'close-circle', iconColor: '#FFFFFF' };
+        return { bg: darkColors.destructive.DEFAULT, icon: 'close-circle', iconColor: '#FFFFFF' };
       case 'warning':
-        return { bg: colors.warning, icon: 'warning', iconColor: '#000000' };
+        return { bg: darkColors.warning.DEFAULT, icon: 'warning', iconColor: '#000000' };
       default:
-        return { bg: colors.card, icon: 'information-circle', iconColor: colors.primary };
+        return { bg: darkColors.card.DEFAULT, icon: 'information-circle', iconColor: darkColors.primary.DEFAULT };
     }
   };
 
