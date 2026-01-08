@@ -13,7 +13,7 @@ export const AdminNavigator: React.FC = () => {
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colors.background,
+          backgroundColor: darkColors.background,
         },
         animation: 'slide_from_right',
       }}
