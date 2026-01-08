@@ -29,7 +29,7 @@ const TabIcon: React.FC<TabIconProps> = ({ name, focused }) => (
     <Ionicons
       name={name}
       size={24}
-      color={focused ? colors.primary : colors.mutedForeground}
+      color={focused ? darkColors.primary.DEFAULT : darkColors.muted.foreground}
     />
   </View>
 );
