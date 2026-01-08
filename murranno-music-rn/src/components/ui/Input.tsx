@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
     gap: spacing[1.5],
   },
   label: {
-    color: colors.dark.foreground,
+    color: darkColors.foreground,
     marginBottom: spacing[1],
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     height: componentSpacing.inputHeight.md,
-    backgroundColor: colors.dark.background,
+    backgroundColor: darkColors.background,
     borderWidth: 1,
     borderRadius: borderRadius.md,
     paddingHorizontal: spacing[3],
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: '100%',
-    color: colors.dark.foreground,
+    color: darkColors.foreground,
     fontSize: fontSize.base,
   },
   inputWithLeftIcon: {
@@ -178,11 +178,11 @@ const styles = StyleSheet.create({
     padding: spacing[1],
   },
   helperText: {
-    color: colors.dark.mutedForeground,
+    color: darkColors.muted.foreground,
     marginTop: spacing[1],
   },
   errorText: {
-    color: colors.dark.destructive,
+    color: darkColors.destructive.DEFAULT,
   },
   disabled: {
     opacity: 0.5,
