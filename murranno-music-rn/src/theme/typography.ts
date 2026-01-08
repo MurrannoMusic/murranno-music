@@ -176,3 +176,13 @@ export const textStyles = {
 };
 
 export type TextStyleKey = keyof typeof textStyles;
+
+// Alias for compatibility
+export const typography = {
+  fontSizes: fontSize,
+  fontFamily,
+  fontWeight,
+  lineHeight,
+  letterSpacing,
+  textStyles,
+};
