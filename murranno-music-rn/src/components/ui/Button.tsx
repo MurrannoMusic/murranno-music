@@ -16,7 +16,7 @@ import {
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
-import { colors } from '../../theme/colors';
+import { colors, darkColors } from '../../theme/colors';
 import { shadows } from '../../theme/shadows';
 import { spacing, borderRadius } from '../../theme/spacing';
 import { textStyles } from '../../theme/typography';
