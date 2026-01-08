@@ -7,7 +7,7 @@ import { colors } from '../theme/colors';
 import SplashScreen from '../screens/SplashScreen';
 import WelcomeScreen from '../screens/WelcomeScreen';
 import LoginScreen from '../screens/LoginScreen';
-import SignUpScreen from '../screens/SignUpScreen';
+import SignUpScreen from '../screens/SignupScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import UserTypeSelectionScreen from '../screens/UserTypeSelectionScreen';
 
