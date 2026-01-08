@@ -16,7 +16,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { colors } from '../../theme/colors';
+import { colors, darkColors } from '../../theme/colors';
 import { spacing, borderRadius, componentSpacing } from '../../theme/spacing';
 import { textStyles, fontSize } from '../../theme/typography';
 import { timing } from '../../theme/animations';
