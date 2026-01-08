@@ -54,8 +54,8 @@ export const gradientGlow: GradientConfig = {
 export const gradientMesh: GradientConfig = {
   colors: [
     'rgba(124, 58, 237, 0.1)', // primary with 10% opacity at top
-    colors.background,
-    colors.card.DEFAULT,
+    darkColors.background,
+    darkColors.card.DEFAULT,
   ],
   start: { x: 0.5, y: 0 },
   end: { x: 0.5, y: 1 },
