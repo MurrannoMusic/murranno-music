@@ -70,8 +70,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) throw error;
       setProfile(data);
+      // Check if user is admin based on role
+      setIsAdmin(data?.role === 'admin');
     } catch (error) {
       console.error('Error fetching profile:', error);
+      setIsAdmin(false);
     }
   };
 
