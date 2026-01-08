@@ -25,7 +25,7 @@ export const Avatar: React.FC<AvatarProps> = ({
 }) => {
   const [imageError, setImageError] = useState(false);
 
-  const getSizeStyles = (): { container: ViewStyle; text: { fontSize: number } } => {
+  const getSizeStyles = (): { container: ImageStyle; text: { fontSize: number } } => {
     switch (size) {
       case 'sm':
         return {
