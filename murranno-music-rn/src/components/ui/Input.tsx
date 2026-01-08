@@ -76,7 +76,7 @@ export const Input: React.FC<InputProps> = ({
 
   const animatedBorderColor = borderColor.interpolate({
     inputRange: [0, 1],
-    outputRange: [colors.dark.border, colors.dark.ring],
+    outputRange: [darkColors.border, darkColors.ring],
   });
 
   const hasError = !!error;
@@ -89,7 +89,7 @@ export const Input: React.FC<InputProps> = ({
         style={[
           styles.inputContainer,
           {
-            borderColor: hasError ? colors.dark.destructive : animatedBorderColor,
+            borderColor: hasError ? darkColors.destructive.DEFAULT : animatedBorderColor,
           },
           disabled && styles.disabled,
         ]}
@@ -103,7 +103,7 @@ export const Input: React.FC<InputProps> = ({
             rightIcon && styles.inputWithRightIcon,
             inputStyle,
           ]}
-          placeholderTextColor={colors.dark.mutedForeground}
+          placeholderTextColor={darkColors.muted.foreground}
           editable={!disabled}
           {...props}
           onFocus={handleFocus}
