@@ -14,7 +14,8 @@ import {
 } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { colors, gradients } from '../../theme/colors';
+import { colors } from '../../theme/colors';
+import { gradients } from '../../theme/gradients';
 import { spacing, componentSpacing } from '../../theme/spacing';
 
 interface PageContainerProps {

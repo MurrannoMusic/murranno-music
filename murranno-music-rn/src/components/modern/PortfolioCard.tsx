@@ -13,7 +13,8 @@ import {
 import { LinearGradient } from 'expo-linear-gradient';
 import MaskedView from '@react-native-masked-view/masked-view';
 import { TrendingUp, TrendingDown } from 'lucide-react-native';
-import { colors, gradients } from '../../theme/colors';
+import { colors } from '../../theme/colors';
+import { gradients } from '../../theme/gradients';
 import { shadows } from '../../theme/shadows';
 import { spacing, borderRadius } from '../../theme/spacing';
 import { textStyles, fontSize, fontWeight } from '../../theme/typography';
