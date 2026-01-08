@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { AdminStackParamList } from '../types';
-import { colors } from '../../theme/colors';
+import { darkColors } from '../../theme/colors';
 
 const PlaceholderScreen = () => null;
 
