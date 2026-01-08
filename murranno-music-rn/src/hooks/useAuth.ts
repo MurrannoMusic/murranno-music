@@ -57,6 +57,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [session, setSession] = useState<any>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // Fetch user profile
   const fetchProfile = async (userId: string) => {
