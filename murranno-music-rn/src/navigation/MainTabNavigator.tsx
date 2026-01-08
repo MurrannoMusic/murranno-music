@@ -135,9 +135,9 @@ export const MainTabNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   tabBarBackground: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: `${colors.card}CC`,
+    backgroundColor: `${darkColors.card.DEFAULT}CC`,
     borderTopWidth: 1,
-    borderTopColor: `${colors.border}33`,
+    borderTopColor: `${darkColors.border}33`,
   },
   iconContainer: {
     width: 40,
@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   iconContainerActive: {
-    backgroundColor: `${colors.primary}15`,
+    backgroundColor: `${darkColors.primary.DEFAULT}15`,
     transform: [{ scale: 1.05 }],
   },
 });
