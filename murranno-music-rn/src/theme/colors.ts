@@ -164,11 +164,21 @@ export const lightColors = {
 export const colors = {
   ...darkColors,
   primary: darkColors.primary.DEFAULT,
+  primaryForeground: darkColors.primary.foreground,
   card: darkColors.card.DEFAULT,
+  cardForeground: darkColors.card.foreground,
   success: darkColors.success.DEFAULT,
+  successForeground: darkColors.success.foreground,
   destructive: darkColors.destructive.DEFAULT,
+  destructiveForeground: darkColors.destructive.foreground,
   warning: darkColors.warning.DEFAULT,
+  warningForeground: darkColors.warning.foreground,
+  secondary: darkColors.secondary.DEFAULT,
+  secondaryForeground: darkColors.secondary.foreground,
+  muted: darkColors.muted.DEFAULT,
   mutedForeground: darkColors.muted.foreground,
+  accent: darkColors.accent.DEFAULT,
+  accentForeground: darkColors.accent.foreground,
   // Backwards compatibility - `colors.dark.*` references
   dark: {
     ...darkColors,
