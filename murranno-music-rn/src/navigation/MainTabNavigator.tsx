@@ -61,8 +61,8 @@ export const MainTabNavigator: React.FC = () => {
             <View style={styles.tabBarBackground} />
           </BlurView>
         ),
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.mutedForeground,
+        tabBarActiveTintColor: darkColors.primary.DEFAULT,
+        tabBarInactiveTintColor: darkColors.muted.foreground,
         tabBarLabelStyle: {
           fontSize: typography.fontSizes.xs,
           fontFamily: typography.fontFamily.medium,
