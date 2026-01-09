@@ -61,13 +61,16 @@ export const colors = {
   overlay: 'rgba(0, 0, 0, 0.5)',
   overlayLight: 'rgba(0, 0, 0, 0.3)',
   
-  // Gradients (as arrays for LinearGradient)
-  gradientPrimary: ['#7C3AED', '#8B5CF6'],
-  gradientAccent: ['#8B5CF6', '#A78BFA'],
-  gradientDark: ['#050810', '#0C1220'],
-  gradientSuccess: ['#22C55E', '#4ADE80'],
-  gradientWarning: ['#F59E0B', '#FBBF24'],
+  // Gradients (as tuples for LinearGradient)
+  gradientPrimary: ['#7C3AED', '#8B5CF6'] as const,
+  gradientAccent: ['#8B5CF6', '#A78BFA'] as const,
+  gradientDark: ['#050810', '#0C1220'] as const,
+  gradientSuccess: ['#22C55E', '#4ADE80'] as const,
+  gradientWarning: ['#F59E0B', '#FBBF24'] as const,
 };
+
+// Type exports for gradient arrays
+export type GradientColors = readonly [string, string];
 
 export const spacing = {
   xs: 4,
