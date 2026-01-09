@@ -1,6 +1,6 @@
 /**
  * Murranno Music - React Native App Entry Point
- * Simplified version for testing - connects to Supabase
+ * Working version with proper input fields
  */
 import React, { useEffect, useState } from 'react';
 import { 
@@ -13,6 +13,8 @@ import {
   SafeAreaView,
   Platform,
   StatusBar,
+  TextInput,
+  KeyboardAvoidingView,
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 import { supabase } from './src/services/supabase';
@@ -63,6 +65,7 @@ export default function App() {
       setUser(data.session?.user ?? null);
       setScreen(data.session?.user ? 'dashboard' : 'auth');
     } catch (error) {
+      console.log('Connection check error:', error);
       setConnectionStatus('error');
       setScreen('auth');
     }
@@ -91,6 +94,11 @@ export default function App() {
   const handleSignUp = async () => {
     if (!email || !password) {
       setMessage('Please enter email and password');
+      return;
+    }
+
+    if (password.length < 6) {
+      setMessage('Password must be at least 6 characters');
       return;
     }
     
@@ -124,8 +132,10 @@ export default function App() {
     return (
       <View style={styles.container}>
         <ExpoStatusBar style="light" />
-        <ActivityIndicator size="large" color={colors.primary} />
-        <Text style={styles.loadingText}>Loading Murranno Music...</Text>
+        <View style={styles.centerContent}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={styles.loadingText}>Loading Murranno Music...</Text>
+        </View>
       </View>
     );
   }
@@ -135,73 +145,100 @@ export default function App() {
     return (
       <SafeAreaView style={styles.container}>
         <ExpoStatusBar style="light" />
-        <ScrollView contentContainerStyle={styles.authContainer}>
-          <Text style={styles.title}>🎵 Murranno Music</Text>
-          <Text style={styles.subtitle}>Music Distribution Platform</Text>
-          
-          {/* Connection Status */}
-          <View style={[styles.statusBadge, connectionStatus === 'connected' ? styles.statusConnected : styles.statusError]}>
-            <Text style={styles.statusText}>
-              {connectionStatus === 'connected' ? '✅ Connected to Supabase' : '❌ Connection Error'}
-            </Text>
-          </View>
-          
-          {/* Email Input */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Email</Text>
-            <View style={styles.input}>
-              <Text 
-                style={styles.inputText}
-                onPress={() => {/* Would open keyboard */}}
-              >
-                {email || 'Enter your email'}
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.flex}
+        >
+          <ScrollView 
+            contentContainerStyle={styles.authContainer}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Text style={styles.title}>🎵 Murranno Music</Text>
+            <Text style={styles.subtitle}>Music Distribution Platform</Text>
+            
+            {/* Connection Status */}
+            <View style={[styles.statusBadge, connectionStatus === 'connected' ? styles.statusConnected : styles.statusError]}>
+              <Text style={styles.statusText}>
+                {connectionStatus === 'connected' ? '✅ Connected to Supabase' : '❌ Connection Error'}
               </Text>
             </View>
-          </View>
-          
-          {/* Password Input */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.inputLabel}>Password</Text>
-            <View style={styles.input}>
-              <Text style={styles.inputText}>
-                {password ? '••••••••' : 'Enter your password'}
-              </Text>
+            
+            {/* Email Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                placeholderTextColor={colors.muted}
+                value={email}
+                onChangeText={setEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                autoCorrect={false}
+              />
             </View>
-          </View>
-          
-          {/* Message */}
-          {message ? (
-            <Text style={[styles.message, message.includes('success') || message.includes('Check') ? styles.successMessage : styles.errorMessage]}>
-              {message}
+            
+            {/* Password Input */}
+            <View style={styles.inputContainer}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your password"
+                placeholderTextColor={colors.muted}
+                value={password}
+                onChangeText={setPassword}
+                secureTextEntry
+                autoCapitalize="none"
+              />
+            </View>
+            
+            {/* Message */}
+            {message ? (
+              <View style={[
+                styles.messageContainer,
+                message.includes('success') || message.includes('Check') 
+                  ? styles.successMessage 
+                  : styles.errorMessage
+              ]}>
+                <Text style={[
+                  styles.messageText,
+                  message.includes('success') || message.includes('Check') 
+                    ? styles.successText 
+                    : styles.errorText
+                ]}>
+                  {message}
+                </Text>
+              </View>
+            ) : null}
+            
+            {/* Sign In Button */}
+            <TouchableOpacity 
+              style={[styles.button, styles.primaryButton, loading && styles.buttonDisabled]}
+              onPress={handleSignIn}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
+            
+            {/* Sign Up Button */}
+            <TouchableOpacity 
+              style={[styles.button, styles.secondaryButton, loading && styles.buttonDisabled]}
+              onPress={handleSignUp}
+              disabled={loading}
+            >
+              <Text style={styles.secondaryButtonText}>Create Account</Text>
+            </TouchableOpacity>
+            
+            <Text style={styles.footerText}>
+              Expo SDK 54 • React Native 0.81{'\n'}
+              Supabase Backend
             </Text>
-          ) : null}
-          
-          {/* Buttons */}
-          <TouchableOpacity 
-            style={[styles.button, styles.primaryButton]}
-            onPress={handleSignIn}
-            disabled={loading}
-          >
-            {loading ? (
-              <ActivityIndicator color="#fff" />
-            ) : (
-              <Text style={styles.buttonText}>Sign In</Text>
-            )}
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.secondaryButton]}
-            onPress={handleSignUp}
-            disabled={loading}
-          >
-            <Text style={styles.secondaryButtonText}>Create Account</Text>
-          </TouchableOpacity>
-          
-          <Text style={styles.footerText}>
-            Expo SDK 54 • React Native 0.81{'\n'}
-            Supabase Backend
-          </Text>
-        </ScrollView>
+          </ScrollView>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     );
   }
@@ -212,7 +249,8 @@ export default function App() {
       <ExpoStatusBar style="light" />
       <ScrollView contentContainerStyle={styles.dashboardContainer}>
         <Text style={styles.title}>🎵 Murranno Music</Text>
-        <Text style={styles.welcomeText}>Welcome, {user?.email}</Text>
+        <Text style={styles.welcomeText}>Welcome!</Text>
+        <Text style={styles.emailText}>{user?.email}</Text>
         
         {/* Stats Cards */}
         <View style={styles.statsContainer}>
@@ -269,10 +307,18 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  flex: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: colors.background,
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
+  },
+  centerContent: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   loadingText: {
     marginTop: 16,
@@ -302,7 +348,13 @@ const styles = StyleSheet.create({
     marginBottom: 32,
   },
   welcomeText: {
-    fontSize: 16,
+    fontSize: 18,
+    color: colors.foreground,
+    textAlign: 'center',
+    marginBottom: 4,
+  },
+  emailText: {
+    fontSize: 14,
     color: colors.muted,
     textAlign: 'center',
     marginBottom: 32,
@@ -331,6 +383,7 @@ const styles = StyleSheet.create({
     color: colors.foreground,
     fontSize: 14,
     marginBottom: 8,
+    fontWeight: '500',
   },
   input: {
     backgroundColor: colors.card,
@@ -338,30 +391,38 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     borderRadius: 12,
     padding: 16,
-  },
-  inputText: {
-    color: colors.muted,
     fontSize: 16,
+    color: colors.foreground,
   },
-  message: {
-    textAlign: 'center',
-    marginBottom: 16,
+  messageContainer: {
     padding: 12,
     borderRadius: 8,
+    marginBottom: 16,
   },
   successMessage: {
-    color: colors.success,
     backgroundColor: `${colors.success}20`,
   },
   errorMessage: {
-    color: colors.destructive,
     backgroundColor: `${colors.destructive}20`,
+  },
+  messageText: {
+    textAlign: 'center',
+    fontSize: 14,
+  },
+  successText: {
+    color: colors.success,
+  },
+  errorText: {
+    color: colors.destructive,
   },
   button: {
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
     marginBottom: 12,
+  },
+  buttonDisabled: {
+    opacity: 0.7,
   },
   primaryButton: {
     backgroundColor: colors.primary,
