@@ -1,34 +1,145 @@
 /**
- * Murranno Music - Complete React Native App
- * Full featured app with all screens and Supabase integration
+ * Murranno Music - React Native App
+ * Clean, modular entry point using existing screens
  */
-import React, { useEffect, useState, useRef, createContext, useContext, useCallback } from 'react';
+import React, { useEffect, useState, createContext, useContext, useCallback } from 'react';
 import {
-  View, Text, StyleSheet, ActivityIndicator, TouchableOpacity, ScrollView,
-  SafeAreaView, Platform, TextInput, KeyboardAvoidingView, ImageBackground,
-  Dimensions, Animated, Image, FlatList, RefreshControl, Switch, Alert, Modal,
+  View, Text, StyleSheet, ActivityIndicator, Image, Platform,
 } from 'react-native';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
-import { LinearGradient } from 'expo-linear-gradient';
-import { BlurView } from 'expo-blur';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import * as ImagePicker from 'expo-image-picker';
-import { Audio } from 'expo-av';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { supabase } from './src/services/supabase';
 import { colors } from './src/theme';
-import api, { Profile, Release, Notification, Earning, Campaign } from './src/services/api';
+import api, { Profile } from './src/services/api';
 
 // Assets
-const musicianBg = require('./src/assets/musician-background.jpg');
 const mmLogo = require('./src/assets/mm_logo.png');
+
+// ============ AUTH CONTEXT ============
+
+interface AuthContextType {
+  user: any;
+  profile: Profile | null;
+  loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, fullName: string, userType: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  refreshProfile: () => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error('useAuth must be used within AuthProvider');
+  return context;
+};
+
+// ============ AUTH PROVIDER ============
+
+const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const refreshProfile = useCallback(async () => {
+    if (!user) return;
+    try {
+      const p = await api.profile.get(user.id);
+      setProfile(p);
+    } catch (error) {
+      console.error('Error refreshing profile:', error);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    const init = async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        setUser(data.session?.user ?? null);
+        if (data.session?.user) {
+          const p = await api.profile.get(data.session.user.id);
+          setProfile(p);
+        }
+      } catch (error) {
+        console.error('Auth init error:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    init();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        try {
+          const p = await api.profile.get(session.user.id);
+          setProfile(p);
+        } catch (error) {
+          console.error('Error loading profile:', error);
+        }
+      } else {
+        setProfile(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const signIn = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) throw error;
+  };
+
+  const signUp = async (email: string, password: string, fullName: string, userType: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { full_name: fullName, user_type: userType } }
+    });
+    if (error) throw error;
+  };
+
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+    setProfile(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, refreshProfile }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+// ============ INLINE SCREENS (Simplified for stability) ============
+// These are simplified versions that match the web app's look and feel
+
+import {
+  TouchableOpacity, ScrollView, SafeAreaView, TextInput,
+  KeyboardAvoidingView, ImageBackground, Dimensions, Animated,
+  FlatList, RefreshControl, Switch, Alert, Modal,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
+import * as ImagePicker from 'expo-image-picker';
+
+const musicianBg = require('./src/assets/musician-background.jpg');
 const prototype1 = require('./src/assets/prototype-1.jpg');
 const prototype2 = require('./src/assets/prototype-2.jpg');
 const prototype3 = require('./src/assets/prototype-3.jpg');
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// Gradient colors typed as tuples for LinearGradient
+const GRADIENT_PRIMARY: readonly [string, string] = ['#7C3AED', '#8B5CF6'];
+const GRADIENT_ACCENT: readonly [string, string] = ['#8B5CF6', '#A78BFA'];
 
 // Carousel slides
 const slides = [
@@ -44,35 +155,17 @@ const userTypes = [
   { type: 'agency', label: 'Marketing Agency', icon: '📢', description: 'Run promotional campaigns for your clients', color: colors.accent },
 ];
 
-// Auth Context
-interface AuthContextType {
-  user: any;
-  profile: Profile | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, fullName: string, userType: string) => Promise<void>;
-  signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | null>(null);
-const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth must be used within AuthProvider');
-  return context;
-};
-
 // Navigation
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
-// ============ AUTH SCREENS ============
+// ============ WELCOME SCREEN ============
 
 const WelcomeScreen = ({ navigation }: any) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [showDrawer, setShowDrawer] = useState(false);
   const [selectedUserType, setSelectedUserType] = useState<string | null>(null);
-  const slideAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     const interval = setInterval(() => setCurrentSlide((p) => (p + 1) % slides.length), 4000);
@@ -81,7 +174,7 @@ const WelcomeScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     Animated.timing(slideAnim, { toValue: currentSlide, duration: 500, useNativeDriver: true }).start();
-  }, [currentSlide]);
+  }, [currentSlide, slideAnim]);
 
   return (
     <View style={styles.container}>
@@ -109,7 +202,7 @@ const WelcomeScreen = ({ navigation }: any) => {
         </View>
         <LinearGradient colors={['transparent', colors.background, colors.background]} style={styles.bottomGradient}>
           <TouchableOpacity style={styles.primaryBtn} onPress={() => setShowDrawer(true)}>
-            <LinearGradient colors={colors.gradientPrimary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
+            <LinearGradient colors={GRADIENT_PRIMARY} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
               <Text style={styles.primaryBtnText}>Get Started</Text>
               <Text style={styles.btnIcon}>↑</Text>
             </LinearGradient>
@@ -138,7 +231,7 @@ const WelcomeScreen = ({ navigation }: any) => {
               ))}
             </ScrollView>
             <TouchableOpacity style={[styles.primaryBtn, !selectedUserType && styles.btnDisabled]} onPress={() => { if (selectedUserType) { setShowDrawer(false); navigation.navigate('Signup', { userType: selectedUserType }); } }} disabled={!selectedUserType}>
-              <LinearGradient colors={colors.gradientPrimary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.gradientBtn, !selectedUserType && styles.gradientBtnDisabled]}>
+              <LinearGradient colors={GRADIENT_PRIMARY} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={[styles.gradientBtn, !selectedUserType && styles.gradientBtnDisabled]}>
                 <Text style={styles.primaryBtnText}>Create Account</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -149,6 +242,8 @@ const WelcomeScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
+// ============ LOGIN SCREEN ============
 
 const LoginScreen = ({ navigation }: any) => {
   const { signIn } = useAuth();
@@ -188,7 +283,7 @@ const LoginScreen = ({ navigation }: any) => {
                     </View>
                     {message ? <View style={[styles.msgBox, message.includes('success') ? styles.successBox : styles.errorBox]}><Text style={[styles.msgText, message.includes('success') ? styles.successText : styles.errorText]}>{message}</Text></View> : null}
                     <TouchableOpacity style={styles.primaryBtn} onPress={handleLogin} disabled={loading}>
-                      <LinearGradient colors={colors.gradientPrimary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
+                      <LinearGradient colors={GRADIENT_PRIMARY} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
                         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>Log In</Text>}
                       </LinearGradient>
                     </TouchableOpacity>
@@ -203,6 +298,8 @@ const LoginScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
+// ============ SIGNUP SCREEN ============
 
 const SignupScreen = ({ navigation, route }: any) => {
   const { signUp } = useAuth();
@@ -249,7 +346,7 @@ const SignupScreen = ({ navigation, route }: any) => {
                     {selectedType && <View style={styles.typeChip}><Text style={styles.typeChipText}>{selectedType.icon} {selectedType.label}</Text></View>}
                     {message ? <View style={[styles.msgBox, message.includes('Check') ? styles.successBox : styles.errorBox]}><Text style={[styles.msgText, message.includes('Check') ? styles.successText : styles.errorText]}>{message}</Text></View> : null}
                     <TouchableOpacity style={styles.primaryBtn} onPress={handleSignup} disabled={loading}>
-                      <LinearGradient colors={colors.gradientPrimary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
+                      <LinearGradient colors={GRADIENT_PRIMARY} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.gradientBtn}>
                         {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>Create Account</Text>}
                       </LinearGradient>
                     </TouchableOpacity>
@@ -264,6 +361,8 @@ const SignupScreen = ({ navigation, route }: any) => {
     </View>
   );
 };
+
+// ============ FORGOT PASSWORD SCREEN ============
 
 const ForgotPasswordScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
@@ -298,7 +397,7 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
           </View>
           {message ? <View style={[styles.msgBox, { marginHorizontal: 24 }, message.includes('sent') ? styles.successBox : styles.errorBox]}><Text style={[styles.msgText, message.includes('sent') ? styles.successText : styles.errorText]}>{message}</Text></View> : null}
           <TouchableOpacity style={[styles.primaryBtn, { marginHorizontal: 24 }]} onPress={handleReset} disabled={loading}>
-            <LinearGradient colors={colors.gradientPrimary} style={styles.gradientBtn}>
+            <LinearGradient colors={GRADIENT_PRIMARY} style={styles.gradientBtn}>
               {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>Send Reset Link</Text>}
             </LinearGradient>
           </TouchableOpacity>
@@ -308,7 +407,7 @@ const ForgotPasswordScreen = ({ navigation }: any) => {
   );
 };
 
-// ============ MAIN SCREENS ============
+// ============ DASHBOARD SCREEN ============
 
 const DashboardScreen = ({ navigation }: any) => {
   const { user, profile, refreshProfile } = useAuth();
@@ -318,12 +417,16 @@ const DashboardScreen = ({ navigation }: any) => {
 
   const loadData = useCallback(async () => {
     if (!user) return;
-    const [dashStats, unread] = await Promise.all([
-      api.analytics.getDashboardStats(user.id),
-      api.notifications.getUnreadCount(user.id),
-    ]);
-    setStats(dashStats);
-    setUnreadCount(unread);
+    try {
+      const [dashStats, unread] = await Promise.all([
+        api.analytics.getDashboardStats(user.id),
+        api.notifications.getUnreadCount(user.id),
+      ]);
+      setStats(dashStats);
+      setUnreadCount(unread);
+    } catch (error) {
+      console.error('Error loading dashboard data:', error);
+    }
   }, [user]);
 
   useEffect(() => { loadData(); }, [loadData]);
@@ -353,7 +456,7 @@ const DashboardScreen = ({ navigation }: any) => {
         
         <Text style={styles.sectionTitle}>Performance Insights</Text>
         
-        <LinearGradient colors={colors.gradientPrimary} style={styles.mainStatCard}>
+        <LinearGradient colors={GRADIENT_PRIMARY} style={styles.mainStatCard}>
           <View style={styles.mainStatHeader}>
             <View style={styles.mainStatIcon}><Text>💰</Text></View>
             <View style={[styles.changeBadge, { backgroundColor: 'rgba(255,255,255,0.2)' }]}><Text style={styles.changeText}>+12%</Text></View>
@@ -406,24 +509,31 @@ const DashboardScreen = ({ navigation }: any) => {
       </ScrollView>
 
       <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('ReleasesTab', { screen: 'Upload' })}>
-        <LinearGradient colors={colors.gradientAccent} style={styles.fabGradient}><Text style={styles.fabIcon}>+</Text></LinearGradient>
+        <LinearGradient colors={GRADIENT_ACCENT} style={styles.fabGradient}><Text style={styles.fabIcon}>+</Text></LinearGradient>
       </TouchableOpacity>
     </View>
   );
 };
 
+// ============ RELEASES SCREEN ============
+
 const ReleasesScreen = ({ navigation }: any) => {
   const { user } = useAuth();
-  const [releases, setReleases] = useState<Release[]>([]);
+  const [releases, setReleases] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
   const loadReleases = useCallback(async () => {
     if (!user) return;
     setLoading(true);
-    const data = await api.releases.getAll(user.id);
-    setReleases(data);
-    setLoading(false);
+    try {
+      const data = await api.releases.getAll(user.id);
+      setReleases(data);
+    } catch (error) {
+      console.error('Error loading releases:', error);
+    } finally {
+      setLoading(false);
+    }
   }, [user]);
 
   useEffect(() => { loadReleases(); }, [loadReleases]);
@@ -454,7 +564,7 @@ const ReleasesScreen = ({ navigation }: any) => {
           <Text style={styles.emptyTitle}>No Releases Yet</Text>
           <Text style={styles.emptyDesc}>Upload your first track to start distributing your music worldwide.</Text>
           <TouchableOpacity style={styles.emptyBtn} onPress={() => navigation.navigate('Upload')}>
-            <LinearGradient colors={colors.gradientPrimary} style={styles.gradientBtn}><Text style={styles.primaryBtnText}>Upload Release</Text></LinearGradient>
+            <LinearGradient colors={GRADIENT_PRIMARY} style={styles.gradientBtn}><Text style={styles.primaryBtnText}>Upload Release</Text></LinearGradient>
           </TouchableOpacity>
         </View>
       ) : (
@@ -481,6 +591,8 @@ const ReleasesScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
+// ============ UPLOAD SCREEN ============
 
 const UploadScreen = ({ navigation }: any) => {
   const { user } = useAuth();
@@ -546,13 +658,8 @@ const UploadScreen = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.addTrackBtn}>
-          <Text style={styles.addTrackIcon}>🎵</Text>
-          <Text style={styles.addTrackText}>Add Tracks (Coming Soon)</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={[styles.primaryBtn, { marginTop: 24 }]} onPress={handleSubmit} disabled={loading}>
-          <LinearGradient colors={colors.gradientPrimary} style={styles.gradientBtn}>
+          <LinearGradient colors={GRADIENT_PRIMARY} style={styles.gradientBtn}>
             {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>Create Release</Text>}
           </LinearGradient>
         </TouchableOpacity>
@@ -579,65 +686,24 @@ const UploadScreen = ({ navigation }: any) => {
   );
 };
 
-const ReleaseDetailScreen = ({ navigation, route }: any) => {
-  const { id } = route.params;
-  const [release, setRelease] = useState<Release | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const load = async () => {
-      const data = await api.releases.getById(id);
-      setRelease(data);
-      setLoading(false);
-    };
-    load();
-  }, [id]);
-
-  if (loading) return <View style={styles.centerContent}><ActivityIndicator size="large" color={colors.primary} /></View>;
-  if (!release) return <View style={styles.centerContent}><Text style={styles.emptyText}>Release not found</Text></View>;
-
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.screenHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}><Text style={styles.backArrow}>←</Text></TouchableOpacity>
-        <Text style={styles.screenTitle}>Release Details</Text>
-        <TouchableOpacity><Text style={styles.editBtn}>Edit</Text></TouchableOpacity>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}>
-        <View style={styles.releaseDetailCover}>
-          {release.cover_art_url ? <Image source={{ uri: release.cover_art_url }} style={styles.releaseDetailImg} /> : <Text style={styles.releaseDetailIcon}>🎵</Text>}
-        </View>
-        <Text style={styles.releaseDetailTitle}>{release.title}</Text>
-        <Text style={styles.releaseDetailArtist}>{release.artist_name}</Text>
-        <View style={styles.releaseDetailMeta}>
-          <View style={styles.metaItem}><Text style={styles.metaLabel}>Status</Text><Text style={styles.metaValue}>{release.status}</Text></View>
-          <View style={styles.metaItem}><Text style={styles.metaLabel}>Genre</Text><Text style={styles.metaValue}>{release.genre || 'Not set'}</Text></View>
-          <View style={styles.metaItem}><Text style={styles.metaLabel}>UPC</Text><Text style={styles.metaValue}>{release.upc || 'Pending'}</Text></View>
-        </View>
-        <Text style={styles.tracksTitle}>Tracks ({release.tracks?.length || 0})</Text>
-        {release.tracks && release.tracks.length > 0 ? release.tracks.map((track, i) => (
-          <View key={track.id} style={styles.trackItem}>
-            <Text style={styles.trackNumber}>{i + 1}</Text>
-            <Text style={styles.trackTitle}>{track.title}</Text>
-            <Text style={styles.trackDuration}>{track.duration ? `${Math.floor(track.duration / 60)}:${(track.duration % 60).toString().padStart(2, '0')}` : '--:--'}</Text>
-          </View>
-        )) : <Text style={styles.emptyText}>No tracks added yet</Text>}
-      </ScrollView>
-    </View>
-  );
-};
+// ============ PROMOTE SCREEN ============
 
 const PromoteScreen = ({ navigation }: any) => {
   const { user } = useAuth();
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [campaigns, setCampaigns] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       if (!user) return;
-      const data = await api.campaigns.getAll(user.id);
-      setCampaigns(data);
-      setLoading(false);
+      try {
+        const data = await api.campaigns.getAll(user.id);
+        setCampaigns(data);
+      } catch (error) {
+        console.error('Error loading campaigns:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [user]);
@@ -654,7 +720,7 @@ const PromoteScreen = ({ navigation }: any) => {
           <Text style={styles.emptyTitle}>Boost Your Music</Text>
           <Text style={styles.emptyDesc}>Create promotional campaigns to reach more listeners and grow your fanbase.</Text>
           <TouchableOpacity style={styles.emptyBtn}>
-            <LinearGradient colors={colors.gradientPrimary} style={styles.gradientBtn}><Text style={styles.primaryBtnText}>Create Campaign</Text></LinearGradient>
+            <LinearGradient colors={GRADIENT_PRIMARY} style={styles.gradientBtn}><Text style={styles.primaryBtnText}>Create Campaign</Text></LinearGradient>
           </TouchableOpacity>
         </View>
       ) : (
@@ -669,19 +735,26 @@ const PromoteScreen = ({ navigation }: any) => {
   );
 };
 
+// ============ EARNINGS SCREEN ============
+
 const EarningsScreen = ({ navigation }: any) => {
   const { user } = useAuth();
   const [stats, setStats] = useState({ total: 0, available: 0, pending: 0, thisMonth: 0 });
-  const [earnings, setEarnings] = useState<Earning[]>([]);
+  const [earnings, setEarnings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       if (!user) return;
-      const [s, e] = await Promise.all([api.earnings.getStats(user.id), api.earnings.getAll(user.id)]);
-      setStats(s);
-      setEarnings(e);
-      setLoading(false);
+      try {
+        const [s, e] = await Promise.all([api.earnings.getStats(user.id), api.earnings.getAll(user.id)]);
+        setStats(s);
+        setEarnings(e);
+      } catch (error) {
+        console.error('Error loading earnings:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [user]);
@@ -694,7 +767,7 @@ const EarningsScreen = ({ navigation }: any) => {
       </View>
       {loading ? <View style={styles.centerContent}><ActivityIndicator size="large" color={colors.primary} /></View> : (
         <ScrollView showsVerticalScrollIndicator={false}>
-          <LinearGradient colors={colors.gradientPrimary} style={styles.balanceCard}>
+          <LinearGradient colors={GRADIENT_PRIMARY} style={styles.balanceCard}>
             <Text style={styles.balanceLabel}>Available Balance</Text>
             <Text style={styles.balanceValue}>₦{stats.available.toLocaleString()}</Text>
             <TouchableOpacity style={styles.withdrawBtn}><Text style={styles.withdrawBtnText}>Withdraw</Text></TouchableOpacity>
@@ -706,7 +779,7 @@ const EarningsScreen = ({ navigation }: any) => {
           </View>
           <View style={styles.transSection}>
             <Text style={styles.transTitle}>Recent Transactions</Text>
-            {earnings.length === 0 ? <View style={styles.emptyTrans}><Text style={styles.emptyTransText}>No transactions yet</Text></View> : earnings.slice(0, 10).map(e => (
+            {earnings.length === 0 ? <View style={styles.emptyTrans}><Text style={styles.emptyTransText}>No transactions yet</Text></View> : earnings.slice(0, 10).map((e: any) => (
               <View key={e.id} style={styles.transItem}>
                 <Text style={styles.transSource}>{e.source}</Text>
                 <Text style={styles.transAmount}>₦{e.amount.toLocaleString()}</Text>
@@ -719,6 +792,8 @@ const EarningsScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
+// ============ ANALYTICS SCREEN ============
 
 const AnalyticsScreen = ({ navigation }: any) => {
   const [period, setPeriod] = useState('30D');
@@ -751,17 +826,24 @@ const AnalyticsScreen = ({ navigation }: any) => {
   );
 };
 
+// ============ NOTIFICATIONS SCREEN ============
+
 const NotificationsScreen = ({ navigation }: any) => {
   const { user } = useAuth();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
       if (!user) return;
-      const data = await api.notifications.getAll(user.id);
-      setNotifications(data);
-      setLoading(false);
+      try {
+        const data = await api.notifications.getAll(user.id);
+        setNotifications(data);
+      } catch (error) {
+        console.error('Error loading notifications:', error);
+      } finally {
+        setLoading(false);
+      }
     };
     load();
   }, [user]);
@@ -788,7 +870,7 @@ const NotificationsScreen = ({ navigation }: any) => {
       ) : (
         <FlatList data={notifications} keyExtractor={item => item.id} renderItem={({ item }) => (
           <TouchableOpacity style={[styles.notifItem, !item.read && styles.notifItemUnread]} onPress={async () => { await api.notifications.markAsRead(item.id); setNotifications(prev => prev.map(n => n.id === item.id ? { ...n, read: true } : n)); }}>
-            <View style={styles.notifIcon}><Text>{getTypeIcon(item.type)}</Text></View>
+            <View style={styles.notifIconContainer}><Text>{getTypeIcon(item.type)}</Text></View>
             <View style={styles.notifContent}>
               <Text style={styles.notifTitle}>{item.title}</Text>
               <Text style={styles.notifMsg} numberOfLines={2}>{item.message}</Text>
@@ -801,8 +883,10 @@ const NotificationsScreen = ({ navigation }: any) => {
   );
 };
 
+// ============ PROFILE SCREEN ============
+
 const ProfileScreen = ({ navigation }: any) => {
-  const { user, profile, signOut, refreshProfile } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const [loading, setLoading] = useState(false);
 
   const handleSignOut = async () => { setLoading(true); try { await signOut(); } finally { setLoading(false); } };
@@ -849,68 +933,12 @@ const ProfileScreen = ({ navigation }: any) => {
   );
 };
 
-const EditProfileScreen = ({ navigation }: any) => {
-  const { user, profile, refreshProfile } = useAuth();
-  const [fullName, setFullName] = useState(profile?.full_name || '');
-  const [bio, setBio] = useState(profile?.bio || '');
-  const [avatarUri, setAvatarUri] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const pickAvatar = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') { Alert.alert('Permission Required', 'Please allow access to your photo library.'); return; }
-    const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 0.8 });
-    if (!result.canceled && result.assets[0]) setAvatarUri(result.assets[0].uri);
-  };
-
-  const handleSave = async () => {
-    setLoading(true);
-    try {
-      await api.profile.update(user.id, { full_name: fullName, bio });
-      if (avatarUri) await api.profile.uploadAvatar(user.id, avatarUri);
-      await refreshProfile();
-      Alert.alert('Success', 'Profile updated!', [{ text: 'OK', onPress: () => navigation.goBack() }]);
-    } catch (e: any) { Alert.alert('Error', e.message || 'Failed to update profile'); } finally { setLoading(false); }
-  };
-
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.screenHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}><Text style={styles.backArrow}>←</Text></TouchableOpacity>
-        <Text style={styles.screenTitle}>Edit Profile</Text>
-        <TouchableOpacity onPress={handleSave} disabled={loading}><Text style={styles.saveBtn}>{loading ? '...' : 'Save'}</Text></TouchableOpacity>
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}>
-        <TouchableOpacity style={styles.editAvatarContainer} onPress={pickAvatar}>
-          {avatarUri || profile?.avatar_url ? <Image source={{ uri: avatarUri || profile?.avatar_url || '' }} style={styles.editAvatar} /> : <View style={styles.editAvatarPlaceholder}><Text style={styles.editAvatarText}>{profile?.full_name?.charAt(0) || 'U'}</Text></View>}
-          <View style={styles.editAvatarOverlay}><Text style={styles.editAvatarIcon}>📷</Text></View>
-        </TouchableOpacity>
-        <View style={styles.formGroup}><Text style={styles.formLabel}>Full Name</Text><TextInput style={styles.formInput} value={fullName} onChangeText={setFullName} placeholder="Enter your name" placeholderTextColor={colors.mutedForeground} /></View>
-        <View style={styles.formGroup}><Text style={styles.formLabel}>Email</Text><TextInput style={[styles.formInput, styles.formInputDisabled]} value={user?.email} editable={false} /></View>
-        <View style={styles.formGroup}><Text style={styles.formLabel}>Bio</Text><TextInput style={[styles.formInput, styles.formTextArea]} value={bio} onChangeText={setBio} placeholder="Tell us about yourself" placeholderTextColor={colors.mutedForeground} multiline numberOfLines={4} textAlignVertical="top" /></View>
-      </ScrollView>
-    </View>
-  );
-};
+// ============ SETTINGS SCREEN ============
 
 const SettingsScreen = ({ navigation }: any) => {
   const [pushEnabled, setPushEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
-
-  const settingsGroups = [
-    { title: 'Notifications', items: [
-      { label: 'Push Notifications', value: pushEnabled, onChange: setPushEnabled, type: 'switch' },
-      { label: 'Email Notifications', value: emailEnabled, onChange: setEmailEnabled, type: 'switch' },
-    ]},
-    { title: 'Appearance', items: [
-      { label: 'Dark Mode', value: darkMode, onChange: setDarkMode, type: 'switch' },
-    ]},
-    { title: 'Account', items: [
-      { label: 'Change Password', screen: 'ChangePassword', type: 'link' },
-      { label: 'Delete Account', screen: 'DeleteAccount', type: 'link', danger: true },
-    ]},
-  ];
 
   return (
     <View style={styles.screenContainer}>
@@ -920,50 +948,25 @@ const SettingsScreen = ({ navigation }: any) => {
         <View style={{ width: 40 }} />
       </View>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {settingsGroups.map((group, gi) => (
-          <View key={gi} style={styles.settingsGroup}>
-            <Text style={styles.settingsGroupTitle}>{group.title}</Text>
-            {group.items.map((item: any, ii) => (
-              <View key={ii} style={styles.settingsItem}>
-                <Text style={[styles.settingsLabel, item.danger && styles.settingsLabelDanger]}>{item.label}</Text>
-                {item.type === 'switch' ? <Switch value={item.value} onValueChange={item.onChange} trackColor={{ false: colors.secondary, true: colors.primary }} thumbColor="#fff" /> : <Text style={styles.settingsArrow}>›</Text>}
-              </View>
-            ))}
+        <View style={styles.settingsGroup}>
+          <Text style={styles.settingsGroupTitle}>Notifications</Text>
+          <View style={styles.settingsItem}>
+            <Text style={styles.settingsLabel}>Push Notifications</Text>
+            <Switch value={pushEnabled} onValueChange={setPushEnabled} trackColor={{ false: colors.secondary, true: colors.primary }} thumbColor="#fff" />
           </View>
-        ))}
+          <View style={styles.settingsItem}>
+            <Text style={styles.settingsLabel}>Email Notifications</Text>
+            <Switch value={emailEnabled} onValueChange={setEmailEnabled} trackColor={{ false: colors.secondary, true: colors.primary }} thumbColor="#fff" />
+          </View>
+        </View>
+        <View style={styles.settingsGroup}>
+          <Text style={styles.settingsGroupTitle}>Appearance</Text>
+          <View style={styles.settingsItem}>
+            <Text style={styles.settingsLabel}>Dark Mode</Text>
+            <Switch value={darkMode} onValueChange={setDarkMode} trackColor={{ false: colors.secondary, true: colors.primary }} thumbColor="#fff" />
+          </View>
+        </View>
         <View style={{ height: 100 }} />
-      </ScrollView>
-    </View>
-  );
-};
-
-const SupportScreen = ({ navigation }: any) => {
-  return (
-    <View style={styles.screenContainer}>
-      <View style={styles.screenHeader}>
-        <TouchableOpacity onPress={() => navigation.goBack()}><Text style={styles.backArrow}>←</Text></TouchableOpacity>
-        <Text style={styles.screenTitle}>Help & Support</Text>
-        <View style={{ width: 40 }} />
-      </View>
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}>
-        <View style={styles.supportCard}>
-          <Text style={styles.supportIcon}>📧</Text>
-          <Text style={styles.supportTitle}>Email Support</Text>
-          <Text style={styles.supportDesc}>Get help via email within 24 hours</Text>
-          <TouchableOpacity style={styles.supportBtn}><Text style={styles.supportBtnText}>support@murranno.com</Text></TouchableOpacity>
-        </View>
-        <View style={styles.supportCard}>
-          <Text style={styles.supportIcon}>💬</Text>
-          <Text style={styles.supportTitle}>Live Chat</Text>
-          <Text style={styles.supportDesc}>Chat with our support team</Text>
-          <TouchableOpacity style={styles.supportBtn}><Text style={styles.supportBtnText}>Start Chat</Text></TouchableOpacity>
-        </View>
-        <View style={styles.supportCard}>
-          <Text style={styles.supportIcon}>📚</Text>
-          <Text style={styles.supportTitle}>FAQ</Text>
-          <Text style={styles.supportDesc}>Find answers to common questions</Text>
-          <TouchableOpacity style={styles.supportBtn}><Text style={styles.supportBtnText}>View FAQ</Text></TouchableOpacity>
-        </View>
       </ScrollView>
     </View>
   );
@@ -980,7 +983,6 @@ const ReleasesStack = () => (
   <ReleasesStackNav.Navigator screenOptions={{ headerShown: false }}>
     <ReleasesStackNav.Screen name="ReleasesList" component={ReleasesScreen} />
     <ReleasesStackNav.Screen name="Upload" component={UploadScreen} />
-    <ReleasesStackNav.Screen name="ReleaseDetail" component={ReleaseDetailScreen} />
   </ReleasesStackNav.Navigator>
 );
 
@@ -996,9 +998,7 @@ const ProfileStackNav = createNativeStackNavigator();
 const ProfileStack = () => (
   <ProfileStackNav.Navigator screenOptions={{ headerShown: false }}>
     <ProfileStackNav.Screen name="ProfileMain" component={ProfileScreen} />
-    <ProfileStackNav.Screen name="EditProfile" component={EditProfileScreen} />
     <ProfileStackNav.Screen name="Settings" component={SettingsScreen} />
-    <ProfileStackNav.Screen name="Support" component={SupportScreen} />
   </ProfileStackNav.Navigator>
 );
 
@@ -1012,74 +1012,19 @@ const MainTabs = () => (
   </Tab.Navigator>
 );
 
-// ============ AUTH PROVIDER ============
-
-const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<any>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const refreshProfile = useCallback(async () => {
-    if (!user) return;
-    const p = await api.profile.get(user.id);
-    setProfile(p);
-  }, [user]);
-
-  useEffect(() => {
-    const init = async () => {
-      const { data } = await supabase.auth.getSession();
-      setUser(data.session?.user ?? null);
-      if (data.session?.user) {
-        const p = await api.profile.get(data.session.user.id);
-        setProfile(p);
-      }
-      setLoading(false);
-    };
-    init();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        const p = await api.profile.get(session.user.id);
-        setProfile(p);
-      } else {
-        setProfile(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) throw error;
-  };
-
-  const signUp = async (email: string, password: string, fullName: string, userType: string) => {
-    const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: fullName, user_type: userType } } });
-    if (error) throw error;
-  };
-
-  const signOut = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    setProfile(null);
-  };
-
-  return <AuthContext.Provider value={{ user, profile, loading, signIn, signUp, signOut, refreshProfile }}>{children}</AuthContext.Provider>;
-};
-
-// ============ MAIN APP ============
-
-export default function App() {
-  return <AuthProvider><AppNavigator /></AuthProvider>;
-}
+// ============ APP NAVIGATOR ============
 
 const AppNavigator = () => {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <View style={styles.loadingContainer}><ExpoStatusBar style="light" /><Image source={mmLogo} style={styles.loadingLogo} resizeMode="contain" /><ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 24 }} /></View>;
+    return (
+      <View style={styles.loadingContainer}>
+        <ExpoStatusBar style="light" />
+        <Image source={mmLogo} style={styles.loadingLogo} resizeMode="contain" />
+        <ActivityIndicator size="large" color={colors.primary} style={{ marginTop: 24 }} />
+      </View>
+    );
   }
 
   return (
@@ -1103,7 +1048,22 @@ const AppNavigator = () => {
   );
 };
 
+// ============ MAIN APP ============
+
+export default function App() {
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <AppNavigator />
+        </AuthProvider>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
+  );
+}
+
 // ============ STYLES ============
+
 const styles = StyleSheet.create({
   flex: { flex: 1 },
   container: { flex: 1, backgroundColor: colors.background },
@@ -1184,219 +1144,180 @@ const styles = StyleSheet.create({
   forgotTitle: { fontSize: 24, fontWeight: 'bold', color: colors.foreground, marginBottom: 8 },
   forgotDesc: { fontSize: 14, color: colors.mutedForeground, textAlign: 'center', marginBottom: 24, paddingHorizontal: 32 },
 
+  // Screen Common
+  screenContainer: { flex: 1, backgroundColor: colors.background },
+  screenHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 16, paddingTop: Platform.OS === 'ios' ? 60 : 24 },
+  screenTitle: { fontSize: 24, fontWeight: 'bold', color: colors.foreground },
+  backArrow: { fontSize: 28, color: colors.foreground },
+  headerBtn: { backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 12 },
+  headerBtnText: { color: '#fff', fontWeight: '600' },
+
   // Dashboard
   dashContainer: { flex: 1, backgroundColor: colors.background },
-  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, paddingTop: Platform.OS === 'ios' ? 50 : 12, backgroundColor: colors.background },
-  topBarLogo: { width: 80, height: 32 },
-  badge: { backgroundColor: colors.primary + '25', paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: colors.primary + '50' },
-  badgeText: { color: colors.primary, fontSize: 12, fontWeight: '600', letterSpacing: 1 },
-  notifBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
+  topBar: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12, paddingTop: Platform.OS === 'ios' ? 50 : 12, backgroundColor: colors.card },
+  topBarLogo: { width: 100, height: 32 },
+  badge: { backgroundColor: colors.primary + '30', paddingHorizontal: 12, paddingVertical: 4, borderRadius: 12 },
+  badgeText: { color: colors.primary, fontSize: 12, fontWeight: '600' },
+  notifBtn: { padding: 8 },
   notifIcon: { fontSize: 24 },
   notifBadge: { position: 'absolute', top: 0, right: 0, backgroundColor: colors.destructive, width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center' },
   notifBadgeText: { color: '#fff', fontSize: 10, fontWeight: 'bold' },
   dashScroll: { flex: 1, paddingHorizontal: 16 },
-  greeting: { fontSize: 20, fontWeight: '600', color: colors.foreground, marginTop: 16, marginBottom: 8 },
-  sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginTop: 20, marginBottom: 12 },
-  mainStatCard: { borderRadius: 20, padding: 20, marginBottom: 12 },
-  mainStatHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  mainStatIcon: { width: 40, height: 40, borderRadius: 20, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
-  changeBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
+  greeting: { fontSize: 24, fontWeight: 'bold', color: colors.foreground, marginTop: 24, marginBottom: 24 },
+  sectionTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginBottom: 16, marginTop: 8 },
+  mainStatCard: { borderRadius: 20, padding: 20, marginBottom: 16 },
+  mainStatHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  mainStatIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.2)', alignItems: 'center', justifyContent: 'center' },
+  changeBadge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8 },
   changeText: { color: '#fff', fontSize: 12, fontWeight: '600' },
   mainStatValue: { fontSize: 32, fontWeight: 'bold', color: '#fff' },
-  mainStatLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)', marginTop: 4 },
-  statsRow: { flexDirection: 'row', gap: 8 },
-  miniStatCard: { flex: 1, backgroundColor: colors.card, borderRadius: 16, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
+  mainStatLabel: { color: 'rgba(255,255,255,0.8)', fontSize: 14, marginTop: 4 },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
+  miniStatCard: { flex: 1, backgroundColor: colors.card, borderRadius: 16, padding: 16, marginHorizontal: 4, alignItems: 'center' },
   miniStatIcon: { fontSize: 24, marginBottom: 8 },
   miniStatValue: { fontSize: 20, fontWeight: 'bold', color: colors.foreground },
-  miniStatLabel: { fontSize: 11, color: colors.mutedForeground, marginTop: 4 },
-  activityCard: { backgroundColor: colors.card, borderRadius: 20, padding: 16, marginTop: 16, borderWidth: 1, borderColor: colors.border },
-  activityHeader: { flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 16 },
-  activityIcon: { fontSize: 20 },
-  activityTitle: { fontSize: 16, fontWeight: 'bold', color: colors.foreground },
-  emptyActivity: { paddingVertical: 24, alignItems: 'center' },
-  emptyText: { color: colors.mutedForeground, fontSize: 14, textAlign: 'center' },
-  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  actionCard: { width: (SCREEN_WIDTH - 44) / 2, backgroundColor: colors.card, borderRadius: 16, padding: 20, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-  actionIcon: { fontSize: 32, marginBottom: 8 },
-  actionLabel: { fontSize: 14, fontWeight: '500', color: colors.foreground },
-  fab: { position: 'absolute', bottom: 100, right: 24, borderRadius: 28, overflow: 'hidden' },
-  fabGradient: { width: 56, height: 56, alignItems: 'center', justifyContent: 'center' },
-  fabIcon: { color: '#fff', fontSize: 28, fontWeight: '300' },
+  miniStatLabel: { color: colors.mutedForeground, fontSize: 12 },
+  activityCard: { backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 16 },
+  activityHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
+  activityIcon: { fontSize: 20, marginRight: 8 },
+  activityTitle: { fontSize: 16, fontWeight: '600', color: colors.foreground },
+  emptyActivity: { padding: 24, alignItems: 'center' },
+  emptyText: { color: colors.mutedForeground, textAlign: 'center' },
+  actionsGrid: { flexDirection: 'row', flexWrap: 'wrap', marginHorizontal: -4 },
+  actionCard: { width: '50%', padding: 4 },
+  actionIcon: { fontSize: 24, marginBottom: 8 },
+  actionLabel: { color: colors.foreground, fontWeight: '500' },
+  fab: { position: 'absolute', right: 20, bottom: 100, width: 56, height: 56, borderRadius: 28 },
+  fabGradient: { flex: 1, alignItems: 'center', justifyContent: 'center', borderRadius: 28 },
+  fabIcon: { fontSize: 32, color: '#fff' },
 
-  // Screen
-  screenContainer: { flex: 1, backgroundColor: colors.background, paddingTop: Platform.OS === 'ios' ? 50 : 10 },
-  screenHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 12 },
-  screenTitle: { fontSize: 24, fontWeight: 'bold', color: colors.foreground },
-  headerBtn: { backgroundColor: colors.primary, paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20 },
-  headerBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  backArrow: { fontSize: 24, color: colors.foreground },
-  editBtn: { color: colors.primary, fontSize: 16, fontWeight: '600' },
-  saveBtn: { color: colors.primary, fontSize: 16, fontWeight: '600' },
-  markReadBtn: { color: colors.primary, fontSize: 14 },
+  // Releases
+  releaseItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 16, padding: 12, marginBottom: 12 },
+  releaseCover: { width: 60, height: 60, borderRadius: 8, backgroundColor: colors.secondary, alignItems: 'center', justifyContent: 'center' },
+  releaseCoverImg: { width: 60, height: 60, borderRadius: 8 },
+  releaseCoverIcon: { fontSize: 24 },
+  releaseInfo: { flex: 1, marginLeft: 12 },
+  releaseTitle: { fontSize: 16, fontWeight: '600', color: colors.foreground },
+  releaseArtist: { color: colors.mutedForeground, marginVertical: 4 },
+  statusBadge: { alignSelf: 'flex-start', paddingHorizontal: 8, paddingVertical: 2, borderRadius: 4 },
+  statusText: { fontSize: 10, fontWeight: '600' },
+  releaseArrow: { fontSize: 24, color: colors.mutedForeground },
 
   // Empty State
   emptyState: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 32 },
   emptyIcon: { fontSize: 64, marginBottom: 16 },
   emptyTitle: { fontSize: 20, fontWeight: 'bold', color: colors.foreground, marginBottom: 8 },
-  emptyDesc: { fontSize: 14, color: colors.mutedForeground, textAlign: 'center', lineHeight: 20, marginBottom: 24 },
+  emptyDesc: { color: colors.mutedForeground, textAlign: 'center', marginBottom: 24 },
   emptyBtn: { borderRadius: 16, overflow: 'hidden' },
 
-  // Releases
-  releaseItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 16, padding: 12, marginBottom: 12, borderWidth: 1, borderColor: colors.border },
-  releaseCover: { width: 56, height: 56, borderRadius: 8, backgroundColor: colors.secondary, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  releaseCoverImg: { width: 56, height: 56 },
-  releaseCoverIcon: { fontSize: 24 },
-  releaseInfo: { flex: 1, marginLeft: 12 },
-  releaseTitle: { fontSize: 16, fontWeight: '600', color: colors.foreground },
-  releaseArtist: { fontSize: 13, color: colors.mutedForeground, marginTop: 2 },
-  statusBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, alignSelf: 'flex-start', marginTop: 4 },
-  statusText: { fontSize: 10, fontWeight: '600' },
-  releaseArrow: { fontSize: 24, color: colors.mutedForeground },
-
-  // Release Detail
-  releaseDetailCover: { width: 200, height: 200, borderRadius: 16, backgroundColor: colors.secondary, alignSelf: 'center', alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
-  releaseDetailImg: { width: 200, height: 200, borderRadius: 16 },
-  releaseDetailIcon: { fontSize: 64 },
-  releaseDetailTitle: { fontSize: 24, fontWeight: 'bold', color: colors.foreground, textAlign: 'center' },
-  releaseDetailArtist: { fontSize: 16, color: colors.mutedForeground, textAlign: 'center', marginTop: 4 },
-  releaseDetailMeta: { flexDirection: 'row', justifyContent: 'space-around', backgroundColor: colors.card, borderRadius: 16, padding: 16, marginTop: 16, borderWidth: 1, borderColor: colors.border },
-  metaItem: { alignItems: 'center' },
-  metaLabel: { fontSize: 12, color: colors.mutedForeground },
-  metaValue: { fontSize: 14, fontWeight: '600', color: colors.foreground, marginTop: 4 },
-  tracksTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginTop: 24, marginBottom: 12 },
-  trackItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 12, marginBottom: 8, borderWidth: 1, borderColor: colors.border },
-  trackNumber: { width: 24, fontSize: 14, color: colors.mutedForeground },
-  trackTitle: { flex: 1, fontSize: 14, color: colors.foreground },
-  trackDuration: { fontSize: 12, color: colors.mutedForeground },
-
   // Upload
-  uploadContent: { paddingHorizontal: 16 },
-  coverPicker: { width: 200, height: 200, alignSelf: 'center', marginBottom: 24, borderRadius: 20, overflow: 'hidden' },
-  coverPreview: { width: 200, height: 200 },
-  coverPlaceholder: { width: 200, height: 200, backgroundColor: colors.card, borderWidth: 2, borderColor: colors.border, borderStyle: 'dashed', borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  uploadContent: { flex: 1, paddingHorizontal: 16 },
+  coverPicker: { aspectRatio: 1, backgroundColor: colors.card, borderRadius: 16, marginBottom: 24, overflow: 'hidden' },
+  coverPreview: { width: '100%', height: '100%' },
+  coverPlaceholder: { flex: 1, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderStyle: 'dashed', borderColor: colors.border, borderRadius: 16, margin: 4 },
   coverIcon: { fontSize: 48, marginBottom: 8 },
-  coverText: { fontSize: 14, fontWeight: '600', color: colors.foreground },
-  coverHint: { fontSize: 11, color: colors.mutedForeground, marginTop: 4 },
+  coverText: { color: colors.foreground, fontWeight: '600' },
+  coverHint: { color: colors.mutedForeground, fontSize: 12, marginTop: 4 },
   formGroup: { marginBottom: 16 },
-  formLabel: { fontSize: 14, fontWeight: '500', color: colors.foreground, marginBottom: 8 },
-  formInput: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, fontSize: 16, color: colors.foreground },
-  formInputDisabled: { opacity: 0.6 },
-  formTextArea: { height: 100, textAlignVertical: 'top', paddingTop: 14 },
-  formSelect: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  formSelectText: { fontSize: 16, color: colors.mutedForeground },
-  formSelectArrow: { fontSize: 12, color: colors.mutedForeground },
-  addTrackBtn: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 16, padding: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 },
-  addTrackIcon: { fontSize: 24 },
-  addTrackText: { fontSize: 16, fontWeight: '600', color: colors.foreground },
+  formLabel: { color: colors.foreground, fontWeight: '600', marginBottom: 8 },
+  formInput: { backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14, color: colors.foreground, fontSize: 16 },
+  formSelect: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 14 },
+  formSelectText: { color: colors.mutedForeground, fontSize: 16 },
+  formSelectArrow: { color: colors.mutedForeground },
 
   // Modal
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalContent: { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingBottom: Platform.OS === 'ios' ? 40 : 24, maxHeight: '70%' },
-  modalTitle: { fontSize: 18, fontWeight: 'bold', color: colors.foreground, textAlign: 'center', padding: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
-  genreList: { paddingHorizontal: 16 },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.7)', justifyContent: 'flex-end' },
+  modalContent: { backgroundColor: colors.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24, maxHeight: '70%' },
+  modalTitle: { fontSize: 20, fontWeight: 'bold', color: colors.foreground, marginBottom: 16, textAlign: 'center' },
+  genreList: { maxHeight: 400 },
   genreItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: colors.border },
-  genreItemSelected: { backgroundColor: colors.primary + '10' },
-  genreText: { fontSize: 16, color: colors.foreground },
+  genreItemSelected: { backgroundColor: colors.primary + '20' },
+  genreText: { color: colors.foreground, fontSize: 16 },
   genreTextSelected: { color: colors.primary, fontWeight: '600' },
   genreCheck: { color: colors.primary, fontSize: 18 },
-  modalClose: { padding: 16, alignItems: 'center' },
+  modalClose: { marginTop: 16, alignItems: 'center' },
   modalCloseText: { color: colors.mutedForeground, fontSize: 16 },
 
-  // Campaigns
-  campaignItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 12, borderWidth: 1, borderColor: colors.border },
-  campaignName: { fontSize: 16, fontWeight: '600', color: colors.foreground },
-  campaignStatus: { fontSize: 12, color: colors.primary },
+  // Campaign
+  campaignItem: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 12 },
+  campaignName: { color: colors.foreground, fontWeight: '600' },
+  campaignStatus: { color: colors.mutedForeground },
 
   // Earnings
-  balanceCard: { margin: 16, borderRadius: 20, padding: 24, alignItems: 'center' },
-  balanceLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
-  balanceValue: { fontSize: 36, fontWeight: 'bold', color: '#fff', marginVertical: 8 },
-  withdrawBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 20, marginTop: 8 },
-  withdrawBtnText: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  earningsStats: { flexDirection: 'row', paddingHorizontal: 16, gap: 8 },
-  earningStat: { flex: 1, backgroundColor: colors.card, borderRadius: 16, padding: 16, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-  earningStatValue: { fontSize: 16, fontWeight: 'bold', color: colors.foreground },
-  earningStatLabel: { fontSize: 11, color: colors.mutedForeground, marginTop: 4 },
-  transSection: { margin: 16 },
-  transTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginBottom: 12 },
-  emptyTrans: { backgroundColor: colors.card, borderRadius: 16, padding: 32, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-  emptyTransText: { color: colors.mutedForeground, fontSize: 14 },
-  transItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 8, borderWidth: 1, borderColor: colors.border },
-  transSource: { fontSize: 14, color: colors.foreground },
-  transAmount: { fontSize: 14, fontWeight: '600', color: colors.success },
+  balanceCard: { borderRadius: 20, padding: 24, marginHorizontal: 16, marginTop: 16, alignItems: 'center' },
+  balanceLabel: { color: 'rgba(255,255,255,0.8)', marginBottom: 8 },
+  balanceValue: { fontSize: 40, fontWeight: 'bold', color: '#fff', marginBottom: 16 },
+  withdrawBtn: { backgroundColor: 'rgba(255,255,255,0.2)', paddingHorizontal: 24, paddingVertical: 10, borderRadius: 12 },
+  withdrawBtnText: { color: '#fff', fontWeight: '600' },
+  earningsStats: { flexDirection: 'row', justifyContent: 'space-around', paddingVertical: 24, marginHorizontal: 16 },
+  earningStat: { alignItems: 'center' },
+  earningStatValue: { fontSize: 18, fontWeight: 'bold', color: colors.foreground },
+  earningStatLabel: { color: colors.mutedForeground, marginTop: 4 },
+  transSection: { paddingHorizontal: 16 },
+  transTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginBottom: 16 },
+  emptyTrans: { backgroundColor: colors.card, borderRadius: 12, padding: 32, alignItems: 'center' },
+  emptyTransText: { color: colors.mutedForeground },
+  transItem: { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 8 },
+  transSource: { color: colors.foreground },
+  transAmount: { color: colors.success, fontWeight: '600' },
 
   // Analytics
-  periodSelector: { flexDirection: 'row', marginHorizontal: 16, marginBottom: 16, gap: 8 },
-  periodBtn: { flex: 1, paddingVertical: 10, borderRadius: 20, backgroundColor: colors.card, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-  periodBtnActive: { backgroundColor: colors.primary, borderColor: colors.primary },
-  periodBtnText: { fontSize: 13, fontWeight: '500', color: colors.mutedForeground },
-  periodBtnTextActive: { color: '#fff' },
-  chartCard: { marginHorizontal: 16, backgroundColor: colors.card, borderRadius: 20, padding: 16, borderWidth: 1, borderColor: colors.border, marginBottom: 16 },
-  chartTitle: { fontSize: 16, fontWeight: '600', color: colors.foreground, marginBottom: 16 },
-  chartPlaceholder: { height: 180, backgroundColor: colors.secondary, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
-  chartPlaceholderText: { color: colors.mutedForeground, fontSize: 14 },
-  analyticsSection: { marginHorizontal: 16, marginBottom: 16 },
+  periodSelector: { flexDirection: 'row', justifyContent: 'center', paddingVertical: 16, gap: 8 },
+  periodBtn: { paddingHorizontal: 16, paddingVertical: 8, borderRadius: 20, backgroundColor: colors.card },
+  periodBtnActive: { backgroundColor: colors.primary },
+  periodBtnText: { color: colors.mutedForeground },
+  periodBtnTextActive: { color: '#fff', fontWeight: '600' },
+  chartCard: { backgroundColor: colors.card, borderRadius: 16, padding: 16, marginHorizontal: 16, marginBottom: 16 },
+  chartTitle: { color: colors.foreground, fontWeight: '600', marginBottom: 16 },
+  chartPlaceholder: { height: 200, alignItems: 'center', justifyContent: 'center', backgroundColor: colors.secondary, borderRadius: 12 },
+  chartPlaceholderText: { color: colors.mutedForeground },
+  analyticsSection: { paddingHorizontal: 16, marginBottom: 16 },
   analyticsSectionTitle: { fontSize: 16, fontWeight: '600', color: colors.foreground, marginBottom: 12 },
-  emptyAnalytics: { backgroundColor: colors.card, borderRadius: 16, padding: 24, alignItems: 'center', borderWidth: 1, borderColor: colors.border },
-  emptyAnalyticsText: { color: colors.mutedForeground, fontSize: 14 },
+  emptyAnalytics: { backgroundColor: colors.card, borderRadius: 12, padding: 24, alignItems: 'center' },
+  emptyAnalyticsText: { color: colors.mutedForeground },
 
   // Notifications
-  notifItem: { flexDirection: 'row', alignItems: 'flex-start', backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 8, borderWidth: 1, borderColor: colors.border },
-  notifItemUnread: { backgroundColor: colors.primary + '08', borderColor: colors.primary + '30' },
-  notifIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: colors.secondary, alignItems: 'center', justifyContent: 'center' },
+  notifItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 8 },
+  notifItemUnread: { borderLeftWidth: 3, borderLeftColor: colors.primary },
+  notifIconContainer: { width: 40, height: 40, borderRadius: 20, backgroundColor: colors.secondary, alignItems: 'center', justifyContent: 'center' },
   notifContent: { flex: 1, marginLeft: 12 },
-  notifTitle: { fontSize: 15, fontWeight: '600', color: colors.foreground },
-  notifMsg: { fontSize: 13, color: colors.mutedForeground, marginTop: 4, lineHeight: 18 },
-  unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary, marginLeft: 8 },
+  notifTitle: { color: colors.foreground, fontWeight: '600' },
+  notifMsg: { color: colors.mutedForeground, marginTop: 4 },
+  unreadDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary },
+  markReadBtn: { color: colors.primary, fontSize: 14 },
 
   // Profile
-  profileHeader: { alignItems: 'center', paddingVertical: 24 },
-  profileAvatar: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 12 },
+  profileHeader: { alignItems: 'center', paddingVertical: 32 },
+  profileAvatar: { width: 100, height: 100, borderRadius: 50, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center', marginBottom: 16 },
   profileAvatarImg: { width: 100, height: 100, borderRadius: 50 },
-  profileAvatarText: { fontSize: 40, fontWeight: 'bold', color: '#fff' },
-  profileEditBadge: { position: 'absolute', bottom: 0, right: 0, backgroundColor: colors.card, width: 32, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.background },
+  profileAvatarText: { fontSize: 40, color: '#fff', fontWeight: 'bold' },
+  profileEditBadge: { position: 'absolute', bottom: 0, right: 0, width: 32, height: 32, borderRadius: 16, backgroundColor: colors.card, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: colors.background },
   profileEditIcon: { fontSize: 14 },
-  profileName: { fontSize: 20, fontWeight: 'bold', color: colors.foreground },
-  profileEmail: { fontSize: 14, color: colors.mutedForeground, marginTop: 4 },
-  profileBadge: { backgroundColor: colors.primary + '25', paddingHorizontal: 16, paddingVertical: 6, borderRadius: 20, marginTop: 12, borderWidth: 1, borderColor: colors.primary + '50' },
-  profileBadgeText: { color: colors.primary, fontSize: 12, fontWeight: '600', textTransform: 'capitalize' },
-  profileMenu: { marginHorizontal: 16 },
-  menuItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 16, padding: 16, marginBottom: 8, borderWidth: 1, borderColor: colors.border },
+  profileName: { fontSize: 24, fontWeight: 'bold', color: colors.foreground },
+  profileEmail: { color: colors.mutedForeground, marginTop: 4 },
+  profileBadge: { backgroundColor: colors.primary + '30', paddingHorizontal: 16, paddingVertical: 6, borderRadius: 16, marginTop: 12 },
+  profileBadgeText: { color: colors.primary, fontWeight: '600', textTransform: 'capitalize' },
+  profileMenu: { paddingHorizontal: 16 },
+  menuItem: { flexDirection: 'row', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 8 },
   menuIcon: { fontSize: 20, marginRight: 12 },
-  menuLabel: { flex: 1, fontSize: 16, color: colors.foreground },
-  menuArrow: { fontSize: 20, color: colors.mutedForeground },
-  signOutBtn: { marginHorizontal: 16, marginTop: 16, paddingVertical: 16, borderRadius: 16, borderWidth: 1, borderColor: colors.destructive, alignItems: 'center' },
-  signOutText: { color: colors.destructive, fontSize: 16, fontWeight: '600' },
-  versionText: { textAlign: 'center', color: colors.mutedForeground, fontSize: 12, marginTop: 24 },
-
-  // Edit Profile
-  editAvatarContainer: { width: 120, height: 120, alignSelf: 'center', marginBottom: 24 },
-  editAvatar: { width: 120, height: 120, borderRadius: 60 },
-  editAvatarPlaceholder: { width: 120, height: 120, borderRadius: 60, backgroundColor: colors.primary, alignItems: 'center', justifyContent: 'center' },
-  editAvatarText: { fontSize: 48, fontWeight: 'bold', color: '#fff' },
-  editAvatarOverlay: { position: 'absolute', bottom: 0, right: 0, backgroundColor: colors.card, width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: colors.background },
-  editAvatarIcon: { fontSize: 18 },
+  menuLabel: { flex: 1, color: colors.foreground, fontSize: 16 },
+  menuArrow: { color: colors.mutedForeground, fontSize: 24 },
+  signOutBtn: { marginHorizontal: 16, marginTop: 24, padding: 16, borderRadius: 12, borderWidth: 1, borderColor: colors.destructive, alignItems: 'center' },
+  signOutText: { color: colors.destructive, fontWeight: '600' },
+  versionText: { textAlign: 'center', color: colors.mutedForeground, marginTop: 24, fontSize: 12 },
+  editBtn: { color: colors.primary, fontSize: 16 },
+  saveBtn: { color: colors.primary, fontSize: 16, fontWeight: '600' },
 
   // Settings
-  settingsGroup: { marginBottom: 24 },
-  settingsGroupTitle: { fontSize: 14, fontWeight: '600', color: colors.mutedForeground, paddingHorizontal: 16, marginBottom: 8, textTransform: 'uppercase', letterSpacing: 1 },
-  settingsItem: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: colors.card, paddingHorizontal: 16, paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: colors.border },
-  settingsLabel: { fontSize: 16, color: colors.foreground },
-  settingsLabelDanger: { color: colors.destructive },
-  settingsArrow: { fontSize: 20, color: colors.mutedForeground },
-
-  // Support
-  supportCard: { backgroundColor: colors.card, borderRadius: 20, padding: 24, alignItems: 'center', marginBottom: 16, borderWidth: 1, borderColor: colors.border },
-  supportIcon: { fontSize: 48, marginBottom: 12 },
-  supportTitle: { fontSize: 18, fontWeight: '600', color: colors.foreground, marginBottom: 4 },
-  supportDesc: { fontSize: 14, color: colors.mutedForeground, textAlign: 'center', marginBottom: 16 },
-  supportBtn: { backgroundColor: colors.primary + '20', paddingHorizontal: 20, paddingVertical: 10, borderRadius: 20 },
-  supportBtnText: { color: colors.primary, fontSize: 14, fontWeight: '600' },
+  settingsGroup: { marginBottom: 24, paddingHorizontal: 16 },
+  settingsGroupTitle: { fontSize: 14, color: colors.mutedForeground, fontWeight: '600', marginBottom: 12, textTransform: 'uppercase' },
+  settingsItem: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: colors.card, borderRadius: 12, padding: 16, marginBottom: 8 },
+  settingsLabel: { color: colors.foreground, fontSize: 16 },
 
   // Tab Bar
-  tabBar: { backgroundColor: colors.card, borderTopWidth: 1, borderTopColor: colors.border, paddingTop: 8, paddingBottom: Platform.OS === 'ios' ? 24 : 8, height: Platform.OS === 'ios' ? 88 : 64 },
-  tabBarLabel: { fontSize: 10, fontWeight: '500' },
-  tabIconContainer: { width: 40, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  tabIconContainerActive: { backgroundColor: colors.primary + '20' },
+  tabBar: { backgroundColor: colors.card, borderTopWidth: 0, height: Platform.OS === 'ios' ? 90 : 70, paddingTop: 8 },
+  tabBarLabel: { fontSize: 12, marginBottom: Platform.OS === 'ios' ? 0 : 8 },
+  tabIconContainer: { width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  tabIconContainerActive: { backgroundColor: colors.primary + '30' },
   tabIcon: { fontSize: 20 },
 });
