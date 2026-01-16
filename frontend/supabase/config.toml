@@ -1,4 +1,4 @@
-project_id = "nqfltvbzqxdxsobhedci"
+project_id = "xsyzebusnqzxpnsruuoc"
 
 [functions.get-subscription-plans]
 verify_jwt = false
