@@ -42,7 +42,7 @@ export const AvatarDropdown = () => {
           <Avatar className="w-10 h-10 border-2 border-primary/30">
             <AvatarImage src={profile?.profile_image || ''} alt={currentUser.name} />
             <AvatarFallback className="bg-primary/20 text-primary font-bold text-sm">
-              {currentUser.name.slice(0, 2).toUpperCase()}
+              {(currentUser.name || 'User').slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
         </button>

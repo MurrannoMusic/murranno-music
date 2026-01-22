@@ -23,6 +23,7 @@ export const useUserType = () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
+      console.log('useUserType: fetched user:', user?.id);
 
       if (!user) {
         setAccessibleTiers(['artist']);
@@ -32,6 +33,7 @@ export const useUserType = () => {
 
       // Fetch user profile
       const { data: profileData, error: profileError } = await supabase.functions.invoke('get-profile');
+      console.log('useUserType: profile data:', profileData, 'error:', profileError);
       if (profileError) throw profileError;
 
       if (profileData?.success && profileData.profile) {
@@ -41,10 +43,21 @@ export const useUserType = () => {
           email: profileData.profile.email,
           accountType: 'artist', // Base type
         });
+        console.log('useUserType: set currentUser:', profileData.profile);
+      } else {
+        console.log('useUserType: profile fetch failed or no profile, setting default');
+        // Set default currentUser if profile doesn't exist
+        setCurrentUser({
+          id: user.id,
+          name: user.user_metadata?.full_name || user.email?.split('@')[0] || 'User',
+          email: user.email || '',
+          accountType: 'artist',
+        });
       }
 
       // Fetch accessible tiers from subscriptions
       const { data: subData } = await supabase.functions.invoke('get-user-subscriptions');
+      console.log('useUserType: subscriptions data:', subData);
       if (subData?.success) {
         setAccessibleTiers(subData.accessibleTiers || ['artist']);
       }

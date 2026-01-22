@@ -47,11 +47,10 @@ serve(async (req) => {
       );
     }
 
-    // Update profile
+    // Upsert profile (insert if not exists, update if exists)
     const { data: profile, error: updateError } = await supabase
       .from('profiles')
-      .update(updates)
-      .eq('id', user.id)
+      .upsert({ id: user.id, ...updates }, { onConflict: 'id' })
       .select()
       .single();
 
