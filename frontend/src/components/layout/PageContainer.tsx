@@ -11,7 +11,7 @@ export const PageContainer = ({ children, className = "", showHeader = true }: P
   return (
     <div className={`min-h-screen bg-gradient-mesh mobile-safe-bottom overflow-x-hidden max-w-full ${className}`}>
       {showHeader && <AppHeader />}
-      <div className={showHeader ? "pt-16" : ""}>
+      <div className={showHeader ? "pt-14" : ""}>
         {children}
       </div>
       <BottomNavigation />

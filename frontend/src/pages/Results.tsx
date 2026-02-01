@@ -53,19 +53,7 @@ export const Results = () => {
 
   return (
     <PageContainer>
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          <Link to="/app/agency-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div className="flex-1 text-center">
-            <Badge className="bg-secondary/15 text-secondary-foreground border-secondary/30 px-4 py-1">
-              CAMPAIGN RESULTS
-            </Badge>
-          </div>
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         {/* Overall Performance Stats */}
@@ -76,21 +64,21 @@ export const Results = () => {
               <p className="text-[10px] text-muted-foreground mt-0.5">Total Reach</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
               <p className="text-xl font-bold text-success">{totalMetrics.avgEngagement}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Avg Engagement</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
               <p className="text-xl font-bold text-card-foreground">{totalMetrics.totalConversions}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">Conversions</p>
             </CardContent>
           </Card>
-          
+
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-3 text-center">
               <p className="text-xl font-bold text-success">{totalMetrics.avgROI}</p>
@@ -120,7 +108,7 @@ export const Results = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
                       <h3 className="text-sm font-semibold text-card-foreground truncate">{campaign.name}</h3>
-                      <Badge 
+                      <Badge
                         variant={campaign.status === 'Active' ? 'default' : 'secondary'}
                         className="text-[10px] flex-shrink-0"
                       >
@@ -180,12 +168,12 @@ export const Results = () => {
               <Download className="h-3 w-3" />
               Download Full Report
             </button>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
                 Export CSV
               </button>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 rounded-[16px] transition-all duration-200 text-xs">
                 Share Report
               </button>

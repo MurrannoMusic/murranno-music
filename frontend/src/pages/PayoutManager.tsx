@@ -14,7 +14,7 @@ import { usePayouts } from '@/hooks/usePayouts';
 export const PayoutManager = () => {
   const { currentUser, isLabel } = useUserType();
   const { payouts, getFilteredPayouts, getTotalPending, getStatusBadgeVariant } = usePayouts();
-  
+
   const [selectedArtist, setSelectedArtist] = useState('all');
 
   const filteredPayouts = getFilteredPayouts(selectedArtist);
@@ -40,27 +40,7 @@ export const PayoutManager = () => {
 
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to={isLabel ? "/artist-management" : "/earnings"} className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
-              PAYOUT MANAGER
-            </Badge>
-          </div>
-          
-          {/* Avatar (Right) */}
-          <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-            <DollarSign className="h-5 w-5 text-primary" />
-          </div>
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         {/* Payout Stats */}
@@ -87,7 +67,7 @@ export const PayoutManager = () => {
         {isLabel && (
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-4">
-              <ArtistFilter 
+              <ArtistFilter
                 selectedArtist={selectedArtist}
                 onArtistChange={setSelectedArtist}
                 artists={artists}
@@ -111,11 +91,11 @@ export const PayoutManager = () => {
                   <div className="flex items-center justify-between mb-1">
                     <div className="flex items-center gap-2">
                       <h3 className="text-sm font-semibold text-card-foreground">{payout.artist_name}</h3>
-                      <Badge 
+                      <Badge
                         variant={
                           payout.status === 'pending' ? 'secondary' :
-                          payout.status === 'paid' ? 'default' :
-                          'destructive'
+                            payout.status === 'paid' ? 'default' :
+                              'destructive'
                         }
                         className="text-xs"
                       >
@@ -131,14 +111,14 @@ export const PayoutManager = () => {
                     <span className="text-xs text-muted-foreground">Period: {new Date(payout.period_start).toLocaleDateString()} - {new Date(payout.period_end).toLocaleDateString()}</span>
                     {payout.status === 'pending' && isLabel && (
                       <div className="flex gap-2">
-                        <Button 
+                        <Button
                           size="sm"
                           className="text-xs h-8"
                           onClick={() => handleApprove(payout.id)}
                         >
                           Approve
                         </Button>
-                        <Button 
+                        <Button
                           variant="outline"
                           size="sm"
                           className="text-xs h-8"
@@ -161,7 +141,7 @@ export const PayoutManager = () => {
             <CardTitle className="text-lg font-bold text-card-foreground">Payout Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <button 
+            <button
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 px-4 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-sm"
               onClick={requestBulkPayout}
             >
@@ -170,17 +150,17 @@ export const PayoutManager = () => {
                 <span className="text-xs mt-1 opacity-90">(₦{totalPending.toFixed(2)})</span>
               </span>
             </button>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-3 rounded-[16px] transition-all duration-200 text-xs">
                 Export Records
               </button>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-3 rounded-[16px] transition-all duration-200 text-xs">
                 Schedule Payouts
               </button>
             </div>
-            
+
             <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-6 px-4 rounded-[16px] transition-all duration-200 text-xs">
               Payout Settings
             </button>

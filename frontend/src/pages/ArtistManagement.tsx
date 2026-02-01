@@ -21,7 +21,7 @@ export const ArtistManagement = () => {
   const handleAddArtist = async (artist: { name: string; stageName: string; email?: string; revenueShare?: number; contractStartDate?: Date; contractEndDate?: Date; notes?: string }) => {
     try {
       setAdding(true);
-      
+
       // If email is provided, use invite function
       if (artist.email) {
         const { data, error } = await supabase.functions.invoke('invite-artist-to-label', {
@@ -50,7 +50,7 @@ export const ArtistManagement = () => {
         if (error) throw error;
         toast.success('Artist added successfully');
       }
-      
+
       setShowAddDialog(false);
       refetch();
     } catch (error: any) {
@@ -69,7 +69,7 @@ export const ArtistManagement = () => {
           Add Artist
         </Button>
       </DialogTrigger>
-      <AddArtistForm 
+      <AddArtistForm
         onAdd={handleAddArtist}
         onCancel={() => setShowAddDialog(false)}
         isLabel={true}
@@ -79,29 +79,11 @@ export const ArtistManagement = () => {
 
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to="/app/label-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-4 py-1">
-              ARTIST MANAGEMENT
-            </Badge>
-          </div>
-          
-          {/* Avatar (Right) */}
-          <AvatarDropdown />
-        </div>
-        
-        {/* Actions */}
-        <div className="flex justify-end mt-4">
-          {headerActions}
-        </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
+
+      {/* Actions moved from header */}
+      <div className="mobile-container pt-4 flex justify-end">
+        {headerActions}
       </div>
 
       <div className="mobile-container space-y-4 -mt-2">
@@ -171,17 +153,17 @@ export const ArtistManagement = () => {
               <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs break-words">
                 Bulk Payout
               </button>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Analytics
               </button>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-3">
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Export Reports
               </button>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 border border-border text-xs break-words">
                 Upload Track
               </button>

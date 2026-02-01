@@ -46,26 +46,14 @@ export const CampaignManager = () => {
 
   return (
     <PageContainer>
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          <Link to="/app/agency-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div className="flex-1 text-center">
-            <Badge className="bg-secondary/15 text-secondary-foreground border-secondary/30 px-4 py-1">
-              CAMPAIGN MANAGER
-            </Badge>
-          </div>
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         <CampaignStats stats={stats} />
-        
-        <CampaignFilter 
-          statusFilter={statusFilter} 
-          onFilterChange={setStatusFilter} 
+
+        <CampaignFilter
+          statusFilter={statusFilter}
+          onFilterChange={setStatusFilter}
         />
 
         <CampaignList

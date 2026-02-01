@@ -5,85 +5,69 @@ export const useCloudinaryUpload = () => {
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const uploadImage = async (file: File, folder: string = 'uploads') => {
-    try {
-      setUploading(true);
-      setProgress(0);
+  const uploadToCloudinary = async (file: File, folder: string, resourceType: 'image' | 'video') => {
+    setUploading(true);
+    setProgress(0);
 
+    try {
+      // 1. Get Signature from Backend
+      const { data: signatureData, error: signatureError } = await supabase.functions.invoke('generate-cloudinary-signature', {
+        body: { folder },
+      });
+
+      if (signatureError) throw new Error(`Signature generation failed: ${signatureError.message}`);
+      if (!signatureData?.signature) throw new Error('No signature returned from backend');
+
+      const { signature, timestamp, cloudName, apiKey } = signatureData;
+
+      // 2. Direct Upload to Cloudinary
       const formData = new FormData();
       formData.append('file', file);
       formData.append('folder', folder);
+      formData.append('api_key', apiKey);
+      formData.append('timestamp', timestamp);
+      formData.append('signature', signature);
 
-      const { data: { session } } = await supabase.auth.getSession();
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-image-cloudinary`;
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`;
 
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session?.access_token ?? ''}`,
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
-        },
-        body: formData,
+      return await new Promise<{ url: string; publicId: string }>((resolve, reject) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const percent = Math.round((event.loaded / event.total) * 100);
+            setProgress(percent);
+          }
+        };
+
+        xhr.onload = () => {
+          if (xhr.status >= 200 && xhr.status < 300) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              setProgress(100);
+              resolve({ url: response.secure_url, publicId: response.public_id });
+            } catch (e) {
+              reject(new Error('Invalid JSON response from Cloudinary'));
+            }
+          } else {
+            reject(new Error(`Cloudinary upload failed (${xhr.status}): ${xhr.responseText}`));
+          }
+        };
+
+        xhr.onerror = () => reject(new Error('Network error during upload'));
+        xhr.send(formData);
       });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Upload failed (${res.status}): ${errText}`);
-      }
-
-      const data = await res.json();
-      if (!data?.url) throw new Error('No URL returned from upload');
-
-      setProgress(100);
-      return { url: data.url, publicId: data.publicId };
     } catch (error: any) {
-      console.error('Error uploading image:', error);
+      console.error(`Error uploading ${resourceType}:`, error);
       throw error;
     } finally {
       setUploading(false);
-      setProgress(0);
     }
   };
 
-  const uploadAudio = async (file: File, folder: string = 'audio') => {
-    try {
-      setUploading(true);
-      setProgress(0);
-
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', folder);
-
-      const { data: { session } } = await supabase.auth.getSession();
-      const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/upload-audio-cloudinary`;
-
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${session?.access_token ?? ''}`,
-          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY!,
-        },
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errText = await res.text();
-        throw new Error(`Upload failed (${res.status}): ${errText}`);
-      }
-
-      const data = await res.json();
-      if (!data?.url) throw new Error('No URL returned from upload');
-
-      setProgress(100);
-      return { url: data.url, publicId: data.publicId };
-    } catch (error: any) {
-      console.error('Error uploading audio:', error);
-      throw error;
-    } finally {
-      setUploading(false);
-      setProgress(0);
-    }
-  };
+  const uploadImage = (file: File, folder: string = 'uploads') => uploadToCloudinary(file, folder, 'image');
+  const uploadAudio = (file: File, folder: string = 'audio') => uploadToCloudinary(file, folder, 'video');
 
   return {
     uploadImage,

@@ -22,7 +22,7 @@ export const Login = () => {
 
   const getPostLoginRoute = () => {
     if (!userRole) return '/app/dashboard';
-    
+
     switch (userRole.tier) {
       case 'admin':
         return '/admin';
@@ -51,13 +51,13 @@ export const Login = () => {
         setBiometricType(getBiometryName(availability.biometryType));
       }
     };
-    
+
     checkBiometric();
   }, []);
 
   const handleBiometricLogin = async () => {
     const savedEmail = localStorage.getItem('biometric_login_email');
-    
+
     if (!savedEmail) {
       return;
     }
@@ -80,7 +80,7 @@ export const Login = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       await signIn(email, password);
       // Save email for biometric login on next time
@@ -96,9 +96,9 @@ export const Login = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0"
-        style={{ 
+        style={{
           backgroundImage: `url(${musicianBg})`,
           backgroundSize: 'cover',
           backgroundPosition: '65% center',
@@ -109,11 +109,11 @@ export const Login = () => {
       {/* Content positioned with card at bottom */}
       <div className="relative z-10 min-h-screen flex flex-col justify-end pt-8 pb-8">
         <div className="mobile-container">
-          <Link to="/get-started" className="mb-4 inline-block">
+          <Link to="/signup" className="mb-4 inline-block">
             <ArrowLeft className="h-6 w-6 text-white drop-shadow-lg" />
           </Link>
         </div>
-        
+
         <div className="mobile-container">
 
           <Card className="backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
@@ -160,7 +160,7 @@ export const Login = () => {
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>

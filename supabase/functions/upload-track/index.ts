@@ -35,8 +35,8 @@ serve(async (req) => {
     const {
       releaseData,
       tracks,
-      coverArtFile,
-      audioFiles,
+      coverArtFile, // Now expecting { url: string } or null
+      audioFiles,   // Now expecting [{ url: string }]
     } = await req.json();
 
     console.log('Upload request from user:', user.id);
@@ -75,40 +75,16 @@ serve(async (req) => {
       artist = newArtist;
     }
 
-    // Upload cover art to Cloudinary if provided
-    let coverArtUrl = null;
-    if (coverArtFile) {
-      const { base64, fileName, contentType } = coverArtFile;
-      
-      // Convert base64 to blob for Cloudinary upload
-      const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-      const blob = new Blob([binaryData], { type: contentType });
-      const file = new File([blob], fileName, { type: contentType });
-      
-      // Upload to Cloudinary via edge function
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('folder', 'cover-art');
-      
-      const uploadResponse = await fetch(
-        `${Deno.env.get('SUPABASE_URL')}/functions/v1/upload-image-cloudinary`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: req.headers.get('Authorization')!,
-          },
-          body: formData,
-        }
-      );
-      
-      if (!uploadResponse.ok) {
-        const errorText = await uploadResponse.text();
-        console.error('Cover art upload error:', errorText);
-        throw new Error(`Failed to upload cover art: ${errorText}`);
-      }
-      
-      const uploadResult = await uploadResponse.json();
-      coverArtUrl = uploadResult.url;
+    // Use provided cover art URL
+    const coverArtUrl = coverArtFile?.url || null;
+
+    // Auto-generate ISRC/UPC if needed
+    let finalUpc = releaseData.upc;
+    let finalIsrc = releaseData.isrc;
+
+    if (!releaseData.is_existing_release) {
+      if (!finalUpc) finalUpc = `M-UPC-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
+      if (!finalIsrc) finalIsrc = `M-ISRC-${crypto.randomUUID().split('-')[0].toUpperCase()}`;
     }
 
     // Create release
@@ -124,7 +100,12 @@ serve(async (req) => {
         genre: releaseData.genre,
         language: releaseData.language,
         label: releaseData.label,
-        copyright: releaseData.copyright,
+        copyright_holder: releaseData.copyright_holder,
+        recording_year: releaseData.recording_year,
+        is_existing_release: releaseData.is_existing_release,
+        upc: finalUpc,
+        isrc: finalIsrc,
+        distribution_platforms: releaseData.distribution_platforms,
       })
       .select()
       .single();
@@ -136,46 +117,12 @@ serve(async (req) => {
 
     console.log('Release created:', release.id);
 
-    // Upload tracks
+    // Create tracks
     const createdTracks = [];
     for (let i = 0; i < tracks.length; i++) {
       const track = tracks[i];
       const audioFile = audioFiles?.[i];
-
-      let audioFileUrl = null;
-      if (audioFile) {
-        const { base64, fileName, contentType } = audioFile;
-        
-        // Convert base64 to blob for Cloudinary upload
-        const binaryData = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-        const blob = new Blob([binaryData], { type: contentType });
-        const file = new File([blob], fileName, { type: contentType });
-        
-        // Upload to Cloudinary via edge function
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('folder', 'track-uploads');
-        
-        const uploadResponse = await fetch(
-          `${Deno.env.get('SUPABASE_URL')}/functions/v1/upload-audio-cloudinary`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: req.headers.get('Authorization')!,
-            },
-            body: formData,
-          }
-        );
-        
-        if (!uploadResponse.ok) {
-          const errorText = await uploadResponse.text();
-          console.error('Audio file upload error:', errorText);
-          throw new Error(`Failed to upload audio file: ${errorText}`);
-        }
-        
-        const uploadResult = await uploadResponse.json();
-        audioFileUrl = uploadResult.url;
-      }
+      const audioFileUrl = audioFile?.url || null;
 
       const { data: createdTrack, error: trackError } = await supabase
         .from('tracks')
@@ -185,6 +132,8 @@ serve(async (req) => {
           duration: track.duration || 0,
           track_number: i + 1,
           audio_file_url: audioFileUrl,
+          lyrics: track.lyrics,
+          songwriter_legal_names: track.songwriter_legal_names,
         })
         .select()
         .single();

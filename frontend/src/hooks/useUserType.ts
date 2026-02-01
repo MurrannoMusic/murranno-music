@@ -11,7 +11,7 @@ export const useUserType = () => {
 
   useEffect(() => {
     fetchUserData();
-    
+
     // Load last viewed dashboard from localStorage
     const lastViewed = localStorage.getItem('lastViewedDashboard') as 'artist' | 'label' | 'agency';
     if (lastViewed) {
@@ -22,6 +22,15 @@ export const useUserType = () => {
   const fetchUserData = async () => {
     try {
       setLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (!session) {
+        setAccessibleTiers(['artist']);
+        setCurrentUser(null);
+        setLoading(false);
+        return;
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       console.log('useUserType: fetched user:', user?.id);
 
@@ -75,7 +84,7 @@ export const useUserType = () => {
       toast.error(`You don't have access to ${tier} dashboard`);
       return;
     }
-    
+
     setCurrentViewingTier(tier);
     localStorage.setItem('lastViewedDashboard', tier);
     toast.success(`Switched to ${tier} dashboard`);

@@ -51,9 +51,9 @@ export const StreamingPlatformCard = ({
 
   if (isEditing || isLocalEditing) {
     return (
-      <Card className="bg-secondary/20 border border-border rounded-[12px]">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-3 mb-3">
+      <Card className="bg-secondary/20 border border-border rounded-lg">
+        <CardContent className="p-3">
+          <div className="flex items-center gap-2 mb-2">
             <div className="text-foreground">{icon}</div>
             <span className="text-sm font-medium text-card-foreground">{name}</span>
           </div>
@@ -62,12 +62,12 @@ export const StreamingPlatformCard = ({
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               placeholder={placeholder}
-              className="bg-background border-border text-sm"
+              className="bg-background border-border text-sm h-8"
             />
-            <Button size="sm" onClick={handleSave} className="shrink-0">
+            <Button size="sm" onClick={handleSave} className="shrink-0 h-8 w-8 p-0">
               <Check className="w-4 h-4" />
             </Button>
-            <Button size="sm" variant="outline" onClick={handleCancel} className="shrink-0">
+            <Button size="sm" variant="outline" onClick={handleCancel} className="shrink-0 h-8 w-8 p-0">
               <X className="w-4 h-4" />
             </Button>
           </div>
@@ -77,40 +77,40 @@ export const StreamingPlatformCard = ({
   }
 
   return (
-    <Card className="bg-secondary/20 border border-border rounded-[12px] hover:bg-secondary/30 transition-smooth">
-      <CardContent className="p-4">
+    <Card className="bg-secondary/20 border border-border rounded-lg hover:bg-secondary/30 transition-smooth">
+      <CardContent className="p-3">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="text-foreground">{icon}</div>
+          <div className="flex items-center gap-2">
+            <div className="text-foreground shrink-0">{icon}</div>
             <div>
               <div className="text-sm font-medium text-card-foreground">{name}</div>
               {url ? (
-                <div className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                  <Check className="w-3 h-3 text-success" />
+                <div className="text-[10px] text-muted-foreground flex items-center gap-1 mt-0">
+                  <Check className="w-2.5 h-2.5 text-success" />
                   Connected
                 </div>
               ) : (
-                <div className="text-xs text-muted-foreground/50 mt-0.5">Not connected</div>
+                <div className="text-[10px] text-muted-foreground/50 mt-0">Not connected</div>
               )}
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {url ? (
               <button
                 onClick={handleOpenLink}
-                className="text-muted-foreground hover:text-foreground transition-smooth"
+                className="text-muted-foreground hover:text-foreground transition-smooth p-1"
               >
-                <ExternalLink className="w-4 h-4" />
+                <ExternalLink className="w-3.5 h-3.5" />
               </button>
             ) : (
               <Button
                 size="sm"
                 variant="ghost"
                 onClick={() => setIsLocalEditing(true)}
-                className="hover:bg-secondary/30"
+                className="hover:bg-secondary/30 h-7 w-7 p-0"
               >
-                <Plus className="w-4 h-4" />
+                <Plus className="w-3.5 h-3.5" />
               </Button>
             )}
           </div>

@@ -18,18 +18,20 @@ export const Signup = () => {
   const { signUp, user, userRole } = useAuth();
   const { switchUserType } = useUserType();
   const { toast } = useToast();
-  const [fullName, setFullName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showVerificationMessage, setShowVerificationMessage] = useState(false);
-  
-  const preselectedTier = location.state?.tier as UserType | undefined;
+
+  const preselectedTier = (location.state?.tier || 'artist') as UserType;
 
   const getPostLoginRoute = () => {
     if (!userRole) return '/app/dashboard';
-    
+
     switch (userRole.tier) {
       case 'admin':
         return '/admin';
@@ -52,7 +54,7 @@ export const Signup = () => {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast({
         title: 'Passwords do not match',
@@ -61,25 +63,38 @@ export const Signup = () => {
       });
       return;
     }
-    
+
     setLoading(true);
-    
+
     try {
-      const { error } = await signUp(email, password, fullName);
-      
+      const { error } = await signUp(email, password, firstName, lastName, phone);
+
       if (error) {
-        // Signup failed, error toast already shown by AuthContext
+        // Check for specific error message regarding existing user
+        if (error.message.includes('User already registered') || error.message.includes('already registered')) {
+          toast({
+            title: 'User already exists',
+            description: 'An account with this email already exists. Please log in instead.',
+            variant: 'destructive',
+          });
+          // Optional: navigate to login after a short delay or immediately
+          // setTimeout(() => navigate('/login'), 2000);
+        }
         setLoading(false);
         return;
       }
-      
+
       // Show verification message instead of navigating
       setShowVerificationMessage(true);
-      
+
+
       toast({
         title: 'Check your email',
-        description: 'We sent you a verification link. Please verify your email to continue.',
+        description: 'We sent you a verification code. Please check your email to continue.',
       });
+
+      // Navigate to verification page with email
+      navigate(`/verify-email?email=${encodeURIComponent(email)}`);
     } catch (error) {
       console.error('Signup error:', error);
     } finally {
@@ -90,9 +105,9 @@ export const Signup = () => {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
       {/* Background Image */}
-      <div 
+      <div
         className="absolute inset-0"
-        style={{ 
+        style={{
           backgroundImage: `url(${musicianBg})`,
           backgroundSize: 'cover',
           backgroundPosition: '65% center',
@@ -107,7 +122,7 @@ export const Signup = () => {
             <ArrowLeft className="h-6 w-6 text-white drop-shadow-lg" />
           </Link>
         </div>
-        
+
         <div className="mobile-container">
 
           <Card className="backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
@@ -146,72 +161,99 @@ export const Signup = () => {
                 <>
                   <SocialLoginButtons />
 
-              <form onSubmit={handleSignup} className="space-y-6 mt-6">
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="fullName" className="text-white/90 drop-shadow-md">Full Name</Label>
-                    <Input
-                      id="fullName"
-                      type="text"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Enter your full name"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>
-                    <Input
-                      id="password"
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Create a password"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <Label htmlFor="confirmPassword" className="text-white/90 drop-shadow-md">Confirm Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      placeholder="Confirm your password"
-                      className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
-                      required
-                    />
-                  </div>
-                </div>
+                  <form onSubmit={handleSignup} className="space-y-6 mt-6">
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="firstName" className="text-white/90 drop-shadow-md">First Name</Label>
+                          <Input
+                            id="firstName"
+                            type="text"
+                            value={firstName}
+                            onChange={(e) => setFirstName(e.target.value)}
+                            placeholder="John"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <Label htmlFor="lastName" className="text-white/90 drop-shadow-md">Last Name</Label>
+                          <Input
+                            id="lastName"
+                            type="text"
+                            value={lastName}
+                            onChange={(e) => setLastName(e.target.value)}
+                            placeholder="Doe"
+                            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                            required
+                          />
+                        </div>
+                      </div>
 
-                <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Creating account...
-                    </>
-                  ) : (
-                    'Create Account'
-                  )}
-                </Button>
-              </form>
+                      <div>
+                        <Label htmlFor="phone" className="text-white/90 drop-shadow-md">Phone Number</Label>
+                        <Input
+                          id="phone"
+                          type="tel"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
+                          placeholder="+234..."
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="email" className="text-white/90 drop-shadow-md">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Enter your email"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="password" className="text-white/90 drop-shadow-md">Password</Label>
+                        <Input
+                          id="password"
+                          type="password"
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Create a password"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <Label htmlFor="confirmPassword" className="text-white/90 drop-shadow-md">Confirm Password</Label>
+                        <Input
+                          id="confirmPassword"
+                          type="password"
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Confirm your password"
+                          className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <Button type="submit" className="w-full gradient-primary music-button shadow-primary" size="lg" disabled={loading}>
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Creating account...
+                        </>
+                      ) : (
+                        'Create Account'
+                      )}
+                    </Button>
+                  </form>
 
                   <div className="mt-6 text-center">
                     <p className="text-white/90 drop-shadow-md">

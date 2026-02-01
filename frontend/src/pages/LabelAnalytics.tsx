@@ -18,25 +18,7 @@ export const LabelAnalytics = () => {
 
   return (
     <PageContainer>
-      {/* Consistent Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Menu Icon (Left) */}
-          <Link to="/app/label-dashboard" className="p-2 hover:bg-secondary/30 rounded-xl transition-smooth">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-secondary/20 text-secondary-foreground border-secondary/30 px-4 py-1">
-              {selectedArtist ? 'ARTIST ANALYTICS' : 'LABEL ANALYTICS'}
-            </Badge>
-          </div>
-          
-          {/* Avatar (Right) */}
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         {/* Artist Selector for Labels */}
@@ -55,7 +37,7 @@ export const LabelAnalytics = () => {
               <div className="text-xs text-muted-foreground font-medium">Total Artists</div>
             </div>
           </div>
-          
+
           <div className="bg-card border border-border rounded-[20px] shadow-soft p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
@@ -113,12 +95,12 @@ export const LabelAnalytics = () => {
               <button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 shadow-primary hover:shadow-glow transform hover:scale-[1.02] active:scale-[0.98] text-xs">
                 Generate Report
               </button>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 px-3 rounded-[16px] transition-all duration-200 text-xs">
                 Export Data
               </button>
             </div>
-            
+
             <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground border border-border font-semibold py-4 px-4 rounded-[16px] transition-all duration-200 text-xs">
               View Detailed Metrics
             </button>

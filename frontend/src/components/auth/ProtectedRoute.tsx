@@ -17,7 +17,7 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        navigate('/get-started');
+        navigate('/signup');
         return;
       }
 
@@ -31,12 +31,12 @@ export const ProtectedRoute = ({ children, requiredTier }: ProtectedRouteProps) 
         // User doesn't have access to this tier
         // Check if they have an expired subscription for this tier
         const tierSub = subscriptions.find(sub => sub.tier === requiredTier);
-        
+
         if (tierSub && (tierSub.status === 'expired' || tierSub.status === 'cancelled')) {
           navigate('/app/subscription/plans');
           return;
         }
-        
+
         // Otherwise redirect to artist dashboard (always accessible)
         navigate('/app/artist-dashboard');
       }

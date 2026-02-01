@@ -78,11 +78,6 @@ export const NewsCarousel = () => {
   return (
     <>
       <div className="space-y-4">
-        <div className="flex items-center gap-2">
-          <Newspaper className="h-5 w-5 text-primary" />
-          <h2 className="text-xl font-bold">News</h2>
-        </div>
-
         <Carousel
           opts={{
             align: 'start',
@@ -93,15 +88,15 @@ export const NewsCarousel = () => {
           <CarouselContent className="-ml-2 md:-ml-4">
             {mockNews.map((news) => {
               const newsImage = imageMap[news.icon as keyof typeof imageMap];
-              
+
               return (
                 <CarouselItem key={news.id} className="pl-2 md:pl-4 basis-[85%] md:basis-[45%] lg:basis-[30%]">
                   <Card className="bg-gray-900/80 border-gray-800/50 p-3 rounded-[20px] hover:scale-[1.02] transition-smooth shadow-lg">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-3 flex-1 min-w-0">
                         <div className="w-20 h-20 rounded-lg overflow-hidden flex-shrink-0 bg-gray-800">
-                          <img 
-                            src={newsImage} 
+                          <img
+                            src={newsImage}
                             alt={news.title}
                             className="w-full h-full object-cover"
                           />

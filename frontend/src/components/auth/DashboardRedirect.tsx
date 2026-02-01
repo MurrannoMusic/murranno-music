@@ -16,18 +16,18 @@ export const DashboardRedirect = () => {
 
       // Get last viewed dashboard from localStorage
       const lastViewed = localStorage.getItem('lastViewedDashboard') as 'artist' | 'label' | 'agency' | null;
-      
+
       // If we have a last viewed dashboard and user has access, go there
       if (lastViewed && accessibleTiers.includes(lastViewed)) {
         const dashboardMap = {
-          artist: '/app/artist-dashboard',
+          artist: '/app/dashboard',
           label: '/app/label-dashboard',
           agency: '/app/agency-dashboard',
         };
         navigate(dashboardMap[lastViewed], { replace: true });
       } else {
-        // Default to artist dashboard (always accessible)
-        navigate('/app/artist-dashboard', { replace: true });
+        // Default to artist dashboard (now main dashboard)
+        navigate('/app/dashboard', { replace: true });
       }
     }
   }, [loading, accessibleTiers, userRole, navigate]);

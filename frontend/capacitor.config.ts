@@ -1,8 +1,8 @@
-import { CapacitorConfig } from '@capacitor/core';
+import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.c3daad8632214cd78f32217f9f05ec3c',
-  appName: 'murranno-music',
+  appId: 'com.murrannomusic.app',
+  appName: 'murranno music',
   webDir: 'dist',
   plugins: {
     // PushNotifications disabled temporarily - requires Firebase setup
@@ -13,8 +13,26 @@ const config: CapacitorConfig = {
       appUrlOpen: {
         enabled: true
       }
-    }
-  }
+    },
+    SplashScreen: {
+      launchShowDuration: 3000,
+      launchAutoHide: false,
+      backgroundColor: "#09090b",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: true,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#999999",
+      splashFullScreen: true,
+      splashImmersive: true,
+    },
+    // Enable faster HTTP requests if needed
+    CapacitorHttp: {
+      enabled: true,
+    },
+  },
+  // Ensure background matches app theme to prevent white flashes
+  backgroundColor: '#09090b',
 };
 
 export default config;

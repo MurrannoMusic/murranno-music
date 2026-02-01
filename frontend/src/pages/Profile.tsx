@@ -19,7 +19,7 @@ export const Profile = () => {
   const { currentUser } = useUserType();
   const { toast } = useToast();
   const { profile, uploadProfileImage } = useArtistProfile();
-  
+
   const [isEditingLinks, setIsEditingLinks] = useState(false);
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [spotifyUrl, setSpotifyUrl] = useState(profile?.spotify_url || '');
@@ -101,22 +101,12 @@ export const Profile = () => {
   if (!currentUser) {
     return (
       <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-          <div className="flex items-center justify-between">
-            <Link to="/app" className="flex items-center">
-              <img src={mmLogo} alt="Murranno Music" className="h-8" />
-            </Link>
-            <div className="flex-1 text-center">
-              <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">PROFILE</Badge>
-            </div>
-            <div className="w-9" />
-          </div>
-        </div>
+        {/* Top Bar removed - using UnifiedTopBar */}
         <div className="mobile-container space-y-4 mt-4">
           <Card className="bg-card border border-border rounded-[20px] shadow-soft">
             <CardContent className="p-6 text-center space-y-2">
               <p className="text-muted-foreground">No profile loaded.</p>
-              <Link to="/app/user-type-selection" className="text-primary hover:underline">Select user type</Link>
+              {/* <Link to="/app/user-type-selection" className="text-primary hover:underline">Select user type</Link> */}
             </CardContent>
           </Card>
         </div>
@@ -126,52 +116,41 @@ export const Profile = () => {
 
   return (
     <div className="smooth-scroll">
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <img src={mmLogo} alt="Murranno Music" className="h-8" />
-          </Link>
-          
-          <div className="flex-1 text-center">
-            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
-              PROFILE
-            </Badge>
-          </div>
-          
-          {/* Avatar Dropdown (Right) */}
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
-      <div className="mobile-container space-y-4 mt-4">
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-              <User className="h-5 w-5 text-primary" />
-              Profile Information
+      <div className="mobile-container space-y-3 mt-2 pb-16">
+        <Card className="bg-card border border-border rounded-xl shadow-soft overflow-hidden">
+          <CardHeader className="p-3 pb-2">
+            <CardTitle className="text-sm font-bold text-card-foreground flex items-center gap-2">
+              <User className="h-4 w-4 text-primary" />
+              Artist Profile
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center gap-4 p-4 bg-secondary/20 rounded-[16px] border border-border">
+          <CardContent className="p-3 pt-0">
+            <div className="flex items-center gap-3 p-3 bg-secondary/10 rounded-lg border border-border/50">
               <ProfileImageUpload
                 imageUrl={profile?.profile_image || currentUser?.avatar}
                 onImageSelect={handleImageSelect}
                 disabled={isUploadingImage}
               />
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-card-foreground">{currentUser?.name ?? 'Unknown User'}</h2>
-                <p className="text-sm text-muted-foreground">{currentUser?.accountType ? currentUser.accountType.toUpperCase() : ''}</p>
-                <p className="text-sm text-muted-foreground">{currentUser?.email ?? ''}</p>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-base font-bold text-card-foreground truncate">{currentUser?.name ?? 'Artist Name'}</h2>
+                <div className="flex flex-col mt-0.5">
+                  <span className="text-[10px] font-bold text-primary uppercase tracking-widest">
+                    {currentUser?.accountType || 'Artist'}
+                  </span>
+                  <span className="text-[10px] text-muted-foreground truncate">{currentUser?.email ?? ''}</span>
+                </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-card-foreground flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Music className="h-5 w-5 text-primary" />
+        <Card className="bg-card border border-border rounded-xl shadow-soft">
+          <CardHeader className="p-3 pb-2">
+            <CardTitle className="text-sm font-bold text-card-foreground flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Music className="h-4 w-4 text-primary" />
                 Streaming Links
               </div>
               {!isEditingLinks && (profile?.spotify_url || profile?.apple_music_url) && (
@@ -179,26 +158,26 @@ export const Profile = () => {
                   variant="ghost"
                   size="sm"
                   onClick={handleEditLinks}
-                  className="text-primary hover:text-primary/80"
+                  className="h-7 w-7 p-0 text-primary hover:text-primary/80"
                 >
-                  <Edit2 className="h-4 w-4" />
+                  <Edit2 className="h-3.5 w-3.5" />
                 </Button>
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="p-3 pt-0">
             {!isEditingLinks && !profile?.spotify_url && !profile?.apple_music_url ? (
               <div className="text-center py-4">
-                <p className="text-muted-foreground mb-4">Connect your streaming profiles</p>
-                <Button onClick={handleEditLinks} variant="outline">
+                <p className="text-xs text-muted-foreground mb-3">Connect your profiles to help us track your stats</p>
+                <Button onClick={handleEditLinks} variant="outline" size="sm" className="h-8 text-xs">
                   Add Streaming Links
                 </Button>
               </div>
             ) : isEditingLinks ? (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="spotify" className="text-sm font-medium text-card-foreground">
-                    Spotify Profile Link
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <Label htmlFor="spotify" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                    Spotify Profile
                   </Label>
                   <Input
                     id="spotify"
@@ -206,16 +185,16 @@ export const Profile = () => {
                     placeholder="https://open.spotify.com/artist/..."
                     value={spotifyUrl}
                     onChange={(e) => setSpotifyUrl(e.target.value)}
-                    className="bg-background border-border rounded-[12px]"
+                    className="h-8 text-xs bg-background border-border rounded-lg"
                   />
                   {errors.spotify && (
-                    <p className="text-sm text-destructive">{errors.spotify}</p>
+                    <p className="text-[10px] text-destructive ml-1">{errors.spotify}</p>
                   )}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="appleMusic" className="text-sm font-medium text-card-foreground">
-                    Apple Music Profile Link
+                <div className="space-y-1.5">
+                  <Label htmlFor="appleMusic" className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">
+                    Apple Music Profile
                   </Label>
                   <Input
                     id="appleMusic"
@@ -223,53 +202,54 @@ export const Profile = () => {
                     placeholder="https://music.apple.com/..."
                     value={appleMusicUrl}
                     onChange={(e) => setAppleMusicUrl(e.target.value)}
-                    className="bg-background border-border rounded-[12px]"
+                    className="h-8 text-xs bg-background border-border rounded-lg"
                   />
                   {errors.appleMusic && (
-                    <p className="text-sm text-destructive">{errors.appleMusic}</p>
+                    <p className="text-[10px] text-destructive ml-1">{errors.appleMusic}</p>
                   )}
                 </div>
 
-                <div className="flex gap-2 pt-2">
-                  <Button onClick={handleSaveLinks} className="flex-1">
-                    <Check className="h-4 w-4 mr-2" />
-                    Save Links
+                <div className="flex gap-2 pt-1">
+                  <Button onClick={handleSaveLinks} size="sm" className="flex-1 h-8 text-xs">
+                    <Check className="h-3.5 w-3.5 mr-1.5" />
+                    Save Changes
                   </Button>
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
+                    size="sm"
                     onClick={() => {
                       setIsEditingLinks(false);
                       setErrors({ spotify: '', appleMusic: '' });
                     }}
-                    className="flex-1"
+                    className="flex-1 h-8 text-xs"
                   >
                     Cancel
                   </Button>
                 </div>
-              </>
+              </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {profile?.spotify_url && (
-                  <div className="p-3 bg-secondary/20 rounded-[12px] border border-border">
-                    <p className="text-xs text-muted-foreground mb-1">Spotify</p>
-                    <a 
-                      href={profile.spotify_url} 
-                      target="_blank" 
+                  <div className="p-2.5 bg-secondary/10 rounded-lg border border-border/50">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Spotify</p>
+                    <a
+                      href={profile.spotify_url}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline break-all"
+                      className="text-xs text-primary hover:underline break-all font-medium"
                     >
                       {profile.spotify_url}
                     </a>
                   </div>
                 )}
                 {profile?.apple_music_url && (
-                  <div className="p-3 bg-secondary/20 rounded-[12px] border border-border">
-                    <p className="text-xs text-muted-foreground mb-1">Apple Music</p>
-                    <a 
-                      href={profile.apple_music_url} 
-                      target="_blank" 
+                  <div className="p-2.5 bg-secondary/10 rounded-lg border border-border/50">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-0.5">Apple Music</p>
+                    <a
+                      href={profile.apple_music_url}
+                      target="_blank"
                       rel="noopener noreferrer"
-                      className="text-sm text-primary hover:underline break-all"
+                      className="text-xs text-primary hover:underline break-all font-medium"
                     >
                       {profile.apple_music_url}
                     </a>

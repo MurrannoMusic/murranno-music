@@ -13,7 +13,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { validateImageFile } from '@/utils/fileValidation';
 import { toast } from '@/hooks/use-toast';
 import { useShare } from '@/hooks/useShare';
-import { TwoTierHeader } from '@/components/layout/TwoTierHeader';
 
 export const ArtistProfile = () => {
   const navigate = useNavigate();
@@ -120,19 +119,13 @@ export const ArtistProfile = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
-      <TwoTierHeader 
-        title="ARTIST PROFILE"
-        backTo="/app/dashboard"
-        actionIcon={<Settings className="w-4 h-4" />}
-        onAction={() => navigate('/app/settings')}
-      />
-      
-      <div className="mobile-container pt-[120px] pb-6 space-y-4">{/* Adjusted padding for two-tier header */}
+
+      <div className="mobile-container pt-16 pb-6 space-y-3">
 
         {/* Profile Header */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardContent className="p-6">
-            <div className="flex flex-col items-center text-center space-y-4">
+        <Card className="bg-card border border-border rounded-xl shadow-soft">
+          <CardContent className="p-4">
+            <div className="flex flex-col items-center text-center space-y-3">
               <ProfileImageUpload
                 imageUrl={formData.profile_image}
                 onImageSelect={handleImageSelect}
@@ -157,17 +150,17 @@ export const ArtistProfile = () => {
                 </div>
               ) : (
                 <>
-                  <h2 className="text-2xl font-bold text-foreground">{profile?.stage_name}</h2>
+                  <h2 className="text-xl font-bold text-foreground">{profile?.stage_name}</h2>
                   {profile?.bio && (
                     <p className="text-sm text-muted-foreground max-w-md">{profile.bio}</p>
                   )}
-                  <div className="flex gap-6 text-sm text-muted-foreground">
+                  <div className="flex gap-4 text-xs text-muted-foreground">
                     <div>
-                      <div className="text-lg font-semibold text-foreground">0</div>
+                      <div className="text-base font-semibold text-foreground">0</div>
                       <div>Releases</div>
                     </div>
                     <div>
-                      <div className="text-lg font-semibold text-foreground">
+                      <div className="text-base font-semibold text-foreground">
                         {profile?.created_at && new Date(profile.created_at).getFullYear()}
                       </div>
                       <div>Member Since</div>
@@ -198,8 +191,8 @@ export const ArtistProfile = () => {
                 <Edit className="w-4 h-4 mr-2" />
                 Edit Profile
               </Button>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 onClick={() => profile && shareArtist(profile.stage_name, window.location.href)}
                 className="flex-1"
               >
@@ -211,11 +204,11 @@ export const ArtistProfile = () => {
         </div>
 
         {/* Streaming Platforms */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="text-lg text-card-foreground">Major Streaming Services</CardTitle>
+        <Card className="bg-card border border-border rounded-xl shadow-soft">
+          <CardHeader className="p-4 pb-2">
+            <CardTitle className="text-base text-card-foreground">Major Streaming Services</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="p-4 pt-0 space-y-2">
             <StreamingPlatformCard
               name="Spotify for Artists"
               icon={<Music className="w-5 h-5" />}
@@ -244,11 +237,11 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Additional Platforms */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="text-lg text-card-foreground">Additional Streaming Platforms</CardTitle>
+        <Card className="bg-card border border-border rounded-xl shadow-soft">
+          <CardHeader className="p-4 pb-2">
+            <CardTitle className="text-base text-card-foreground">Additional Streaming Platforms</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="p-4 pt-0 space-y-2">
             <StreamingPlatformCard
               name="Audiomack"
               icon={<Music className="w-5 h-5" />}
@@ -285,11 +278,11 @@ export const ArtistProfile = () => {
         </Card>
 
         {/* Social Media */}
-        <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-          <CardHeader>
-            <CardTitle className="text-lg text-card-foreground">Social Media</CardTitle>
+        <Card className="bg-card border border-border rounded-xl shadow-soft">
+          <CardHeader className="p-4 pb-2">
+            <CardTitle className="text-base text-card-foreground">Social Media</CardTitle>
           </CardHeader>
-          <CardContent className="space-y-3">
+          <CardContent className="p-4 pt-0 space-y-2">
             <SocialLinkCard
               name="Instagram"
               icon={<Music className="w-5 h-5" />}

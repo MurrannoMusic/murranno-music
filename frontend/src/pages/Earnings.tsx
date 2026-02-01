@@ -18,7 +18,7 @@ import { useWalletBalance } from '@/hooks/useWalletBalance';
 export const Earnings = () => {
   const [activeTab, setActiveTab] = useState('balance');
   const [showWithdrawSheet, setShowWithdrawSheet] = useState(false);
-  
+
   const {
     transactions,
     statusFilter,
@@ -36,25 +36,7 @@ export const Earnings = () => {
 
   return (
     <div className="smooth-scroll">
-      {/* Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          <Link to="/" className="flex items-center">
-            <img src={mmLogo} alt="Murranno Music" className="h-8" />
-          </Link>
-          
-          <div className="flex-1 text-center">
-            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
-              <Wallet className="h-3 w-3 mr-1 inline" />
-              WALLET
-            </Badge>
-          </div>
-          
-          <AvatarDropdown />
-        </div>
-      </div>
-
-      <div className="mobile-container space-y-4 mt-4">
+      {/* Top Bar removed - using UnifiedTopBar */}      <div className="mobile-container space-y-4 mt-2">
         {/* Tab Navigation */}
         <WalletTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -67,7 +49,7 @@ export const Earnings = () => {
               balance.available_balance === 0 && balance.total_earnings === 0 ? (
                 <BalanceEmptyState />
               ) : (
-                <BalanceTab 
+                <BalanceTab
                   balance={balance}
                   earningsSources={earningsSources}
                   onWithdraw={handleWithdraw}
@@ -84,7 +66,7 @@ export const Earnings = () => {
         )}
 
         {activeTab === 'history' && (
-          <HistoryTab 
+          <HistoryTab
             transactions={transactions}
             statusFilter={statusFilter}
             typeFilter={typeFilter}
@@ -96,7 +78,7 @@ export const Earnings = () => {
 
       {/* Withdraw Sheet */}
       {balance && (
-        <WithdrawSheet 
+        <WithdrawSheet
           open={showWithdrawSheet}
           onClose={() => setShowWithdrawSheet(false)}
           availableBalance={balance.available_balance}

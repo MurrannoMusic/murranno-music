@@ -11,7 +11,7 @@ export const BottomNavigation = () => {
   const getNavItems = () => {
     if (currentViewingTier === 'artist') {
       return [
-        { icon: Home, label: 'Home', path: '/app/artist-dashboard' },
+        { icon: Home, label: 'Home', path: '/app/dashboard' },
         { icon: BarChart3, label: 'Analytics', path: '/app/analytics' },
         { icon: Music, label: 'Music', path: '/app/releases' },
         { icon: DollarSign, label: 'Earnings', path: '/app/earnings' },
@@ -39,14 +39,14 @@ export const BottomNavigation = () => {
     }
 
     // Default fallback
-    return [{ icon: Home, label: 'Home', path: '/app/artist-dashboard' }];
+    return [{ icon: Home, label: 'Home', path: '/app/dashboard' }];
   };
 
   const navItems = getNavItems();
 
   return (
-    <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 shadow-soft">
-      <div className="flex items-center justify-around py-3 px-4 max-w-sm mx-auto">
+    <nav className="glass-nav fixed bottom-0 left-0 right-0 z-40 shadow-soft pb-[env(safe-area-inset-bottom)]">
+      <div className="flex items-center justify-evenly py-3 px-4 w-full mx-auto">
         {navItems.map(({ icon: Icon, label, path }) => {
           const isActive = location.pathname === path;
           return (
@@ -54,9 +54,9 @@ export const BottomNavigation = () => {
               key={path}
               to={path}
               className={cn(
-                "nav-item flex flex-col items-center gap-1 p-2 rounded-xl",
-                isActive 
-                  ? "text-primary" 
+                "nav-item flex flex-col items-center gap-1 p-2 rounded-xl flex-1",
+                isActive
+                  ? "text-primary"
                   : "text-muted-foreground hover:text-foreground"
               )}
             >

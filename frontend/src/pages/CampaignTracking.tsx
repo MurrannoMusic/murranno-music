@@ -95,7 +95,7 @@ export default function CampaignTracking() {
         },
         (payload) => {
           console.log('Campaign update:', payload);
-          
+
           if (payload.eventType === 'INSERT') {
             fetchCampaigns();
           } else if (payload.eventType === 'UPDATE') {
@@ -151,7 +151,7 @@ export default function CampaignTracking() {
 
   return (
     <div className="smooth-scroll">
-      <PageHeader title="My Campaigns" />
+      {/* PageHeader removed - using UnifiedTopBar */}
 
       <div className="space-y-6">
         <div className="flex justify-between items-center">

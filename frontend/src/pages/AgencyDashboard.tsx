@@ -19,7 +19,7 @@ export const AgencyDashboard = () => {
 
   useEffect(() => {
     if (!loading && !currentUser) {
-      navigate('/app/user-type-selection', { replace: true });
+      // navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, loading, navigate]);
 
@@ -35,25 +35,7 @@ export const AgencyDashboard = () => {
 
   return (
     <div className="smooth-scroll">
-      {/* Modern Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Logo (Left) */}
-          <Link to="/" className="flex items-center">
-            <img src={mmLogo} alt="Murranno Music" className="h-8" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-accent/15 text-accent border-accent/30 px-4 py-1">
-              AGENCY
-            </Badge>
-          </div>
-          
-          {/* Avatar Dropdown (Right) */}
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         {/* Crypto-style Stats Cards */}
@@ -72,7 +54,7 @@ export const AgencyDashboard = () => {
               <div className="text-xs text-muted-foreground font-medium">Active Campaigns</div>
             </div>
           </div>
-          
+
           <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
@@ -117,7 +99,7 @@ export const AgencyDashboard = () => {
                     <div className="flex items-center justify-between mb-1">
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-semibold text-card-foreground">{campaign.artist}</h3>
-                        <Badge 
+                        <Badge
                           variant={campaign.status === 'Active' ? 'default' : 'secondary'}
                           className="text-xs"
                         >
@@ -150,27 +132,27 @@ export const AgencyDashboard = () => {
                   Create Campaign
                 </button>
               </Link>
-              
+
               <Link to="/app/campaign-manager">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Manage Campaigns
                 </button>
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-2">
               <Link to="/app/client-management">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Manage Clients
                 </button>
               </Link>
-              
+
               <Link to="/app/agency-analytics">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   View Analytics
                 </button>
               </Link>
-              
+
               <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                 Client Analytics
               </button>

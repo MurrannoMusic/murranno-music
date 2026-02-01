@@ -31,8 +31,15 @@ export const useArtistProfile = () => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
+
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.functions.invoke('get-artist-profile');
-      
+
       if (error) throw error;
       if (data?.artist) {
         setProfile(data.artist);

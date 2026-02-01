@@ -128,10 +128,32 @@ export const AddPayoutMethodSheet = ({ open, onClose, onSuccess }: AddPayoutMeth
       if (error) throw error;
 
       if (data.success) {
+        // Set security lock for 24 hours after bank details change
+        const lockUntil = new Date();
+        lockUntil.setHours(lockUntil.getHours() + 24);
+
+        await supabase.from('profiles').update({
+          payout_lock_until: lockUntil.toISOString()
+        }).eq('id', (await supabase.auth.getUser()).data.user?.id);
+
         toast({
           title: 'Success',
-          description: 'Bank account added successfully',
+          description: 'Bank account added successfully. A 24-hour security lock is now active.',
         });
+
+        // Log Security Activity
+        try {
+          await supabase.from('security_logs').insert({
+            user_id: (await supabase.auth.getUser()).data.user?.id,
+            event: 'bank_account_added',
+            details: { bank_name: selectedBankName, account_number: accountNumber },
+            ip_address: 'browser', // IP will be captured by Supabase Auth if using RLS/Functions, but for simple logging:
+            user_agent: navigator.userAgent
+          });
+        } catch (logError) {
+          console.error('Failed to log security activity:', logError);
+        }
+
         onSuccess();
         handleClose();
       } else {
@@ -182,7 +204,7 @@ export const AddPayoutMethodSheet = ({ open, onClose, onSuccess }: AddPayoutMeth
               </SelectTrigger>
               <SelectContent>
                 {banks.map((bank) => (
-                  <SelectItem key={bank.code} value={bank.code}>
+                  <SelectItem key={bank.id} value={bank.code}>
                     {bank.name}
                   </SelectItem>
                 ))}

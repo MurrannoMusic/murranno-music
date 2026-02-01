@@ -26,11 +26,26 @@ const formatDuration = (seconds: number) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-const formatNumber = (num: number): string => {
+const formatNumber = (num: number | undefined | null): string => {
+  if (!num) return "0";
   if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
   if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
   return num.toString();
 };
+
+interface MetadataRowProps {
+  label: string;
+  value: string | number | null | undefined;
+}
+
+const MetadataRow = ({ label, value }: MetadataRowProps) => (
+  <div className="flex justify-between items-center py-2 border-b border-border/50 last:border-0">
+    <span className="text-muted-foreground">{label}</span>
+    <span className="text-foreground font-medium text-right truncate pl-4">
+      {value || '-'}
+    </span>
+  </div>
+);
 
 const ReleaseDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -97,17 +112,17 @@ const ReleaseDetail = () => {
 
   return (
     <div className="min-h-screen bg-gradient-dark mobile-safe-bottom">
-      <TwoTierHeader 
-        title="RELEASE DETAILS" 
+      <TwoTierHeader
+        title="RELEASE DETAILS"
         backTo="/app/releases"
         actionIcon={<Share2 className="w-4 h-4" />}
         onAction={handleShareSmartlink}
       />
 
-      <div className="pt-[120px] pb-20">
+      <div className="pt-[100px] pb-16">
         {/* Hero Section with Blurred Background */}
-        <div 
-          className="relative min-h-[400px] flex items-center justify-center px-4 py-12"
+        <div
+          className="relative min-h-[320px] flex items-center justify-center px-4 py-8"
           style={{
             backgroundImage: coverArtPublicId || !release.cover_art_url ? 'none' : `url(${release.cover_art_url})`,
             backgroundSize: 'cover',
@@ -118,8 +133,8 @@ const ReleaseDetail = () => {
           <div className="absolute inset-0 backdrop-blur-3xl bg-black/60" />
           {coverArtPublicId && (
             <div className="absolute inset-0 opacity-50">
-              <CloudinaryImage 
-                publicId={coverArtPublicId} 
+              <CloudinaryImage
+                publicId={coverArtPublicId}
                 alt={release.title}
                 width={1920}
                 height={1080}
@@ -127,74 +142,74 @@ const ReleaseDetail = () => {
               />
             </div>
           )}
-          
+
           {/* Content */}
           <div className="relative z-10 text-center max-w-md">
             {/* Album Art */}
-            <div className="relative inline-block mb-6">
+            <div className="relative inline-block mb-4">
               {coverArtPublicId ? (
-                <CloudinaryImage 
-                  publicId={coverArtPublicId} 
+                <CloudinaryImage
+                  publicId={coverArtPublicId}
                   alt={release.title}
-                  width={192}
-                  height={192}
-                  className="w-48 h-48 rounded-[20px] shadow-2xl"
+                  width={160}
+                  height={160}
+                  className="w-40 h-40 rounded-xl shadow-2xl"
                 />
               ) : release.cover_art_url ? (
                 <img
                   src={release.cover_art_url}
                   alt={release.title}
-                  className="w-48 h-48 rounded-[20px] shadow-2xl"
+                  className="w-40 h-40 rounded-xl shadow-2xl"
                 />
               ) : (
-                <div className="w-48 h-48 rounded-[20px] shadow-2xl bg-primary/20 flex items-center justify-center">
-                  <Music className="h-16 w-16 text-primary" />
+                <div className="w-40 h-40 rounded-xl shadow-2xl bg-primary/20 flex items-center justify-center">
+                  <Music className="h-12 w-16 text-primary" />
                 </div>
               )}
-              <Badge 
-                className={`absolute top-2 right-2 ${statusColors[release.status]} border-0`}
+              <Badge
+                className={`absolute top-1.5 right-1.5 text-[9px] px-1.5 py-0 ${statusColors[release.status]} border-0`}
               >
                 {release.status}
               </Badge>
             </div>
 
             {/* Release Info */}
-            <h1 className="text-3xl font-bold text-white mb-2">{release.title}</h1>
-            <p className="text-white/90 text-lg mb-1">
-              {release.release_type} by: {release.artist_name}
+            <h1 className="text-2xl font-bold text-white mb-1">{release.title}</h1>
+            <p className="text-white/90 text-sm mb-1 uppercase tracking-widest font-semibold">
+              {release.artist_name}
             </p>
-            <p className="text-white/80">
-              Release Date: {new Date(release.release_date).toLocaleDateString()}
+            <p className="text-white/70 text-[10px] uppercase font-bold tracking-tighter">
+              {release.release_type} • Released {new Date(release.release_date).toLocaleDateString()}
             </p>
           </div>
         </div>
 
-        <div className="mobile-container space-y-6 mt-6">
+        <div className="mobile-container space-y-3 mt-4">
           {/* Stats Cards */}
-          <div className="grid grid-cols-2 gap-3">
-            <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Play className="h-5 w-5 text-primary" />
+          <div className="grid grid-cols-2 gap-2.5">
+            <Card className="bg-card border border-border rounded-xl shadow-soft">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
+                    <Play className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-card-foreground">{formatNumber(release.total_streams)}</p>
-                    <p className="text-xs text-muted-foreground">Total Streams</p>
+                    <p className="text-lg font-bold text-card-foreground leading-tight">{formatNumber(release.total_streams || 0)}</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Streams</p>
                   </div>
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-              <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-success/20 rounded-full flex items-center justify-center">
-                    <DollarSign className="h-5 w-5 text-success" />
+            <Card className="bg-card border border-border rounded-xl shadow-soft">
+              <CardContent className="p-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 bg-success/20 rounded-full flex items-center justify-center">
+                    <DollarSign className="h-4 w-4 text-success" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-card-foreground">₦{release.total_earnings.toFixed(2)}</p>
-                    <p className="text-xs text-muted-foreground">Total Earnings</p>
+                    <p className="text-lg font-bold text-card-foreground leading-tight">₦{(release.total_earnings || 0).toFixed(0)}</p>
+                    <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Earnings</p>
                   </div>
                 </div>
               </CardContent>
@@ -203,24 +218,24 @@ const ReleaseDetail = () => {
 
           {/* Tracks List */}
           {release.tracks.length > 0 && (
-            <Card className="bg-card border border-border rounded-[20px] shadow-soft">
-              <CardHeader>
-                <CardTitle className="text-lg font-bold text-card-foreground flex items-center gap-3">
-                  <Music className="h-5 w-5 text-primary" />
+            <Card className="bg-card border border-border rounded-xl shadow-soft">
+              <CardHeader className="p-3 pb-2">
+                <CardTitle className="text-sm font-bold text-card-foreground flex items-center gap-2">
+                  <Music className="h-4 w-4 text-primary" />
                   Tracks ({release.tracks.length})
                 </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-2">
+              <CardContent className="space-y-1.5 p-3 pt-0">
                 {release.tracks.map((track) => (
-                  <div key={track.id} className="flex items-center justify-between p-3 bg-secondary/20 rounded-[12px] border border-border">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <span className="text-sm font-bold text-muted-foreground w-6">{track.track_number}</span>
+                  <div key={track.id} className="flex items-center justify-between p-2.5 bg-secondary/10 rounded-lg border border-border/50">
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                      <span className="text-xs font-bold text-muted-foreground w-4">{track.track_number}</span>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-card-foreground truncate">{track.title}</p>
-                        <p className="text-xs text-muted-foreground">{formatNumber(track.streams)} streams</p>
+                        <p className="text-xs font-semibold text-card-foreground truncate">{track.title}</p>
+                        <p className="text-[10px] text-muted-foreground font-medium">{formatNumber(track.streams || 0)} streams</p>
                       </div>
                     </div>
-                    <span className="text-sm text-muted-foreground">{formatDuration(track.duration)}</span>
+                    <span className="text-[10px] font-bold text-muted-foreground">{formatDuration(track.duration)}</span>
                   </div>
                 ))}
               </CardContent>
@@ -228,48 +243,25 @@ const ReleaseDetail = () => {
           )}
 
           {/* Metadata Section */}
-          <div className="bg-card border border-border rounded-[20px] shadow-soft p-6">
-            <h2 className="text-sm font-bold text-muted-foreground mb-4 tracking-wider">
+          <div className="bg-card border border-border rounded-xl shadow-soft p-4">
+            <h2 className="text-[10px] font-bold text-muted-foreground mb-3 tracking-widest uppercase">
               METADATA
             </h2>
-            <div className="space-y-3">
-              {release.genre && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Genre:</span>
-                  <span className="text-foreground font-medium">{release.genre}</span>
-                </div>
-              )}
-              {release.language && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Language:</span>
-                  <span className="text-foreground font-medium">{release.language}</span>
-                </div>
-              )}
-              {release.label && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Label:</span>
-                  <span className="text-foreground font-medium">{release.label}</span>
-                </div>
-              )}
-              {release.copyright && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">Copyright:</span>
-                  <span className="text-foreground font-medium text-sm">{release.copyright}</span>
-                </div>
-              )}
-              {release.upc_ean && (
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground">UPC/EAN:</span>
-                  <span className="text-foreground font-medium">{release.upc_ean}</span>
-                </div>
-              )}
+            <div className="space-y-0.5">
+              <MetadataRow label="Genre" value={release.genre} />
+              <MetadataRow label="Language" value={release.language} />
+              <MetadataRow label="Label" value={release.label} />
+              <MetadataRow label="Recording Year" value={release.recording_year} />
+              <MetadataRow label="Copyright" value={release.copyright} />
+              <MetadataRow label="UPC/EAN" value={release.upc_ean} />
+              <MetadataRow label="ISRC" value={release.isrc} />
             </div>
           </div>
 
           {/* Smartlink Section */}
           {release.smartlink && (
-            <div className="bg-card border border-border rounded-[20px] shadow-soft p-6">
-              <h2 className="text-sm font-bold text-muted-foreground mb-4 tracking-wider">
+            <div className="bg-card border border-border rounded-xl shadow-soft p-4">
+              <h2 className="text-[10px] font-bold text-muted-foreground mb-3 tracking-widest uppercase">
                 SMARTLINK
               </h2>
               <div className="flex items-center gap-2">
@@ -277,39 +269,39 @@ const ReleaseDetail = () => {
                   href={release.smartlink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-primary hover:underline break-all flex-1"
+                  className="flex items-center gap-2 text-xs text-primary hover:underline break-all flex-1 font-medium"
                 >
                   {release.smartlink}
-                  <ExternalLink className="h-4 w-4 flex-shrink-0" />
+                  <ExternalLink className="h-3.5 w-3.5 flex-shrink-0" />
                 </a>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => copySmartlink(release.smartlink!)}
-                  className="h-8 w-8 p-0 flex-shrink-0"
+                  className="h-7 w-7 p-0 flex-shrink-0"
                 >
-                  <Copy className="h-4 w-4" />
+                  <Copy className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </div>
           )}
 
           {/* Action Buttons */}
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-2 pt-2">
             <Button
               onClick={handleFilterInAnalytics}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-[16px] h-12 text-base font-semibold"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-xl h-10 text-xs font-bold"
             >
-              <SlidersHorizontal className="mr-2 h-5 w-5" />
-              Filter in analytics
+              <SlidersHorizontal className="mr-1.5 h-4 w-4" />
+              Analytics
             </Button>
             <Button
               onClick={handleShareSmartlink}
               variant="outline"
-              className="w-full rounded-[16px] h-12 text-base font-semibold"
+              className="w-full rounded-xl h-10 text-xs font-bold border-border/50"
             >
-              <Share2 className="mr-2 h-5 w-5" />
-              Share Smartlink
+              <Share2 className="mr-1.5 h-4 w-4" />
+              Share link
             </Button>
           </div>
         </div>

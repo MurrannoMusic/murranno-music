@@ -24,7 +24,7 @@ export const LabelDashboard = () => {
 
   useEffect(() => {
     if (!loading && !currentUser) {
-      navigate('/app/user-type-selection', { replace: true });
+      // navigate('/app/user-type-selection', { replace: true });
     }
   }, [currentUser, loading, navigate]);
 
@@ -40,40 +40,22 @@ export const LabelDashboard = () => {
 
   const stats = getStatsAsItems();
 
-  const headerTitle = selectedArtist 
+  const headerTitle = selectedArtist
     ? `Managing: ${(currentUser as any).artists.find((a: any) => a.id === selectedArtist)?.stageName}`
     : `${(currentUser as any).companyName}`;
 
-  const headerSubtitle = selectedArtist 
-    ? "Artist management dashboard" 
+  const headerSubtitle = selectedArtist
+    ? "Artist management dashboard"
     : "Label dashboard - manage all artists";
 
   return (
     <div className="smooth-scroll">
-      {/* Modern Top Bar */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between">
-          {/* Logo (Left) */}
-          <Link to="/" className="flex items-center">
-            <img src={mmLogo} alt="Murranno Music" className="h-8" />
-          </Link>
-          
-          {/* User Type (Center) */}
-          <div className="flex-1 text-center">
-            <Badge className="bg-secondary/15 text-secondary-foreground border-secondary/30 px-4 py-1">
-              LABEL
-            </Badge>
-          </div>
-          
-          {/* Avatar Dropdown (Right) */}
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
       <div className="mobile-container space-y-4 -mt-2">
         {/* Artist Selector */}
         <ArtistSelector />
-        
+
         {/* Crypto-style Stats Cards */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
@@ -92,7 +74,7 @@ export const LabelDashboard = () => {
               <div className="text-xs text-muted-foreground font-medium">Total Earnings</div>
             </div>
           </div>
-          
+
           <div className="bg-card border border-border rounded-[20px] p-4 shadow-soft">
             <div className="flex items-center justify-between mb-4">
               <div className="w-8 h-8 bg-primary/20 rounded-full flex items-center justify-center">
@@ -141,11 +123,10 @@ export const LabelDashboard = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <p className="text-sm font-semibold text-card-foreground truncate">{activity.title}</p>
-                      <span className={`text-sm font-bold ${
-                        activity.type === 'success' ? 'text-success' : 
-                        activity.type === 'primary' ? 'text-primary' : 
-                        'text-card-foreground'
-                      }`}>
+                      <span className={`text-sm font-bold ${activity.type === 'success' ? 'text-success' :
+                        activity.type === 'primary' ? 'text-primary' :
+                          'text-card-foreground'
+                        }`}>
                         {activity.value}
                       </span>
                     </div>
@@ -169,21 +150,21 @@ export const LabelDashboard = () => {
                   Upload Track
                 </button>
               </Link>
-              
+
               <Link to="/app/promotions">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Start Campaign
                 </button>
               </Link>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-2">
               <Link to="/app/label-analytics">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   View Analytics
                 </button>
               </Link>
-              
+
               <Link to="/app/payout-manager">
                 <button className="w-full bg-secondary hover:bg-secondary/80 text-secondary-foreground font-semibold py-4 px-6 rounded-[16px] transition-all duration-200 border border-border hover:border-border/50">
                   Manage Payouts

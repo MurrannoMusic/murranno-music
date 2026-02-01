@@ -18,7 +18,7 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
     if (loading) return; // wait for auth initialization
 
     if (!user) {
-      navigate('/get-started');
+      navigate('/signup');
       return;
     }
 

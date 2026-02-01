@@ -10,6 +10,13 @@ interface Profile {
   id: string;
   email: string;
   full_name: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  phone_number: string | null;
+  kyc_tier: number;
+  kyc_status: 'unverified' | 'pending' | 'verified' | 'rejected';
+  nin_number: string | null;
+  id_document_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -45,7 +52,8 @@ interface AuthContextType {
   subscriptions: Subscription[];
   accessibleTiers: string[];
   loading: boolean;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
+  verifyEmailOtp: (email: string, token: string) => Promise<{ error: any }>;
+  signUp: (email: string, password: string, firstName: string, lastName: string, phone: string) => Promise<{ error: any }>;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   resetPasswordForEmail: (email: string) => Promise<{ error: any }>;
@@ -56,6 +64,7 @@ interface AuthContextType {
   hasAgencyAccess: boolean;
   hasActiveSubscription: boolean;
   refreshUserData: () => Promise<void>;
+  resendEmailOtp: (email: string) => Promise<{ error: any }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -88,7 +97,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .single();
 
       if (profileError) throw profileError;
-      setProfile(profileData);
+      setProfile(profileData as Profile);
 
       // Fetch user role
       const { data: roleData, error: roleError } = await supabase
@@ -124,7 +133,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         console.log('Auth state changed:', event, session?.user?.id);
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
           // Defer data fetching to avoid blocking auth state change
           setTimeout(() => {
@@ -144,7 +153,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
-      
+
       if (session?.user) {
         setTimeout(() => {
           fetchUserData(session.user.id);
@@ -156,8 +165,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return () => authSubscription.unsubscribe();
   }, []);
 
-  const signUp = async (email: string, password: string, fullName: string) => {
+  const signUp = async (email: string, password: string, firstName: string, lastName: string, phone: string) => {
     try {
+      const fullName = `${firstName} ${lastName}`.trim();
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -165,6 +175,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           emailRedirectTo: `${window.location.origin}/`,
           data: {
             full_name: fullName,
+            first_name: firstName,
+            last_name: lastName,
+            phone_number: phone,
           },
         },
       });
@@ -195,6 +208,34 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             }
           }, 1000); // Wait 1 second to ensure user profile is created
         }
+      }
+
+      return { error };
+    } catch (error: any) {
+      return { error };
+    }
+  };
+
+
+  const verifyEmailOtp = async (email: string, token: string) => {
+    try {
+      const { data, error } = await supabase.auth.verifyOtp({
+        email,
+        token,
+        type: 'signup',
+      });
+
+      if (error) {
+        toast({
+          title: 'Verification failed',
+          description: error.message,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Email verified!',
+          description: 'Your account has been successfully verified.',
+        });
       }
 
       return { error };
@@ -269,7 +310,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithGoogle = async () => {
     try {
       // Use HTTPS callback URL for both web and native
-      const redirectUrl = isNativeApp() 
+      const redirectUrl = isNativeApp()
         ? `${window.location.origin}/auth/callback?platform=native`
         : `${window.location.origin}/auth/callback`;
 
@@ -295,7 +336,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data?.url) {
           // Open OAuth URL in in-app browser
           const { Browser } = await import('@capacitor/browser');
-          await Browser.open({ 
+          await Browser.open({
             url: data.url,
             toolbarColor: '#1DB954',
           });
@@ -330,7 +371,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const signInWithApple = async () => {
     try {
       // Use HTTPS callback URL for both web and native
-      const redirectUrl = isNativeApp() 
+      const redirectUrl = isNativeApp()
         ? `${window.location.origin}/auth/callback?platform=native`
         : `${window.location.origin}/auth/callback`;
 
@@ -356,7 +397,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         if (data?.url) {
           // Open OAuth URL in in-app browser
           const { Browser } = await import('@capacitor/browser');
-          await Browser.open({ 
+          await Browser.open({
             url: data.url,
             toolbarColor: '#000000',
           });
@@ -392,7 +433,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const isArtist = true; // Always true for authenticated users
   const hasLabelAccess = accessibleTiers.includes('label');
   const hasAgencyAccess = accessibleTiers.includes('agency');
-  
+
   const hasActiveSubscription = subscriptions.some(sub => sub.isActive);
 
   const value: AuthContextType = {
@@ -403,6 +444,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     subscriptions,
     accessibleTiers,
     loading,
+    verifyEmailOtp,
     signUp,
     signIn,
     signOut,
@@ -414,6 +456,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     hasAgencyAccess,
     hasActiveSubscription,
     refreshUserData,
+    resendEmailOtp,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

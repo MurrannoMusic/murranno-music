@@ -52,42 +52,42 @@ export const FAQ = () => {
 
   return (
     <PageContainer>
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-3xl mx-auto py-4 px-4">
         <Button
           variant="ghost"
           onClick={() => navigate(-1)}
-          className="mb-6"
+          className="mb-4 h-8 px-2"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" />
+          <ArrowLeft className="mr-2 h-3.5 w-3.5" />
           Back
         </Button>
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-muted-foreground">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold mb-2">Frequently Asked Questions</h1>
+          <p className="text-sm text-muted-foreground">
             Find answers to common questions about using Murranno Music
           </p>
         </div>
 
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="single" collapsible className="space-y-2">
           {faqs.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`} className="border rounded-lg px-6">
-              <AccordionTrigger className="text-left hover:no-underline">
-                <span className="font-semibold">{faq.question}</span>
+            <AccordionItem key={index} value={`item-${index}`} className="border rounded-lg px-4">
+              <AccordionTrigger className="text-left hover:no-underline py-3">
+                <span className="font-semibold text-sm">{faq.question}</span>
               </AccordionTrigger>
-              <AccordionContent className="text-muted-foreground">
+              <AccordionContent className="text-xs text-muted-foreground pb-3">
                 {faq.answer}
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
 
-        <div className="mt-12 p-6 bg-muted rounded-lg">
-          <h3 className="font-semibold mb-2">Still have questions?</h3>
-          <p className="text-muted-foreground mb-4">
+        <div className="mt-8 p-4 bg-muted/50 rounded-lg">
+          <h3 className="font-semibold text-sm mb-1">Still have questions?</h3>
+          <p className="text-xs text-muted-foreground mb-3">
             Can't find what you're looking for? Our support team is here to help.
           </p>
-          <Button onClick={() => navigate('/support')}>
+          <Button size="sm" onClick={() => navigate('/support')}>
             Contact Support
           </Button>
         </div>

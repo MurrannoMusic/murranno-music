@@ -1,94 +1,100 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle2, XCircle, Loader2, Mail } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { Loader2, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import musicianBg from '@/assets/musician-background.jpg';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export const VerifyEmail = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [status, setStatus] = useState<'verifying' | 'success' | 'error' | 'pending'>('pending');
-  const [email, setEmail] = useState<string>('');
+  const { verifyEmailOtp, resendEmailOtp } = useAuth();
 
-  const token = searchParams.get('token');
-  const type = searchParams.get('type');
+  const [email, setEmail] = useState<string>('');
+  const [otp, setOtp] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    const verifyEmail = async () => {
-      if (token && type) {
-        setStatus('verifying');
-        try {
-          const { error } = await supabase.auth.verifyOtp({
-            token_hash: token,
-            type: type as any,
-          });
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [countdown]);
 
-          if (error) {
-            console.error('Verification error:', error);
-            setStatus('error');
-            toast({
-              title: 'Verification failed',
-              description: error.message,
-              variant: 'destructive',
-            });
-          } else {
-            setStatus('success');
-            toast({
-              title: 'Email verified!',
-              description: 'Your account has been successfully verified.',
-            });
-            setTimeout(() => navigate('/login'), 2000);
-          }
-        } catch (err) {
-          console.error('Verification error:', err);
-          setStatus('error');
-        }
-      }
-    };
+  const handleResend = async () => {
+    if (countdown > 0) return;
 
-    verifyEmail();
-  }, [token, type, navigate, toast]);
+    setIsResending(true);
+    try {
+      await resendEmailOtp(email);
+      setCountdown(60); // Start 60s cooldown
+    } finally {
+      setIsResending(false);
+    }
+  };
 
-  const handleResendVerification = async () => {
-    if (!email) {
+  useEffect(() => {
+    const emailParam = searchParams.get('email');
+    if (emailParam) {
+      setEmail(emailParam);
+    }
+  }, [searchParams]);
+
+  const handleVerify = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
+
+    if (otp.length !== 6) {
       toast({
-        title: 'Email required',
-        description: 'Please enter your email address',
+        title: 'Invalid Code',
+        description: 'Please enter the complete 6-digit code.',
         variant: 'destructive',
       });
       return;
     }
 
+    setIsLoading(true);
     try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-      });
+      const { error } = await verifyEmailOtp(email, otp);
 
-      if (error) throw error;
-
-      toast({
-        title: 'Verification email sent',
-        description: 'Please check your inbox for the verification link',
-      });
-    } catch (error: any) {
-      toast({
-        title: 'Failed to resend',
-        description: error.message,
-        variant: 'destructive',
-      });
+      if (error) {
+        setIsLoading(false);
+        // Error toast handled in verifyEmailOtp
+      } else {
+        // Success toast handled in verifyEmailOtp, wait a bit then redirect
+        setTimeout(() => navigate('/app/dashboard'), 1500);
+      }
+    } catch (err) {
+      setIsLoading(false);
+      console.error('Verification error:', err);
     }
   };
 
+  // Auto-submit when 6 digits are entered
+  useEffect(() => {
+    if (otp.length === 6) {
+      handleVerify();
+    }
+  }, [otp]);
+
   return (
     <div className="min-h-screen bg-background relative overflow-hidden">
-      <div 
+      <div
         className="absolute inset-0"
-        style={{ 
+        style={{
           backgroundImage: `url(${musicianBg})`,
           backgroundSize: 'cover',
           backgroundPosition: '65% center',
@@ -100,74 +106,84 @@ export const VerifyEmail = () => {
         <Card className="w-full max-w-md backdrop-blur-xl bg-black/30 border-white/20 shadow-2xl">
           <CardHeader className="bg-white/5 border-b border-white/10">
             <CardTitle className="text-center text-2xl text-white drop-shadow-lg">
-              Email Verification
+              Verify Your Email
             </CardTitle>
+            <CardDescription className="text-center text-white/70">
+              Enter the 6-digit code sent to <span className="font-semibold text-white">{email}</span>
+            </CardDescription>
           </CardHeader>
-          <CardContent className="pt-6">
-            {status === 'verifying' && (
-              <div className="text-center space-y-4">
-                <Loader2 className="h-16 w-16 mx-auto text-primary animate-spin" />
-                <p className="text-white/90 drop-shadow-md">Verifying your email...</p>
-              </div>
-            )}
+          <CardContent className="pt-6 flex flex-col items-center space-y-6">
 
-            {status === 'success' && (
-              <div className="text-center space-y-4">
-                <CheckCircle2 className="h-16 w-16 mx-auto text-green-400" />
-                <p className="text-white/90 drop-shadow-md font-medium">
-                  Email verified successfully!
-                </p>
-                <p className="text-white/70 text-sm drop-shadow-md">
-                  Redirecting you to login...
-                </p>
-              </div>
-            )}
+            <div className="space-y-4 w-full flex flex-col items-center">
+              <InputOTP
+                maxLength={6}
+                value={otp}
+                onChange={setOtp}
+                disabled={isLoading}
+              >
+                <InputOTPGroup className="gap-2">
+                  <InputOTPSlot index={0} className="bg-white/10 border-white/20 text-white" />
+                  <InputOTPSlot index={1} className="bg-white/10 border-white/20 text-white" />
+                  <InputOTPSlot index={2} className="bg-white/10 border-white/20 text-white" />
+                  <InputOTPSlot index={3} className="bg-white/10 border-white/20 text-white" />
+                  <InputOTPSlot index={4} className="bg-white/10 border-white/20 text-white" />
+                  <InputOTPSlot index={5} className="bg-white/10 border-white/20 text-white" />
+                </InputOTPGroup>
+              </InputOTP>
 
-            {status === 'error' && (
-              <div className="text-center space-y-4">
-                <XCircle className="h-16 w-16 mx-auto text-red-400" />
-                <p className="text-white/90 drop-shadow-md font-medium">
-                  Verification failed
-                </p>
-                <p className="text-white/70 text-sm drop-shadow-md">
-                  The verification link may be invalid or expired.
-                </p>
+              <p className="text-xs text-white/50">
+                Didn't receive code? Check your spam folder or try signing up again.
+              </p>
+            </div>
+
+            <div className="w-full space-y-2">
+              <Button
+                onClick={(e) => handleVerify(e)}
+                className="w-full gradient-primary music-button shadow-primary"
+                disabled={isLoading || otp.length !== 6}
+              >
+                {isLoading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  'Verify Email'
+                )}
+              </Button>
+
+              <div className="flex flex-col gap-2">
                 <Button
-                  onClick={() => navigate('/login')}
-                  className="w-full gradient-primary music-button shadow-primary"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-white/50 hover:text-white"
+                  onClick={handleResend}
+                  disabled={isResending || countdown > 0}
                 >
-                  Go to Login
+                  {isResending ? (
+                    <>
+                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                      Sending...
+                    </>
+                  ) : countdown > 0 ? (
+                    `Resend code in ${countdown}s`
+                  ) : (
+                    "Resend Code"
+                  )}
+                </Button>
+
+                <Button
+                  variant="ghost"
+                  className="w-full text-white/70 hover:text-white hover:bg-white/10"
+                  onClick={() => navigate('/signup')}
+                  disabled={isLoading}
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Back to Sign Up
                 </Button>
               </div>
-            )}
+            </div>
 
-            {status === 'pending' && (
-              <div className="text-center space-y-4">
-                <Mail className="h-16 w-16 mx-auto text-primary" />
-                <p className="text-white/90 drop-shadow-md font-medium">
-                  Check your email
-                </p>
-                <p className="text-white/70 text-sm drop-shadow-md">
-                  We've sent you a verification link. Please check your inbox and click the link to verify your account.
-                </p>
-                <div className="pt-4 space-y-3">
-                  <input
-                    type="email"
-                    placeholder="Enter your email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-4 py-2 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/50 focus:bg-white/15 focus:border-white/40 focus:outline-none"
-                  />
-                  <Button
-                    onClick={handleResendVerification}
-                    variant="outline"
-                    className="w-full border-white/20 text-white hover:bg-white/10"
-                  >
-                    Resend Verification Email
-                  </Button>
-                </div>
-              </div>
-            )}
           </CardContent>
         </Card>
       </div>

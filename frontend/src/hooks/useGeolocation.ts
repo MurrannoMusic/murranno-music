@@ -10,23 +10,68 @@ export const useGeolocation = () => {
 
   const checkPermissions = async () => {
     if (!isNativeApp()) {
-      return { location: 'granted' };
+      return new Promise<{ location: 'granted' | 'denied' | 'prompt' }>((resolve) => {
+        if (!navigator.geolocation) {
+          resolve({ location: 'denied' });
+          return;
+        }
+        navigator.permissions.query({ name: 'geolocation' }).then((result) => {
+          resolve({ location: result.state as 'granted' | 'denied' | 'prompt' });
+        }).catch(() => {
+          // Fallback if permissions query not supported
+          resolve({ location: 'prompt' });
+        });
+      });
     }
     return await Geolocation.checkPermissions();
   };
 
   const requestPermissions = async () => {
     if (!isNativeApp()) {
-      toast.error('Geolocation is only available in the native app');
-      return { location: 'denied' };
+      // Browser will prompt automatically on first use of getCurrentPosition
+      return { location: 'granted' as const };
     }
     return await Geolocation.requestPermissions();
   };
 
   const getCurrentPosition = async (options?: PositionOptions): Promise<Position | null> => {
     if (!isNativeApp()) {
-      toast.error('Geolocation is only available in the native app');
-      return null;
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          toast.error('Geolocation is not supported by your browser');
+          resolve(null);
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const pos: Position = {
+              timestamp: position.timestamp,
+              coords: {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                accuracy: position.coords.accuracy,
+                altitude: position.coords.altitude,
+                altitudeAccuracy: position.coords.altitudeAccuracy,
+                heading: position.coords.heading,
+                speed: position.coords.speed,
+              }
+            };
+            setCurrentPosition(pos);
+            resolve(pos);
+          },
+          (error) => {
+            console.error('Browser geolocation error:', error);
+            toast.error('Failed to get location');
+            resolve(null);
+          },
+          {
+            enableHighAccuracy: options?.enableHighAccuracy,
+            timeout: options?.timeout,
+            maximumAge: options?.maximumAge
+          }
+        );
+      });
     }
 
     try {
@@ -54,7 +99,40 @@ export const useGeolocation = () => {
     options?: PositionOptions
   ) => {
     if (!isNativeApp()) {
-      toast.error('Geolocation is only available in the native app');
+      if (!navigator.geolocation) {
+        toast.error('Geolocation is not supported by your browser');
+        return;
+      }
+
+      const id = navigator.geolocation.watchPosition(
+        (position) => {
+          const pos: Position = {
+            timestamp: position.timestamp,
+            coords: {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              accuracy: position.coords.accuracy,
+              altitude: position.coords.altitude,
+              altitudeAccuracy: position.coords.altitudeAccuracy,
+              heading: position.coords.heading,
+              speed: position.coords.speed,
+            }
+          };
+          setCurrentPosition(pos);
+          callback(pos);
+        },
+        (error) => {
+          console.error('Browser watch position error', error);
+          toast.error('Failed to track location');
+        },
+        {
+          enableHighAccuracy: options?.enableHighAccuracy,
+          timeout: options?.timeout,
+          maximumAge: options?.maximumAge
+        }
+      );
+      setWatchId(id.toString());
+      setIsTracking(true);
       return;
     }
 
@@ -89,7 +167,14 @@ export const useGeolocation = () => {
   };
 
   const stopWatchingPosition = async () => {
-    if (!isNativeApp() || !watchId) return;
+    if (!watchId) return;
+
+    if (!isNativeApp()) {
+      navigator.geolocation.clearWatch(parseInt(watchId));
+      setWatchId(null);
+      setIsTracking(false);
+      return;
+    }
 
     try {
       await Geolocation.clearWatch({ id: watchId });

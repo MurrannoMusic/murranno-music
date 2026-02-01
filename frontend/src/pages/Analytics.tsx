@@ -47,26 +47,11 @@ export const Analytics = () => {
 
   return (
     <div className="smooth-scroll">
-      {/* Header */}
-      <div className="bg-gradient-dark backdrop-blur-xl p-4 text-foreground mobile-safe-top">
-        <div className="flex items-center justify-between mb-4">
-          <Link to="/" className="flex items-center">
-            <img src={mmLogo} alt="Murranno Music" className="h-8" />
-          </Link>
-          
-          <div className="flex-1 text-center">
-            <Badge className="bg-primary/15 text-primary border-primary/30 px-4 py-1">
-              ANALYTICS
-            </Badge>
-          </div>
-          
-          <AvatarDropdown />
-        </div>
-      </div>
+      {/* Top Bar removed - using UnifiedTopBar */}
 
-      <div className="mobile-container space-y-4 mt-4 pb-20">
+      <div className="mobile-container space-y-3 mt-2 pb-16">
         {/* Analytics Tabs */}
-        <AnalyticsTabs 
+        <AnalyticsTabs
           tabs={analyticsTabs}
           activeTab={activeTab}
           onTabChange={setActiveTab}
@@ -74,16 +59,16 @@ export const Analytics = () => {
 
         {/* Page Title & Filter Button */}
         <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-foreground">
+          <h1 className="text-2xl font-bold text-foreground">
             {analyticsTabs.find(tab => tab.id === activeTab)?.label}
           </h1>
           <Button
             variant="outline"
             size="sm"
             onClick={() => setShowFilters(true)}
-            className="border border-border rounded-[16px] px-4 py-2"
+            className="border border-border rounded-xl px-3 py-1.5 h-8 text-xs"
           >
-            <Filter className="h-4 w-4 mr-2" />
+            <Filter className="h-3.5 w-3.5 mr-1.5" />
             Filter
           </Button>
         </div>
@@ -96,7 +81,7 @@ export const Analytics = () => {
         />
 
         {/* Stats Comparison Card */}
-        <StatsComparison 
+        <StatsComparison
           stats={stats}
           label={analyticsTabs.find(tab => tab.id === activeTab)?.label || 'Streams'}
         />

@@ -23,7 +23,10 @@ export interface ReleaseDetail {
   language: string | null;
   label: string | null;
   copyright: string | null;
+  copyright: string | null;
   upc_ean: string | null;
+  isrc: string | null;
+  recording_year: string | null;
   smartlink: string | null;
   tracks: Track[];
   total_streams: number;

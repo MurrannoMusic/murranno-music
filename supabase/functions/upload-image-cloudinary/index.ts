@@ -30,15 +30,28 @@ serve(async (req) => {
 
     console.log('Uploading image to Cloudinary:', { folder, fileName: file.name });
 
-    // Convert file to base64
+    // Convert file to base64 using chunking to avoid stack overflow
     const arrayBuffer = await file.arrayBuffer();
-    const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+    const bytes = new Uint8Array(arrayBuffer);
+    let binary = '';
+    const len = bytes.byteLength;
+    const chunkSize = 0x8000; // 32KB chunks
+
+    for (let i = 0; i < len; i += chunkSize) {
+      binary += String.fromCharCode.apply(
+        null,
+        // @ts-ignore: Deno types mismatch workaround
+        bytes.subarray(i, Math.min(i + chunkSize, len)) as unknown as number[]
+      );
+    }
+
+    const base64 = btoa(binary);
     const dataUri = `data:${file.type};base64,${base64}`;
 
     // Generate signature for signed upload
     const timestamp = Math.floor(Date.now() / 1000);
     const paramsToSign = `folder=${folder}&timestamp=${timestamp}`;
-    
+
     // Create SHA-1 signature per Cloudinary spec: sha1(string_to_sign + api_secret)
     const encoder = new TextEncoder();
     const stringToSign = paramsToSign;
