@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { LogIn, Menu, X } from "lucide-react";
 import mmLogo from "@/assets/mm_logo.png";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,8 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export const LandingNav = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, userRole, signOut } = useAuth();
+  const navigate = useNavigate();
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
@@ -14,6 +17,12 @@ export const LandingNav = () => {
       element.scrollIntoView({ behavior: 'smooth' });
     }
     setIsOpen(false);
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    setIsOpen(false);
+    navigate('/');
   };
 
   return (
@@ -41,12 +50,27 @@ export const LandingNav = () => {
             <button onClick={() => scrollToSection('footer')} className="text-white hover:text-primary transition-colors font-medium">
               Support
             </button>
-            <Link to="/login">
-              <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
-                <LogIn className="h-4 w-4" />
-                Sign In
-              </Button>
-            </Link>
+
+            {user ? (
+              userRole?.tier === 'admin' ? (
+                <Link to="/admin">
+                  <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
+                    Dashboard
+                  </Button>
+                </Link>
+              ) : (
+                <Button onClick={handleSignOut} variant="outline" className="gap-2 border-white/20 text-white hover:bg-white/10 hover:text-white">
+                  Sign Out
+                </Button>
+              )
+            ) : (
+              <Link to="/login">
+                <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
+                  <LogIn className="h-4 w-4" />
+                  Sign In
+                </Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile Menu */}
@@ -91,12 +115,27 @@ export const LandingNav = () => {
                 >
                   Support
                 </button>
-                <Link to="/login" className="mt-4" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full gap-2 hover-scale">
-                    <LogIn className="h-4 w-4" />
-                    Sign In
-                  </Button>
-                </Link>
+
+                {user ? (
+                  userRole?.tier === 'admin' ? (
+                    <Link to="/admin" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full gap-2 hover-scale bg-primary text-white">
+                        Dashboard
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Button onClick={handleSignOut} variant="outline" className="w-full gap-2 border-white/20 hover:bg-white/10">
+                      Sign Out
+                    </Button>
+                  )
+                ) : (
+                  <Link to="/login" className="mt-4" onClick={() => setIsOpen(false)}>
+                    <Button className="w-full gap-2 hover-scale">
+                      <LogIn className="h-4 w-4" />
+                      Sign In
+                    </Button>
+                  </Link>
+                )}
               </div>
             </SheetContent>
           </Sheet>
