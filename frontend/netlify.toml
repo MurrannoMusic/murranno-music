@@ -5,8 +5,8 @@
   # Publish directory (Vite default output)
   publish = "dist"
   
-  # Node version
-  environment = { NODE_VERSION = "24" }
+  # Node version and Secret Scanning Exceptions
+  environment = { NODE_VERSION = "24", SECRETS_SCAN_OMIT_KEYS = "VITE_CLOUDINARY_CLOUD_NAME,VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_PROJECT_ID,VITE_SUPABASE_PUBLISHABLE_KEY,VITE_SUPABASE_URL" }
 
 # Redirect rules for Single Page Application (React Router)
 [[redirects]]
