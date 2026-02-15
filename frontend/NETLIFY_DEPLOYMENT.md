@@ -26,7 +26,7 @@ This guide covers deploying the Murranno Music web application to Netlify. The a
    - **Base directory:** `frontend`
    - **Build command:** `npm run build`
    - **Publish directory:** `frontend/dist`
-   - **Node version:** 18
+   - **Node version:** 24
 
 3. **Add Environment Variables**
 

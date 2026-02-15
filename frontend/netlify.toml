@@ -6,7 +6,7 @@
   publish = "dist"
   
   # Node version
-  environment = { NODE_VERSION = "18" }
+  environment = { NODE_VERSION = "24" }
 
 # Redirect rules for Single Page Application (React Router)
 [[redirects]]
