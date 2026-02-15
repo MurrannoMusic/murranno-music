@@ -33,11 +33,11 @@ This guide covers deploying the Murranno Music web application to Netlify. The a
    Go to Site settings → Environment variables → Add variables:
 
    ```
-   VITE_CLOUDINARY_CLOUD_NAME=dhdkysyop
-   VITE_SUPABASE_PROJECT_ID=xsyzebusnqzxpnsruuoc
-   VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_oYi60e92qNpQ4NypYUfHoA_Uff48zRB
-   VITE_SUPABASE_URL=https://xsyzebusnqzxpnsruuoc.supabase.co
-   VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzeXplYnVzbnF6eHBuc3J1dW9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2ODk1MDQsImV4cCI6MjA3MTI2NTUwNH0.dguJ2sj8aCeF6e2xjTddVOivUvjnB76HjQm7tVR4nvE
+   VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+   VITE_SUPABASE_PROJECT_ID=your_project_id
+   VITE_SUPABASE_PUBLISHABLE_KEY=your_publishable_key
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_anon_key
    ```
 
 4. **Deploy**
@@ -71,11 +71,11 @@ This guide covers deploying the Murranno Music web application to Netlify. The a
 4. **Set Environment Variables**
 
    ```bash
-   netlify env:set VITE_CLOUDINARY_CLOUD_NAME dhdkysyop
-   netlify env:set VITE_SUPABASE_PROJECT_ID xsyzebusnqzxpnsruuoc
-   netlify env:set VITE_SUPABASE_PUBLISHABLE_KEY sb_publishable_oYi60e92qNpQ4NypYUfHoA_Uff48zRB
-   netlify env:set VITE_SUPABASE_URL https://xsyzebusnqzxpnsruuoc.supabase.co
-   netlify env:set VITE_SUPABASE_ANON_KEY eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhzeXplYnVzbnF6eHBuc3J1dW9jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2ODk1MDQsImV4cCI6MjA3MTI2NTUwNH0.dguJ2sj8aCeF6e2xjTddVOivUvjnB76HjQm7tVR4nvE
+   netlify env:set VITE_CLOUDINARY_CLOUD_NAME your_cloud_name
+   netlify env:set VITE_SUPABASE_PROJECT_ID your_project_id
+   netlify env:set VITE_SUPABASE_PUBLISHABLE_KEY your_publishable_key
+   netlify env:set VITE_SUPABASE_URL your_supabase_url
+   netlify env:set VITE_SUPABASE_ANON_KEY your_anon_key
    ```
 
 5. **Deploy**
