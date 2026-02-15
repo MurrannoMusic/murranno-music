@@ -128,11 +128,11 @@ const App = () => (
                   <Route path="/splash" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><Splash /></Suspense></MobileOnlyRoute>} />
                   <Route path="/welcome" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><Welcome /></Suspense></MobileOnlyRoute>} />
                   {/* <Route path="/get-started" element={<MobileOnlyRoute><GetStarted /></MobileOnlyRoute>} /> */}
-                  <Route path="/login" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><Login /></Suspense></MobileOnlyRoute>} />
-                  <Route path="/signup" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><Signup /></Suspense></MobileOnlyRoute>} />
-                  <Route path="/verify-email" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><VerifyEmail /></Suspense></MobileOnlyRoute>} />
-                  <Route path="/forgot-password" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><ForgotPassword /></Suspense></MobileOnlyRoute>} />
-                  <Route path="/reset-password" element={<MobileOnlyRoute><Suspense fallback={<PageLoader />}><ResetPassword /></Suspense></MobileOnlyRoute>} />
+                  <Route path="/login" element={<Suspense fallback={<PageLoader />}><Login /></Suspense>} />
+                  <Route path="/signup" element={<Suspense fallback={<PageLoader />}><Signup /></Suspense>} />
+                  <Route path="/verify-email" element={<Suspense fallback={<PageLoader />}><VerifyEmail /></Suspense>} />
+                  <Route path="/forgot-password" element={<Suspense fallback={<PageLoader />}><ForgotPassword /></Suspense>} />
+                  <Route path="/reset-password" element={<Suspense fallback={<PageLoader />}><ResetPassword /></Suspense>} />
                   <Route path="/auth/callback" element={<Suspense fallback={<PageLoader />}><AuthCallback /></Suspense>} />
 
                   {/* Legal & Support Pages */}

@@ -23,7 +23,7 @@ export const LandingNav = () => {
           <Link to="/" className="flex items-center">
             <img src={mmLogo} alt="Murranno Music" className="h-10" />
           </Link>
-          
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-10">
             <button onClick={() => scrollToSection('home')} className="text-white hover:text-primary transition-colors font-medium">
@@ -42,7 +42,7 @@ export const LandingNav = () => {
               Support
             </button>
             <Link to="/login">
-              <Button className="gap-2">
+              <Button className="gap-2 bg-primary hover:bg-primary/90 text-white">
                 <LogIn className="h-4 w-4" />
                 Sign In
               </Button>
@@ -56,37 +56,37 @@ export const LandingNav = () => {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent 
-              side="right" 
+            <SheetContent
+              side="right"
               className="w-[300px] bg-background/95 backdrop-blur-xl border-l border-border/50 animate-slide-in-right"
             >
               <div className="flex flex-col gap-6 mt-8 animate-fade-in">
-                <button 
-                  onClick={() => scrollToSection('home')} 
+                <button
+                  onClick={() => scrollToSection('home')}
                   className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Home
                 </button>
-                <button 
-                  onClick={() => scrollToSection('services')} 
+                <button
+                  onClick={() => scrollToSection('services')}
                   className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Distribution
                 </button>
-                <button 
-                  onClick={() => scrollToSection('why')} 
+                <button
+                  onClick={() => scrollToSection('why')}
                   className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Promotions
                 </button>
-                <button 
-                  onClick={() => scrollToSection('testimonials')} 
+                <button
+                  onClick={() => scrollToSection('testimonials')}
                   className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Blog
                 </button>
-                <button 
-                  onClick={() => scrollToSection('footer')} 
+                <button
+                  onClick={() => scrollToSection('footer')}
                   className="text-foreground hover:text-primary transition-all duration-200 font-medium text-left text-lg hover:translate-x-1"
                 >
                   Support
