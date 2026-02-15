@@ -8,6 +8,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { ProfileImageUpload } from '@/components/profile/ProfileImageUpload';
 import { StreamingPlatformCard } from '@/components/profile/StreamingPlatformCard';
 import { SocialLinkCard } from '@/components/profile/SocialLinkCard';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { useArtistProfile } from '@/hooks/useArtistProfile';
 import { Skeleton } from '@/components/ui/skeleton';
 import { validateImageFile } from '@/utils/fileValidation';
@@ -17,12 +19,19 @@ import { useShare } from '@/hooks/useShare';
 export const ArtistProfile = () => {
   const navigate = useNavigate();
   const { profile, loading, updating, updateProfile, uploadProfileImage } = useArtistProfile();
+  const { profile: userProfile, refreshUserData } = useAuth();
   const { shareArtist } = useShare();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    phone_number: '',
+    nin_number: '',
     stage_name: '',
     bio: '',
     profile_image: '',
+    spotify_id: '',
+    apple_music_id: '',
     spotify_url: '',
     youtube_url: '',
     apple_music_url: '',
@@ -37,11 +46,17 @@ export const ArtistProfile = () => {
   });
 
   useEffect(() => {
-    if (profile) {
+    if (profile && userProfile) {
       setFormData({
+        first_name: userProfile.first_name || '',
+        last_name: userProfile.last_name || '',
+        phone_number: userProfile.phone_number || '',
+        nin_number: userProfile.nin_number || '',
         stage_name: profile.stage_name || '',
         bio: profile.bio || '',
         profile_image: profile.profile_image || '',
+        spotify_id: profile.spotify_id || '',
+        apple_music_id: profile.apple_music_id || '',
         spotify_url: profile.spotify_url || '',
         youtube_url: profile.youtube_url || '',
         apple_music_url: profile.apple_music_url || '',
@@ -55,7 +70,7 @@ export const ArtistProfile = () => {
         twitter_url: profile.twitter_url || '',
       });
     }
-  }, [profile]);
+  }, [profile, userProfile]);
 
   const handleImageSelect = async (file: File) => {
     const { valid, error } = validateImageFile(file);
@@ -78,18 +93,70 @@ export const ArtistProfile = () => {
   };
 
   const handleSave = async () => {
-    const success = await updateProfile(formData);
-    if (success) {
-      setIsEditing(false);
+    try {
+      // 1. Update Artist Profile
+      const artistSuccess = await updateProfile({
+        stage_name: formData.stage_name,
+        bio: formData.bio,
+        profile_image: formData.profile_image,
+        spotify_id: formData.spotify_id,
+        apple_music_id: formData.apple_music_id,
+        spotify_url: formData.spotify_url,
+        youtube_url: formData.youtube_url,
+        apple_music_url: formData.apple_music_url,
+        audiomack_url: formData.audiomack_url,
+        soundcloud_url: formData.soundcloud_url,
+        deezer_url: formData.deezer_url,
+        tidal_url: formData.tidal_url,
+        instagram_url: formData.instagram_url,
+        facebook_url: formData.facebook_url,
+        tiktok_url: formData.tiktok_url,
+        twitter_url: formData.twitter_url,
+      });
+
+      // 2. Update User Profile (Personal Info)
+      if (userProfile) {
+        const { error: userError } = await supabase
+          .from('profiles')
+          .update({
+            first_name: formData.first_name,
+            last_name: formData.last_name,
+            full_name: `${formData.first_name} ${formData.last_name}`.trim(),
+            phone_number: formData.phone_number,
+            nin_number: formData.nin_number,
+          })
+          .eq('id', userProfile.id);
+
+        if (userError) throw userError;
+        await refreshUserData();
+      }
+
+      if (artistSuccess) {
+        setIsEditing(false);
+        toast({ title: 'Profile updated successfully' });
+      }
+    } catch (error: any) {
+      console.error('Error saving profile:', error);
+      toast({
+        title: 'Error saving profile',
+        description: error.message,
+        variant: 'destructive',
+      });
     }
   };
 
   const handleCancel = () => {
-    if (profile) {
+    if (profile && userProfile) {
       setFormData({
+        first_name: userProfile.first_name || '',
+        last_name: userProfile.last_name || '',
+        phone_number: userProfile.phone_number || '',
+        nin_number: userProfile.nin_number || '',
         stage_name: profile.stage_name || '',
         bio: profile.bio || '',
         profile_image: profile.profile_image || '',
+        spotify_id: profile.spotify_id || '',
+        apple_music_id: profile.apple_music_id || '',
         spotify_url: profile.spotify_url || '',
         youtube_url: profile.youtube_url || '',
         apple_music_url: profile.apple_music_url || '',
@@ -133,20 +200,69 @@ export const ArtistProfile = () => {
               />
 
               {isEditing ? (
-                <div className="w-full space-y-3">
-                  <Input
-                    value={formData.stage_name}
-                    onChange={(e) => setFormData(prev => ({ ...prev, stage_name: e.target.value }))}
-                    placeholder="Stage Name"
-                    className="bg-background border-border text-center"
-                  />
-                  <Textarea
-                    value={formData.bio}
-                    onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
-                    placeholder="Bio"
-                    className="bg-background border-border resize-none"
-                    rows={3}
-                  />
+                <div className="w-full space-y-4">
+                  {/* Personal Info Section */}
+                  <div className="grid grid-cols-2 gap-3 p-3 bg-secondary/10 rounded-lg">
+                    <div className="col-span-2 text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">
+                      Personal Information
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-medium text-muted-foreground">First Name</label>
+                      <Input
+                        value={formData.first_name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, first_name: e.target.value }))}
+                        className="bg-background border-border h-8 text-sm"
+                        placeholder="First Name"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-medium text-muted-foreground">Last Name</label>
+                      <Input
+                        value={formData.last_name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, last_name: e.target.value }))}
+                        className="bg-background border-border h-8 text-sm"
+                        placeholder="Last Name"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-medium text-muted-foreground">Phone Number</label>
+                      <Input
+                        value={formData.phone_number}
+                        onChange={(e) => setFormData(prev => ({ ...prev, phone_number: e.target.value }))}
+                        className="bg-background border-border h-8 text-sm"
+                        placeholder="Phone Number"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label className="text-[10px] font-medium text-muted-foreground">NIN Number</label>
+                      <Input
+                        value={formData.nin_number}
+                        onChange={(e) => setFormData(prev => ({ ...prev, nin_number: e.target.value }))}
+                        className="bg-background border-border h-8 text-sm"
+                        placeholder="NIN Number"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Artist Info Section */}
+                  <div className="space-y-3">
+                    <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                      Artist Details
+                    </div>
+                    <Input
+                      value={formData.stage_name}
+                      onChange={(e) => setFormData(prev => ({ ...prev, stage_name: e.target.value }))}
+                      placeholder="Stage Name"
+                      className="bg-background border-border text-center font-bold"
+                    />
+                    <Textarea
+                      value={formData.bio}
+                      onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                      placeholder="Artist Bio"
+                      className="bg-background border-border resize-none"
+                      rows={3}
+                    />
+                  </div>
                 </div>
               ) : (
                 <>
@@ -208,31 +324,55 @@ export const ArtistProfile = () => {
           <CardHeader className="p-4 pb-2">
             <CardTitle className="text-base text-card-foreground">Major Streaming Services</CardTitle>
           </CardHeader>
-          <CardContent className="p-4 pt-0 space-y-2">
-            <StreamingPlatformCard
-              name="Spotify for Artists"
-              icon={<Music className="w-5 h-5" />}
-              url={formData.spotify_url}
-              onUpdate={(url) => setFormData(prev => ({ ...prev, spotify_url: url || '' }))}
-              isEditing={isEditing}
-              placeholder="https://open.spotify.com/artist/..."
-            />
-            <StreamingPlatformCard
-              name="Apple Music"
-              icon={<Music2 className="w-5 h-5" />}
-              url={formData.apple_music_url}
-              onUpdate={(url) => setFormData(prev => ({ ...prev, apple_music_url: url || '' }))}
-              isEditing={isEditing}
-              placeholder="https://music.apple.com/..."
-            />
-            <StreamingPlatformCard
-              name="YouTube Music"
-              icon={<Disc3 className="w-5 h-5" />}
-              url={formData.youtube_url}
-              onUpdate={(url) => setFormData(prev => ({ ...prev, youtube_url: url || '' }))}
-              isEditing={isEditing}
-              placeholder="https://youtube.com/@..."
-            />
+          <CardContent className="p-4 pt-0 space-y-4">
+            {isEditing && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-2 p-3 bg-secondary/10 rounded-lg">
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Spotify Artist ID</label>
+                  <Input
+                    value={formData.spotify_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, spotify_id: e.target.value }))}
+                    placeholder="e.g. 4Z8W4fUhv5... (from URI)"
+                    className="bg-background border-border text-sm"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-muted-foreground uppercase">Apple Music Artist ID</label>
+                  <Input
+                    value={formData.apple_music_id}
+                    onChange={(e) => setFormData(prev => ({ ...prev, apple_music_id: e.target.value }))}
+                    placeholder="e.g. 123456789"
+                    className="bg-background border-border text-sm"
+                  />
+                </div>
+              </div>
+            )}
+            <div className="space-y-2">
+              <StreamingPlatformCard
+                name="Spotify for Artists"
+                icon={<Music className="w-5 h-5" />}
+                url={formData.spotify_url}
+                onUpdate={(url) => setFormData(prev => ({ ...prev, spotify_url: url || '' }))}
+                isEditing={isEditing}
+                placeholder="https://open.spotify.com/artist/..."
+              />
+              <StreamingPlatformCard
+                name="Apple Music"
+                icon={<Music2 className="w-5 h-5" />}
+                url={formData.apple_music_url}
+                onUpdate={(url) => setFormData(prev => ({ ...prev, apple_music_url: url || '' }))}
+                isEditing={isEditing}
+                placeholder="https://music.apple.com/..."
+              />
+              <StreamingPlatformCard
+                name="YouTube Music"
+                icon={<Disc3 className="w-5 h-5" />}
+                url={formData.youtube_url}
+                onUpdate={(url) => setFormData(prev => ({ ...prev, youtube_url: url || '' }))}
+                isEditing={isEditing}
+                placeholder="https://youtube.com/@..."
+              />
+            </div>
           </CardContent>
         </Card>
 

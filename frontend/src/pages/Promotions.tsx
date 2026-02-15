@@ -71,77 +71,96 @@ const PromotionsContent = () => {
         onSelectBundle={handleSelectBundleFromCart}
       />
 
-      <div className="smooth-scroll">
+      <div className="smooth-scroll px-4 md:px-6">
         {/* Top Bar removed - using UnifiedTopBar */}
 
-        <div className="mobile-container space-y-4 mt-2">
-          {/* Hero Section */}
-          <Card className="overflow-hidden relative rounded-xl border-0">
-            <div
-              className="absolute inset-0 bg-cover bg-center"
-              style={{ backgroundImage: `url(${promotionsHeroBg})` }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-primary/40 to-accent/40 backdrop-blur-[2px]" />
-            <CardContent className="relative p-6 text-center space-y-2 text-white">
-              <h1 className="text-2xl font-bold mb-1 drop-shadow-lg">Promotion Catalog</h1>
-              <p className="text-white/90 text-sm drop-shadow-md max-w-[240px] mx-auto">
-                Premium services to amplify your reach
-              </p>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => navigate('/app/campaign-tracking')}
-                className="mt-2 shadow-lg h-9 rounded-lg font-bold"
+        {/* Hero Section */}
+        <div className="relative overflow-hidden rounded-xl mb-5 group">
+          <div
+            className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
+            style={{ backgroundImage: `url(${promotionsHeroBg})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent backdrop-blur-[1px]" />
+          <div className="relative p-6 md:p-8 text-white flex flex-col items-start justify-center min-h-[160px]">
+            <Badge className="mb-2 bg-white/20 hover:bg-white/30 text-white border-none backdrop-blur-md text-[10px] px-2 py-0.5">
+              Premium Services
+            </Badge>
+            <h1 className="text-2xl md:text-3xl font-bold mb-1 drop-shadow-lg tracking-tight">
+              Amplify Your Sound
+            </h1>
+            <p className="text-gray-200 text-xs md:text-sm max-w-sm mb-4 leading-relaxed">
+              Professional promotional campaigns designed to get your music the attention it deserves.
+            </p>
+            <Button
+              size="sm"
+              onClick={() => navigate('/app/campaign-tracking')}
+              className="bg-white text-black hover:bg-white/90 font-bold shadow-xl border-none h-8 text-xs"
+            >
+              Track Active Campaigns
+            </Button>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <Tabs defaultValue="bundles" className="w-full space-y-4">
+          <div className="flex items-center justify-between">
+            <TabsList className="bg-secondary/30 backdrop-blur-sm border border-white/5 p-1 h-9 rounded-full">
+              <TabsTrigger
+                value="bundles"
+                className="rounded-full px-4 py-1 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
               >
-                Track Campaigns
-              </Button>
-            </CardContent>
-          </Card>
-
-          {/* Tabs */}
-          <Tabs defaultValue="bundles" className="w-full">
-            <TabsList className="grid w-full grid-cols-2 h-9 p-1 bg-secondary/20 rounded-lg">
-              <TabsTrigger value="bundles" className="text-xs py-1.5 rounded-md">Junkets</TabsTrigger>
-              <TabsTrigger value="services" className="text-xs py-1.5 rounded-md">Services</TabsTrigger>
+                Featured Junkets
+              </TabsTrigger>
+              <TabsTrigger
+                value="services"
+                className="rounded-full px-4 py-1 text-xs data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
+              >
+                All Services
+              </TabsTrigger>
             </TabsList>
+          </div>
 
-            {/* Promotional Junkets Tab */}
-            <TabsContent value="bundles" className="space-y-3 mt-3">
-              <div className="text-center mb-1">
-                <h2 className="text-base font-bold mb-0.5">Curated Bundles</h2>
-                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest leading-none">
-                  Impact Packages
+          {/* Promotional Junkets Tab */}
+          <TabsContent value="bundles" className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-2 mb-2">
+              <div>
+                <h2 className="text-lg font-bold tracking-tight">Curated Impact Bundles</h2>
+                <p className="text-muted-foreground text-xs">
+                  Complete promotional packages tailored for your growth stage
                 </p>
               </div>
+            </div>
 
-              {bundlesLoading ? (
-                <div className="grid gap-3">
-                  {[1, 2].map(i => (
-                    <Card key={i} className="h-48 animate-pulse bg-muted rounded-xl" />
-                  ))}
+            {bundlesLoading ? (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1">
+                {[1, 2, 3].map(i => (
+                  <Card key={i} className="h-[350px] animate-pulse bg-muted/50 rounded-2xl border-none" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 px-1">
+                {bundles.map((bundle, index) => (
+                  <BundleCard
+                    key={bundle.id}
+                    bundle={bundle}
+                    onSelect={handleBundleSelect}
+                    isRecommended={index === 1} // Recommend Growth Junket
+                  />
+                ))}
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Individual Services Tab */}
+          <TabsContent value="services" className="space-y-4 animate-in fade-in-50 slide-in-from-bottom-2 duration-500">
+            <div className="space-y-3">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 px-1">
+                <div>
+                  <h2 className="text-lg font-bold tracking-tight">Build Your Strategy</h2>
+                  <p className="text-muted-foreground text-xs">
+                    Select individual services to customize your campaign
+                  </p>
                 </div>
-              ) : (
-                <div className="grid gap-4">
-                  {bundles.map((bundle, index) => (
-                    <BundleCard
-                      key={bundle.id}
-                      bundle={bundle}
-                      onSelect={handleBundleSelect}
-                      isRecommended={index === 1} // Recommend Growth Junket
-                    />
-                  ))}
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Individual Services Tab */}
-            <TabsContent value="services" className="space-y-3 mt-3">
-              <div className="mb-2">
-                <h2 className="text-base font-bold mb-0.5">Individual Services</h2>
-                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-3 leading-none">
-                  Custom Strategy
-                </p>
-
                 <CategoryFilter
                   categories={categories}
                   selectedCategory={selectedCategory}
@@ -151,17 +170,21 @@ const PromotionsContent = () => {
               </div>
 
               {servicesLoading ? (
-                <div className="grid gap-3 grid-cols-1">
-                  {[1, 2, 3].map(i => (
-                    <Card key={i} className="h-64 animate-pulse bg-muted rounded-xl" />
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-1">
+                  {[1, 2, 3, 4].map(i => (
+                    <Card key={i} className="h-72 animate-pulse bg-muted/50 rounded-2xl border-none" />
                   ))}
                 </div>
               ) : filteredServices.length === 0 ? (
-                <Card className="p-8 text-center rounded-xl bg-secondary/5">
-                  <p className="text-xs text-muted-foreground">No services found</p>
-                </Card>
+                <div className="flex flex-col items-center justify-center py-12 text-center bg-secondary/5 rounded-2xl border border-dashed border-border/50 mx-1">
+                  <Megaphone className="h-10 w-10 text-muted-foreground/30 mb-3" />
+                  <h3 className="text-base font-semibold text-foreground">No services found</h3>
+                  <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+                    Try adjusting your filters or check back later for new promotional options.
+                  </p>
+                </div>
               ) : (
-                <div className="grid gap-3 grid-cols-1">
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 px-1">
                   {filteredServices.map((service) => (
                     <ServiceCard
                       key={service.id}
@@ -171,9 +194,9 @@ const PromotionsContent = () => {
                   ))}
                 </div>
               )}
-            </TabsContent>
-          </Tabs>
-        </div>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {/* Campaign Creation Wizard */}
         {selectedService && (

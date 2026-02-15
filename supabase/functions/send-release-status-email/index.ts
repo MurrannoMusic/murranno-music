@@ -87,7 +87,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: 'Murranno Music <releases@resend.dev>',
+          from: 'Murranno Music <hello@murrannomusic.site>',
           to: [profile.email],
           subject: `Release Update: ${release.title}`,
           html: releaseStatusEmail(
@@ -104,11 +104,11 @@ serve(async (req) => {
         await supabase.from('notifications').insert({
           user_id: artist.user_id,
           title: `Release ${status === 'approved' ? 'Approved' : status === 'rejected' ? 'Rejected' : 'Updated'}`,
-          message: status === 'approved' 
+          message: status === 'approved'
             ? `Your release "${release.title}" has been approved and will be distributed on ${new Date(release.release_date).toLocaleDateString()}.`
             : status === 'rejected'
-            ? `Your release "${release.title}" was rejected. ${rejectionReason || 'Please review and resubmit.'}`
-            : `Your release "${release.title}" status has been updated to ${status}.`,
+              ? `Your release "${release.title}" was rejected. ${rejectionReason || 'Please review and resubmit.'}`
+              : `Your release "${release.title}" status has been updated to ${status}.`,
           type: status === 'approved' ? 'success' : status === 'rejected' ? 'error' : 'info',
           related_type: 'release',
           related_id: releaseId

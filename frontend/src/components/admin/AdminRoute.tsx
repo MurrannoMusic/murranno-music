@@ -26,7 +26,7 @@ export const AdminRoute = ({ children }: AdminRouteProps) => {
     if (!userRole) return;
 
     if (userRole.tier !== 'admin') {
-      navigate('/');
+      navigate('/app');
       return;
     }
   }, [user, userRole, loading, navigate]);

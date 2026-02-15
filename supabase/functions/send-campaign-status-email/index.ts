@@ -72,7 +72,7 @@ serve(async (req) => {
 
       try {
         await resend.emails.send({
-          from: 'Murranno Music <campaigns@resend.dev>',
+          from: 'Murranno Music <hello@murrannomusic.site>',
           to: [profile.email],
           subject: `Campaign Update: ${campaign.name}`,
           html: campaignStatusEmail(

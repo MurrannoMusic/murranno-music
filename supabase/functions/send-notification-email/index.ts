@@ -38,7 +38,7 @@ serve(async (req) => {
 
     // Verify admin role
     const { data: isAdmin } = await supabase.rpc('has_admin_role', { _user_id: user.id });
-    
+
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: 'Admin access required' }), {
         status: 403,
@@ -58,7 +58,7 @@ serve(async (req) => {
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
 
     const emailResponse = await resend.emails.send({
-      from: 'Murranno Music <notifications@resend.dev>',
+      from: 'Murranno Music <hello@murrannomusic.site>',
       to: Array.isArray(to) ? to : [to],
       subject,
       html,

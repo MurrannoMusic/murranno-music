@@ -28,7 +28,19 @@ serve(async (req) => {
     }
 
     // Check admin role
-    const { data: isAdmin } = await supabase.rpc('has_admin_role', { _user_id: user.id });
+    let isAdmin = false;
+    try {
+      const { data, error } = await supabase.rpc('has_admin_role', { _user_id: user.id });
+      if (error) {
+        console.error('Error checking admin role:', error);
+        throw error;
+      }
+      isAdmin = data;
+    } catch (err) {
+      console.error('Exception checking admin role:', err);
+      throw new Error(`Failed to verify admin role: ${err.message}`);
+    }
+
     if (!isAdmin) {
       return new Response(JSON.stringify({ success: false, error: 'Admin access required' }), {
         status: 403,
@@ -46,21 +58,38 @@ serve(async (req) => {
     }
 
     // Update release status
-    const { error: updateError } = await supabase
-      .from('releases')
-      .update({ status })
-      .eq('id', releaseId);
+    try {
+      const { error: updateError } = await supabase
+        .from('releases')
+        .update({ status })
+        .eq('id', releaseId);
 
-    if (updateError) throw updateError;
+      if (updateError) {
+        console.error('Error updating release:', updateError);
+        throw updateError;
+      }
+    } catch (err) {
+      console.error('Exception updating release:', err);
+      throw new Error(`Failed to update release: ${err.message}`);
+    }
 
     // Log admin action
-    await supabase.from('admin_audit_logs').insert({
-      admin_id: user.id,
-      action: 'MODERATE_RELEASE',
-      target_type: 'release',
-      target_id: releaseId,
-      metadata: { status, reason },
-    });
+    try {
+      const { error: auditError } = await supabase.from('admin_audit_logs').insert({
+        admin_id: user.id,
+        action: 'MODERATE_RELEASE',
+        target_type: 'release',
+        target_id: releaseId,
+        metadata: { status, reason },
+      });
+
+      if (auditError) {
+        console.error('Error inserting audit log:', auditError);
+        // We log but don't fail the request for audit log failure
+      }
+    } catch (err) {
+      console.error('Exception inserting audit log:', err);
+    }
 
     // Send release status email notification
     try {
@@ -74,7 +103,6 @@ serve(async (req) => {
 
       if (emailError) {
         console.error('Failed to send release status email:', emailError);
-        // Don't fail the whole operation if email fails
       }
     } catch (emailErr) {
       console.error('Error invoking send-release-status-email:', emailErr);
@@ -86,7 +114,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error: any) {
-    console.error('Error moderating release:', error);
+    console.error('Error moderating release (main catch):', error);
     return new Response(JSON.stringify({ success: false, error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },

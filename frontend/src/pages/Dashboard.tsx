@@ -91,7 +91,9 @@ export const Dashboard = () => {
               <div className="text-base font-bold text-card-foreground">
                 {formatCurrency(stats[1]?.value || "0")}
               </div>
-              <div className="text-[9px] text-emerald-500 font-medium">+12% this month</div>
+              <div className={`text-[9px] font-medium ${stats[1]?.changeType === 'positive' ? 'text-emerald-500' : 'text-muted-foreground'}`}>
+                {stats[1]?.change} this month
+              </div>
             </div>
           </div>
 
@@ -105,7 +107,9 @@ export const Dashboard = () => {
               <div className="text-base font-bold text-card-foreground">
                 {stats[0]?.value || "0"}
               </div>
-              <div className="text-[9px] text-blue-500 font-medium">+23% vs last week</div>
+              <div className={`text-[9px] font-medium ${stats[0]?.changeType === 'positive' ? 'text-blue-500' : 'text-muted-foreground'}`}>
+                {stats[0]?.change} vs last month
+              </div>
             </div>
           </div>
         </div>

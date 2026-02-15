@@ -38,7 +38,7 @@ serve(async (req) => {
     }
 
     const { data: isAdmin } = await supabaseClient.rpc('has_admin_role', { _user_id: user.id });
-    
+
     if (!isAdmin) {
       return new Response(JSON.stringify({ error: 'Admin access required' }), {
         status: 403,
@@ -90,7 +90,7 @@ serve(async (req) => {
 
     // Send email notifications
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-    
+
     // Get users who have email notifications enabled
     const { data: emailUsers, error: emailError } = await supabaseClient
       .from('notification_preferences')
@@ -119,11 +119,11 @@ serve(async (req) => {
     let emailsSent = 0;
     if (profiles && profiles.length > 0) {
       console.log(`Sending ${profiles.length} emails`);
-      
+
       for (const profile of profiles) {
         try {
           await resend.emails.send({
-            from: 'Murranno Music <notifications@resend.dev>',
+            from: 'Murranno Music <hello@murrannomusic.site>',
             to: [profile.email],
             subject: title,
             html: `
@@ -148,7 +148,7 @@ serve(async (req) => {
 
     // Send push notifications
     let pushNotificationsSent = 0;
-    
+
     // Get users who have push notifications enabled
     const { data: pushUsers, error: pushError } = await supabaseClient
       .from('notification_preferences')
@@ -177,7 +177,7 @@ serve(async (req) => {
 
       if (pushTokens && pushTokens.length > 0) {
         console.log(`Sending push notifications to ${pushTokens.length} devices`);
-        
+
         // Note: This is a placeholder for actual push notification sending
         // In production, you would use Firebase Cloud Messaging (FCM) for Android
         // and Apple Push Notification service (APNs) for iOS
@@ -190,9 +190,9 @@ serve(async (req) => {
             notificationId: Date.now().toString(),
           },
         });
-        
+
         pushNotificationsSent = pushTokens.length;
-        
+
         // TODO: Implement actual push notification sending
         // Example with FCM:
         // for (const token of pushTokens) {
@@ -206,8 +206,8 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         notificationsSent: notifications.length,
         emailsSent,
         pushNotificationsSent,

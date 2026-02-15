@@ -15,7 +15,7 @@ serve(async (req) => {
 
   const payload = await req.text();
   const headers = Object.fromEntries(req.headers);
-  
+
   try {
     // If webhook secret is configured, verify the webhook
     if (hookSecret) {
@@ -31,7 +31,7 @@ serve(async (req) => {
       };
 
       const { user, email_data } = verification;
-      
+
       // Only send verification emails, not other types
       if (email_data.email_action_type !== 'signup') {
         console.log('Not a signup email, skipping');
@@ -51,7 +51,7 @@ serve(async (req) => {
       );
 
       const { error } = await resend.emails.send({
-        from: 'Murranno Music <onboarding@resend.dev>',
+        from: 'Murranno Music <hello@murrannomusic.site>',
         to: [user.email],
         subject: 'Verify your Murranno Music account',
         html,
@@ -85,7 +85,7 @@ serve(async (req) => {
       );
 
       const { error } = await resend.emails.send({
-        from: 'Murranno Music <onboarding@resend.dev>',
+        from: 'Murranno Music <hello@murrannomusic.site>',
         to: [email],
         subject: 'Verify your Murranno Music account',
         html,

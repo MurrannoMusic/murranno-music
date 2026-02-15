@@ -64,23 +64,23 @@ export const useStats = () => {
 
   const getStatsAsItems = () => {
     return [
-      { 
-        title: 'Total Streams', 
-        value: stats.totalStreams.toLocaleString(), 
-        change: `+${stats.monthlyGrowth}%`, 
-        changeType: stats.monthlyGrowth >= 0 ? 'positive' : 'negative' 
+      {
+        title: 'Total Streams',
+        value: stats.totalStreams.toLocaleString(),
+        change: stats.monthlyGrowth ? `${stats.monthlyGrowth > 0 ? '+' : ''}${stats.monthlyGrowth}%` : '0%',
+        changeType: stats.monthlyGrowth >= 0 ? 'positive' : 'negative'
       },
-      { 
-        title: 'Earnings', 
-        value: `₦${stats.totalEarnings.toLocaleString()}`, 
-        change: '+12%', 
-        changeType: 'positive' 
+      {
+        title: 'Earnings',
+        value: `₦${stats.totalEarnings.toLocaleString()}`,
+        change: '0%', // Placeholder until historical data is available
+        changeType: 'neutral'
       },
-      { 
-        title: 'Active Releases', 
-        value: stats.activeReleases.toString(), 
-        change: '+2', 
-        changeType: 'positive' 
+      {
+        title: 'Active Releases',
+        value: stats.activeReleases.toString(),
+        change: '0',
+        changeType: 'neutral'
       },
     ];
   };

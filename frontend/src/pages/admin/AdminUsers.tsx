@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -8,51 +7,36 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { toast } from 'sonner';
 import { Search } from 'lucide-react';
 import { format } from 'date-fns';
+import { useAdminFilters } from '@/hooks/admin/useAdminFilters';
+import { useAdminUsers } from '@/hooks/admin/useAdminUsers';
+import { AdminUser } from '@/types/admin';
 
 export default function AdminUsers() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [tierFilter, setTierFilter] = useState('all');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const queryClient = useQueryClient();
-
-  const { data, isLoading } = useQuery({
-    queryKey: ['admin-users', page, search, tierFilter, statusFilter],
-    queryFn: async () => {
-      const payload: any = {
-        page,
-        limit: 20,
-        ...(search && { search }),
-      };
-      if (tierFilter && tierFilter !== 'all') payload.tier = tierFilter;
-      if (statusFilter && statusFilter !== 'all') payload.status = statusFilter;
-
-      const { data, error } = await supabase.functions.invoke('admin-get-all-users', {
-        body: payload,
-      });
-      if (error) throw error;
-      return data;
-    },
+  const {
+    page,
+    setPage,
+    search,
+    setSearch,
+    filters,
+    handleFilterChange,
+  } = useAdminFilters({
+    tier: 'all',
+    status: 'all',
   });
 
-  const updateRoleMutation = useMutation({
-    mutationFn: async ({ userId, newTier }: { userId: string; newTier: string }) => {
-      const { data, error } = await supabase.functions.invoke('admin-update-user-role', {
-        body: { userId, newTier },
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      toast.success('User role updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['admin-users'] });
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update user role');
-    },
+  const {
+    users,
+    total,
+    totalPages,
+    isLoading,
+    updateRoleMutation,
+  } = useAdminUsers({
+    page,
+    search,
+    tierFilter: filters.tier,
+    statusFilter: filters.status,
   });
 
   return (
@@ -78,7 +62,7 @@ export default function AdminUsers() {
                   className="pl-8"
                 />
               </div>
-              <Select value={tierFilter} onValueChange={setTierFilter}>
+              <Select value={filters.tier} onValueChange={(val) => handleFilterChange('tier', val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by tier" />
                 </SelectTrigger>
@@ -90,7 +74,7 @@ export default function AdminUsers() {
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <Select value={filters.status} onValueChange={(val) => handleFilterChange('status', val)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
@@ -107,7 +91,7 @@ export default function AdminUsers() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Users ({data?.total || 0})</CardTitle>
+            <CardTitle>Users ({total})</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -128,14 +112,14 @@ export default function AdminUsers() {
                       Loading...
                     </TableCell>
                   </TableRow>
-                ) : data?.users?.length === 0 ? (
+                ) : users.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center">
                       No users found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  data?.users?.map((user: any) => (
+                  users.map((user: AdminUser) => (
                     <TableRow key={user.id}>
                       <TableCell>{user.email}</TableCell>
                       <TableCell>{user.full_name || '-'}</TableCell>
@@ -150,8 +134,8 @@ export default function AdminUsers() {
                             user.subscriptions?.[0]?.status === 'active'
                               ? 'default'
                               : user.subscriptions?.[0]?.status === 'trial'
-                              ? 'secondary'
-                              : 'destructive'
+                                ? 'secondary'
+                                : 'destructive'
                           }
                         >
                           {user.subscriptions?.[0]?.status || 'N/A'}
@@ -187,7 +171,7 @@ export default function AdminUsers() {
               </TableBody>
             </Table>
 
-            {data && data.totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-4">
                 <Button
                   variant="outline"
@@ -197,12 +181,12 @@ export default function AdminUsers() {
                   Previous
                 </Button>
                 <span className="flex items-center px-4">
-                  Page {page} of {data.totalPages}
+                  Page {page} of {totalPages}
                 </span>
                 <Button
                   variant="outline"
-                  onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
-                  disabled={page === data.totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
                 >
                   Next
                 </Button>

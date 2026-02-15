@@ -54,7 +54,7 @@ serve(async (req) => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "Murranno Music <onboarding@resend.dev>",
+      from: "Murranno Music <hello@murrannomusic.site>",
       to: [profile.email],
       subject,
       html: `

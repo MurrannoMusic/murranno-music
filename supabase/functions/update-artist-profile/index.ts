@@ -12,17 +12,22 @@ serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
+    // Create Admin Client for DB operations (Bypass RLS)
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Get the user from the request authorization header
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      throw new Error('No Authorization header');
+    }
+
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(
+      authHeader.replace('Bearer ', '')
+    );
+
     if (authError || !user) {
       console.error('Authentication error:', authError);
       return new Response(
@@ -31,11 +36,12 @@ serve(async (req) => {
       );
     }
 
-    const { 
-      stage_name, 
-      bio, 
-      profile_image, 
-      spotify_id, 
+    const updates = await req.json();
+    const {
+      stage_name,
+      bio,
+      profile_image,
+      spotify_id,
       apple_music_id,
       spotify_url,
       youtube_url,
@@ -48,58 +54,44 @@ serve(async (req) => {
       facebook_url,
       tiktok_url,
       twitter_url
-    } = await req.json();
+    } = updates;
 
     console.log('Updating artist profile for user:', user.id);
 
     // Get artist profile
-    const { data: artist, error: fetchError } = await supabase
+    const { data: artist, error: fetchError } = await supabaseAdmin
       .from('artists')
       .select('id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
-    if (fetchError || !artist) {
-      console.error('Artist profile not found:', fetchError);
-      return new Response(
-        JSON.stringify({ error: 'Artist profile not found' }),
-        { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    let result;
+
+    if (artist) {
+      // Update existing profile
+      console.log('Updating existing artist profile:', artist.id);
+      result = await supabaseAdmin
+        .from('artists')
+        .update(updates)
+        .eq('id', artist.id)
+        .select()
+        .single();
+    } else {
+      // Create new profile
+      console.log('Creating new artist profile for user:', user.id);
+      result = await supabaseAdmin
+        .from('artists')
+        .insert({
+          user_id: user.id,
+          ...updates
+        })
+        .select()
+        .single();
     }
 
-    // Build update object with only provided fields
-    const updates: any = {};
-    if (stage_name !== undefined) updates.stage_name = stage_name;
-    if (bio !== undefined) updates.bio = bio;
-    if (profile_image !== undefined) updates.profile_image = profile_image;
-    if (spotify_id !== undefined) updates.spotify_id = spotify_id;
-    if (apple_music_id !== undefined) updates.apple_music_id = apple_music_id;
-    if (spotify_url !== undefined) updates.spotify_url = spotify_url;
-    if (youtube_url !== undefined) updates.youtube_url = youtube_url;
-    if (audiomack_url !== undefined) updates.audiomack_url = audiomack_url;
-    if (soundcloud_url !== undefined) updates.soundcloud_url = soundcloud_url;
-    if (apple_music_url !== undefined) updates.apple_music_url = apple_music_url;
-    if (deezer_url !== undefined) updates.deezer_url = deezer_url;
-    if (tidal_url !== undefined) updates.tidal_url = tidal_url;
-    if (instagram_url !== undefined) updates.instagram_url = instagram_url;
-    if (facebook_url !== undefined) updates.facebook_url = facebook_url;
-    if (tiktok_url !== undefined) updates.tiktok_url = tiktok_url;
-    if (twitter_url !== undefined) updates.twitter_url = twitter_url;
+    const { data: updatedArtist, error: updateError } = result;
 
-    if (Object.keys(updates).length === 0) {
-      return new Response(
-        JSON.stringify({ error: 'No fields to update' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // Update artist profile
-    const { data: updatedArtist, error: updateError } = await supabase
-      .from('artists')
-      .update(updates)
-      .eq('id', artist.id)
-      .select()
-      .single();
+    if (updateError) throw updateError;
 
     if (updateError) throw updateError;
 

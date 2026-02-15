@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useQueryClient } from '@tanstack/react-query';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
-import { Eye, CheckCircle, XCircle, Music, AlertCircle } from 'lucide-react';
+import { Eye, CheckCircle, XCircle, Music } from 'lucide-react';
 import { format } from 'date-fns';
 import { ContentStats } from '@/components/admin/ContentStats';
 import { BulkActionsBar } from '@/components/admin/BulkActionsBar';
@@ -17,99 +16,47 @@ import { RejectionDialog } from '@/components/admin/RejectionDialog';
 import { AudioPreviewPlayer } from '@/components/admin/AudioPreviewPlayer';
 import { AdvancedFilters } from '@/components/admin/AdvancedFilters';
 import { MetadataWarnings } from '@/components/admin/MetadataWarnings';
-
-interface Release {
-  id: string;
-  title: string;
-  artist_id: string;
-  release_type: string;
-  status: string;
-  release_date: string;
-  cover_art_url: string | null;
-  genre: string | null;
-  created_at: string;
-  upc_ean: string | null;
-  label: string | null;
-  copyright: string | null;
-  language: string | null;
-}
-
-interface Track {
-  id: string;
-  title: string;
-  audio_file_url: string | null;
-}
+import { useAdminFilters } from '@/hooks/admin/useAdminFilters';
+import { useAdminReleases } from '@/hooks/admin/useAdminReleases';
+import { AdminRelease, AdminTrack } from '@/types/admin';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function AdminContent() {
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
-  const [genreFilter, setGenreFilter] = useState('all');
-  const [releaseTypeFilter, setReleaseTypeFilter] = useState('all');
-  const [selectedRelease, setSelectedRelease] = useState<Release | null>(null);
+  const {
+    page,
+    setPage,
+    search,
+    setSearch,
+    filters,
+    handleFilterChange,
+    resetFilters
+  } = useAdminFilters({
+    status: 'all',
+    genre: 'all',
+    releaseType: 'all'
+  });
+
+  const {
+    releases,
+    total,
+    totalPages,
+    stats,
+    isLoading,
+    moderateRelease
+  } = useAdminReleases({
+    page,
+    search,
+    statusFilter: filters.status,
+    genreFilter: filters.genre,
+    releaseTypeFilter: filters.releaseType
+  });
+
+  const [selectedRelease, setSelectedRelease] = useState<AdminRelease | null>(null);
   const [selectedReleases, setSelectedReleases] = useState<Set<string>>(new Set());
   const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
-  const [releaseToReject, setReleaseToReject] = useState<Release | null>(null);
-  const [tracks, setTracks] = useState<Track[]>([]);
+  const [releaseToReject, setReleaseToReject] = useState<AdminRelease | null>(null);
+  const [tracks, setTracks] = useState<AdminTrack[]>([]);
   const queryClient = useQueryClient();
-
-  const { data: releases, isLoading } = useQuery({
-    queryKey: ['admin-releases', page, search, statusFilter, genreFilter, releaseTypeFilter],
-    queryFn: async () => {
-      let query = supabase
-        .from('releases')
-        .select('*', { count: 'exact' })
-        .order('created_at', { ascending: false })
-        .range((page - 1) * 20, page * 20 - 1);
-
-      if (search) {
-        query = query.ilike('title', `%${search}%`);
-      }
-
-      if (statusFilter && statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
-      if (genreFilter && genreFilter !== 'all') {
-        query = query.eq('genre', genreFilter);
-      }
-
-      if (releaseTypeFilter && releaseTypeFilter !== 'all') {
-        query = query.eq('release_type', releaseTypeFilter);
-      }
-
-      const { data, error, count } = await query;
-      if (error) throw error;
-
-      return {
-        releases: data || [],
-        total: count || 0,
-        totalPages: Math.ceil((count || 0) / 20),
-        pending: data?.filter(r => r.status === 'Pending').length || 0,
-        published: data?.filter(r => r.status === 'Published').length || 0,
-        rejected: data?.filter(r => r.status === 'Rejected').length || 0,
-      };
-    },
-  });
-
-  const moderateRelease = useMutation({
-    mutationFn: async ({ releaseId, status, reason }: { releaseId: string; status: string; reason?: string }) => {
-      const { data, error } = await supabase.functions.invoke('admin-moderate-release', {
-        body: { releaseId, status, reason },
-      });
-      if (error) throw error;
-      return data;
-    },
-    onSuccess: () => {
-      toast.success('Release status updated successfully');
-      queryClient.invalidateQueries({ queryKey: ['admin-releases'] });
-      setSelectedRelease(null);
-      setSelectedReleases(new Set());
-    },
-    onError: (error: any) => {
-      toast.error(error.message || 'Failed to update release status');
-    },
-  });
 
   const handleSelectRelease = (releaseId: string, checked: boolean) => {
     const newSelection = new Set(selectedReleases);
@@ -123,7 +70,7 @@ export default function AdminContent() {
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
-      const allIds = new Set(releases?.releases.map(r => r.id) || []);
+      const allIds = new Set(releases.map(r => r.id));
       setSelectedReleases(allIds);
     } else {
       setSelectedReleases(new Set());
@@ -156,19 +103,12 @@ export default function AdminContent() {
     }
   };
 
-  const handleClearFilters = () => {
-    setSearch('');
-    setStatusFilter('all');
-    setGenreFilter('all');
-    setReleaseTypeFilter('all');
-  };
-
   const fetchTracks = async (releaseId: string) => {
     const { data, error } = await supabase
       .from('tracks')
       .select('id, title, audio_file_url')
       .eq('release_id', releaseId);
-    
+
     if (!error && data) {
       setTracks(data);
     }
@@ -198,27 +138,27 @@ export default function AdminContent() {
         </div>
 
         <ContentStats
-          totalReleases={releases?.total || 0}
-          pendingCount={releases?.pending || 0}
-          publishedCount={releases?.published || 0}
-          rejectedCount={releases?.rejected || 0}
+          totalReleases={total}
+          pendingCount={stats.pending}
+          publishedCount={stats.published}
+          rejectedCount={stats.rejected}
         />
 
         <AdvancedFilters
           search={search}
           onSearchChange={setSearch}
-          statusFilter={statusFilter}
-          onStatusChange={setStatusFilter}
-          genreFilter={genreFilter}
-          onGenreChange={setGenreFilter}
-          releaseTypeFilter={releaseTypeFilter}
-          onReleaseTypeChange={setReleaseTypeFilter}
-          onClearFilters={handleClearFilters}
+          statusFilter={filters.status}
+          onStatusChange={(val) => handleFilterChange('status', val)}
+          genreFilter={filters.genre}
+          onGenreChange={(val) => handleFilterChange('genre', val)}
+          releaseTypeFilter={filters.releaseType}
+          onReleaseTypeChange={(val) => handleFilterChange('releaseType', val)}
+          onClearFilters={resetFilters}
         />
 
         <Card>
           <CardHeader>
-            <CardTitle>Releases ({releases?.total || 0})</CardTitle>
+            <CardTitle>Releases ({total})</CardTitle>
           </CardHeader>
           <CardContent>
             <Table>
@@ -226,7 +166,7 @@ export default function AdminContent() {
                 <TableRow>
                   <TableHead className="w-12">
                     <Checkbox
-                      checked={selectedReleases.size === releases?.releases.length && releases?.releases.length > 0}
+                      checked={selectedReleases.size === releases.length && releases.length > 0}
                       onCheckedChange={handleSelectAll}
                     />
                   </TableHead>
@@ -246,14 +186,14 @@ export default function AdminContent() {
                       Loading...
                     </TableCell>
                   </TableRow>
-                ) : releases?.releases?.length === 0 ? (
+                ) : releases.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center">
                       No releases found
                     </TableCell>
                   </TableRow>
                 ) : (
-                  releases?.releases?.map((release: Release) => (
+                  releases.map((release) => (
                     <TableRow key={release.id}>
                       <TableCell>
                         <Checkbox
@@ -398,7 +338,7 @@ export default function AdminContent() {
               </TableBody>
             </Table>
 
-            {releases && releases.totalPages > 1 && (
+            {totalPages > 1 && (
               <div className="flex justify-center gap-2 mt-4">
                 <Button
                   variant="outline"
@@ -408,12 +348,12 @@ export default function AdminContent() {
                   Previous
                 </Button>
                 <span className="flex items-center px-4">
-                  Page {page} of {releases.totalPages}
+                  Page {page} of {totalPages}
                 </span>
                 <Button
                   variant="outline"
-                  onClick={() => setPage((p) => Math.min(releases.totalPages, p + 1))}
-                  disabled={page === releases.totalPages}
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
                 >
                   Next
                 </Button>
@@ -426,9 +366,9 @@ export default function AdminContent() {
           selectedCount={selectedReleases.size}
           onApprove={handleBulkApprove}
           onReject={handleBulkReject}
-          onPause={() => {}}
-          onActivate={() => {}}
-          onDelete={() => {}}
+          onPause={() => { }}
+          onActivate={() => { }}
+          onDelete={() => { }}
           onClearSelection={() => setSelectedReleases(new Set())}
         />
 

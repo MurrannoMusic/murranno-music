@@ -91,7 +91,7 @@ serve(async (req) => {
         const period = periodStart === periodEnd ? periodStart : `${periodStart} - ${periodEnd}`;
 
         await resend.emails.send({
-          from: 'Murranno Music <earnings@resend.dev>',
+          from: 'Murranno Music <hello@murrannomusic.site>',
           to: [profile.email],
           subject: `New Earnings: ${earning.currency} ${earning.amount.toFixed(2)}`,
           html: earningsAlertEmail(

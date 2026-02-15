@@ -64,7 +64,9 @@ export const LabelDashboard = () => {
                 <DollarSign className="h-4 w-4 text-primary" />
               </div>
               <div className="text-right">
-                <div className="text-xs text-success font-medium">+12%</div>
+                <div className={`text-xs font-medium ${stats[1]?.changeType === 'positive' ? 'text-success' : 'text-muted-foreground'}`}>
+                  {stats[1]?.change}
+                </div>
               </div>
             </div>
             <div className="space-y-1">
@@ -81,7 +83,9 @@ export const LabelDashboard = () => {
                 <Users className="h-4 w-4 text-primary" />
               </div>
               <div className="text-right">
-                <div className="text-xs text-success font-medium">+23%</div>
+                <div className={`text-xs font-medium ${stats[0]?.changeType === 'positive' ? 'text-success' : 'text-muted-foreground'}`}>
+                  {stats[0]?.change}
+                </div>
               </div>
             </div>
             <div className="space-y-1">

@@ -1,19 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, FileText, DollarSign, TrendingUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAdminStats } from '@/hooks/admin/useAdminStats';
 
 export default function AdminDashboard() {
-  const { data: analytics, isLoading } = useQuery({
-    queryKey: ['admin-platform-analytics'],
-    queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('admin-get-platform-analytics');
-      if (error) throw error;
-      return data.analytics;
-    },
-  });
+  const { analytics, isLoading } = useAdminStats();
 
   const stats = [
     {

@@ -1,13 +1,21 @@
-import { Clock } from 'lucide-react';
+import { Clock, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import { useReleases } from '@/hooks/useReleases';
+import { useNavigate } from 'react-router-dom';
 
 export const UpcomingReleaseCountdown = () => {
-    // Mock date - replace with next release date
-    const releaseDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
-    const trackName = "Summer Vibes";
+    const { releases, loading } = useReleases();
+    const navigate = useNavigate();
+
+    // Find the next upcoming release (future release date)
+    const upcomingRelease = releases
+        .filter(r => r.releaseDate && new Date(r.releaseDate) > new Date())
+        .sort((a, b) => new Date(a.releaseDate!).getTime() - new Date(b.releaseDate!).getTime())[0];
 
     const calculateTimeLeft = () => {
-        const difference = +releaseDate - +new Date();
+        if (!upcomingRelease?.releaseDate) return null;
+
+        const difference = +new Date(upcomingRelease.releaseDate) - +new Date();
 
         if (difference > 0) {
             return {
@@ -22,23 +30,29 @@ export const UpcomingReleaseCountdown = () => {
     const [timeLeft, setTimeLeft] = useState(calculateTimeLeft());
 
     useEffect(() => {
+        setTimeLeft(calculateTimeLeft()); // Initial calc
+
         const timer = setTimeout(() => {
             setTimeLeft(calculateTimeLeft());
-        }, 60000); // Update every minute is enough for UI
+        }, 60000); // Update every minute
 
         return () => clearTimeout(timer);
-    });
+    }, [upcomingRelease]);
 
-    if (!timeLeft) return null;
+    if (loading) return null;
+    if (!upcomingRelease || !timeLeft) return null;
 
     return (
-        <div className="mx-4 my-2 p-4 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-2xl border border-indigo-500/30 flex items-center justify-between">
+        <div
+            className="mx-4 my-2 p-4 bg-gradient-to-br from-indigo-500/20 to-purple-600/20 rounded-2xl border border-indigo-500/30 flex items-center justify-between cursor-pointer hover:bg-indigo-500/10 transition-colors"
+            onClick={() => navigate(`/app/releases/${upcomingRelease.id}`)}
+        >
             <div>
                 <div className="flex items-center gap-2 mb-1">
                     <Clock className="h-4 w-4 text-indigo-400" />
                     <span className="text-xs font-bold text-indigo-400 uppercase tracking-wider">Upcoming Release</span>
                 </div>
-                <p className="font-bold text-lg text-foreground">{trackName}</p>
+                <p className="font-bold text-lg text-foreground truncate max-w-[150px]">{upcomingRelease.title}</p>
             </div>
 
             <div className="flex gap-2 text-center">

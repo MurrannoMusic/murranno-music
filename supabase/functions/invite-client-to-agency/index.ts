@@ -134,7 +134,7 @@ serve(async (req) => {
 
     // Send email notification
     const resend = new Resend(Deno.env.get('RESEND_API_KEY'));
-    
+
     // Check if client has email notifications enabled
     const { data: preferences } = await supabase
       .from('notification_preferences')
@@ -148,7 +148,7 @@ serve(async (req) => {
         const artistName = artist?.stage_name || 'Artist';
 
         await resend.emails.send({
-          from: 'Murranno Music <notifications@resend.dev>',
+          from: 'Murranno Music <hello@murrannomusic.site>',
           to: [clientEmail],
           subject: `You've been added to ${agencyName}!`,
           html: agencyInvitationEmail(
