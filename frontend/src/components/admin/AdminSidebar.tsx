@@ -31,6 +31,8 @@ const menuItems = [
 
 
 
+import mmLogo from '@/assets/mm_logo.png';
+
 export function AdminSidebar() {
   const { state } = useSidebar();
   const location = useLocation();
@@ -41,7 +43,7 @@ export function AdminSidebar() {
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center justify-center w-full">
           <img
-            src="/src/assets/mm_logo.png"
+            src={mmLogo}
             alt="Murranno Music Logo"
             className={`object-contain transition-all ${isCollapsed ? 'h-8 w-8' : 'h-12 w-auto'}`}
           />
