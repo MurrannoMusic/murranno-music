@@ -19,12 +19,14 @@ import {
   Database,
   HelpCircle,
   Scale,
+  Globe,
   Share2,
   Save,
   Users,
   AlertTriangle,
   Server
 } from 'lucide-react';
+import { AdminLayout } from '@/components/admin/AdminLayout';
 import { AdminTeamSettings } from '@/components/admin/settings/AdminTeamSettings';
 
 interface PlatformSettings {
