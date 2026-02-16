@@ -11,11 +11,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { 
-  Settings, 
-  Shield, 
-  Mail, 
-  CreditCard, 
+import {
+  Settings,
+  Shield,
+  Mail,
+  CreditCard,
   Bell,
   Globe,
   Save,
@@ -36,6 +36,15 @@ interface PlatformSettings {
   platformFee: number;
   emailNotifications: boolean;
   smsNotifications: boolean;
+  helpCenterUrl?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  termsUrl?: string;
+  privacyUrl?: string;
+  socialInstagram?: string;
+  socialTwitter?: string;
+  socialFacebook?: string;
+  socialLinkedin?: string;
 }
 
 export default function AdminSettings() {
@@ -54,6 +63,15 @@ export default function AdminSettings() {
     platformFee: 15,
     emailNotifications: true,
     smsNotifications: false,
+    helpCenterUrl: '',
+    contactPhone: '',
+    contactEmail: '',
+    termsUrl: '',
+    privacyUrl: '',
+    socialInstagram: '',
+    socialTwitter: '',
+    socialFacebook: '',
+    socialLinkedin: '',
   });
 
   // Fetch current settings
@@ -84,6 +102,15 @@ export default function AdminSettings() {
         platformFee: Number(settingsData.platform_fee_percentage),
         emailNotifications: settingsData.email_notifications_enabled,
         smsNotifications: settingsData.sms_notifications_enabled,
+        helpCenterUrl: settingsData.help_center_url,
+        contactPhone: settingsData.contact_phone,
+        contactEmail: settingsData.contact_email,
+        termsUrl: settingsData.terms_url,
+        privacyUrl: settingsData.privacy_url,
+        socialInstagram: settingsData.social_instagram,
+        socialTwitter: settingsData.social_twitter,
+        socialFacebook: settingsData.social_facebook,
+        socialLinkedin: settingsData.social_linkedin,
       });
     }
   }, [settingsData]);
@@ -183,6 +210,18 @@ export default function AdminSettings() {
             <TabsTrigger value="data" className="gap-2">
               <Database className="h-4 w-4" />
               Data Management
+            </TabsTrigger>
+            <TabsTrigger value="support" className="gap-2">
+              <Mail className="h-4 w-4" />
+              Support
+            </TabsTrigger>
+            <TabsTrigger value="legal" className="gap-2">
+              <Shield className="h-4 w-4" />
+              Legal
+            </TabsTrigger>
+            <TabsTrigger value="social" className="gap-2">
+              <Globe className="h-4 w-4" />
+              Social
             </TabsTrigger>
           </TabsList>
 
@@ -320,7 +359,7 @@ export default function AdminSettings() {
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <Label htmlFor="gateway">Payment Gateway</Label>
-                  <Select 
+                  <Select
                     value={settings.paymentProcessor}
                     onValueChange={(value) => updateSetting('paymentProcessor', value)}
                   >
@@ -365,7 +404,7 @@ export default function AdminSettings() {
 
                 <div className="space-y-2">
                   <Label htmlFor="payout-schedule">Payout Schedule</Label>
-                  <Select 
+                  <Select
                     value={settings.payoutSchedule}
                     onValueChange={(value) => updateSetting('payoutSchedule', value)}
                   >
@@ -454,6 +493,135 @@ export default function AdminSettings() {
                       {seedServices.isPending ? 'Seeding...' : 'Seed Services & Bundles'}
                     </Button>
                   </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          <TabsContent value="support" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="h-5 w-5" />
+                  Support Configuration
+                </CardTitle>
+                <CardDescription>
+                  Manage support contact information and links
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="help-center">Help Center URL</Label>
+                  <Input
+                    id="help-center"
+                    placeholder="https://help.murranno.com"
+                    value={settings.helpCenterUrl || ''}
+                    onChange={(e) => updateSetting('helpCenterUrl', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-phone">Contact Phone</Label>
+                  <Input
+                    id="contact-phone"
+                    placeholder="+234..."
+                    value={settings.contactPhone || ''}
+                    onChange={(e) => updateSetting('contactPhone', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="contact-email">Contact Email</Label>
+                  <Input
+                    id="contact-email"
+                    type="email"
+                    placeholder="contact@murranno.com"
+                    value={settings.contactEmail || ''}
+                    onChange={(e) => updateSetting('contactEmail', e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="legal" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="h-5 w-5" />
+                  Legal Documents
+                </CardTitle>
+                <CardDescription>
+                  Links to legal documents and policies
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="terms-url">Terms of Service URL</Label>
+                  <Input
+                    id="terms-url"
+                    placeholder="https://murranno.com/terms"
+                    value={settings.termsUrl || ''}
+                    onChange={(e) => updateSetting('termsUrl', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="privacy-url">Privacy Policy URL</Label>
+                  <Input
+                    id="privacy-url"
+                    placeholder="https://murranno.com/privacy"
+                    value={settings.privacyUrl || ''}
+                    onChange={(e) => updateSetting('privacyUrl', e.target.value)}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="social" className="space-y-4">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="h-5 w-5" />
+                  Social Media Links
+                </CardTitle>
+                <CardDescription>
+                  Manage platform social media profiles
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="social-instagram">Instagram URL</Label>
+                  <Input
+                    id="social-instagram"
+                    placeholder="https://instagram.com/murrannomusic"
+                    value={settings.socialInstagram || ''}
+                    onChange={(e) => updateSetting('socialInstagram', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social-twitter">Twitter/X URL</Label>
+                  <Input
+                    id="social-twitter"
+                    placeholder="https://twitter.com/murrannomusic"
+                    value={settings.socialTwitter || ''}
+                    onChange={(e) => updateSetting('socialTwitter', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social-facebook">Facebook URL</Label>
+                  <Input
+                    id="social-facebook"
+                    placeholder="https://facebook.com/murrannomusic"
+                    value={settings.socialFacebook || ''}
+                    onChange={(e) => updateSetting('socialFacebook', e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="social-linkedin">LinkedIn URL</Label>
+                  <Input
+                    id="social-linkedin"
+                    placeholder="https://linkedin.com/company/murranno-music"
+                    value={settings.socialLinkedin || ''}
+                    onChange={(e) => updateSetting('socialLinkedin', e.target.value)}
+                  />
                 </div>
               </CardContent>
             </Card>
