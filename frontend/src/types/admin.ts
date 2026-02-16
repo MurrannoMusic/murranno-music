@@ -12,12 +12,20 @@ export interface AdminRelease {
     label: string | null;
     copyright: string | null;
     language: string | null;
+    recording_year?: string | null;
+    primary_artist?: string | null;
+    description?: string | null;
 }
 
 export interface AdminTrack {
     id: string;
     title: string;
     audio_file_url: string | null;
+    duration?: string | null;
+    isrc?: string | null;
+    lyrics?: string | null;
+    songwriter_legal_names?: string[] | null;
+    explicit_content?: boolean;
 }
 
 export interface AdminUser {

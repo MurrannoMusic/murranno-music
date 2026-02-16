@@ -22,6 +22,7 @@ import { AdminRelease, AdminTrack } from '@/types/admin';
 import { supabase } from '@/integrations/supabase/client';
 
 import { AdminEditReleaseDialog } from '@/components/admin/AdminEditReleaseDialog';
+import { ReleaseDistributionDetails } from '@/components/admin/ReleaseDistributionDetails';
 import { Pencil } from 'lucide-react';
 
 export default function AdminContent() {
@@ -111,8 +112,10 @@ export default function AdminContent() {
   const fetchTracks = async (releaseId: string) => {
     const { data, error } = await supabase
       .from('tracks')
-      .select('id, title, audio_file_url')
-      .eq('release_id', releaseId);
+      // Select all fields needed for AdminTrack interface
+      .select('id, title, audio_file_url, duration, isrc, lyrics, songwriter_legal_names, explicit_content')
+      .eq('release_id', releaseId)
+      .order('track_number', { ascending: true }); // Ensure proper ordering if track_number exists, else logic might be needed
 
     if (!error && data) {
       setTracks(data);
@@ -274,81 +277,10 @@ export default function AdminContent() {
                                     type: 'TikTok'
                                   } as any} />
 
-                                  <div className="flex gap-4">
-                                    {selectedRelease.cover_art_url && (
-                                      <div className="relative group">
-                                        <img
-                                          src={selectedRelease.cover_art_url}
-                                          alt={selectedRelease.title}
-                                          className="h-32 w-32 rounded-lg object-cover"
-                                        />
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                                          <a
-                                            href={selectedRelease.cover_art_url}
-                                            download={`cover-${selectedRelease.title}.jpg`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className="text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
-                                            title="Download Artwork"
-                                          >
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
-                                          </a>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <div className="flex-1 space-y-2">
-                                      <h3 className="font-semibold text-lg">{selectedRelease.title}</h3>
-                                      <div className="space-y-1 text-sm">
-                                        <p className="text-muted-foreground capitalize">
-                                          <span className="font-medium">Type:</span> {selectedRelease.release_type}
-                                        </p>
-                                        <p className="text-muted-foreground">
-                                          <span className="font-medium">Genre:</span> {selectedRelease.genre || 'Not specified'}
-                                        </p>
-                                        <p className="text-muted-foreground">
-                                          <span className="font-medium">Label:</span> {selectedRelease.label || 'Not specified'}
-                                        </p>
-                                        <p className="text-muted-foreground">
-                                          <span className="font-medium">UPC/EAN:</span> {selectedRelease.upc_ean || 'Not specified'}
-                                        </p>
-                                      </div>
-                                    </div>
-                                    <Button
-                                      variant="outline"
-                                      size="sm"
-                                      onClick={() => {
-                                        setReleaseToEdit(selectedRelease);
-                                        setEditDialogOpen(true);
-                                      }}
-                                    >
-                                      <Pencil className="h-4 w-4 mr-2" />
-                                      Edit
-                                    </Button>
-                                  </div>
-
-                                  {tracks.length > 0 && tracks.map((track, i) => (
-                                    <div key={track.id} className="space-y-2 border p-3 rounded-lg bg-muted/20">
-                                      <div className="flex justify-between items-center">
-                                        <h4 className="font-semibold text-sm">Track {i + 1}: {track.title}</h4>
-                                        {track.audio_file_url && (
-                                          <a
-                                            href={track.audio_file_url}
-                                            download={`track-${track.title}.mp3`}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                          >
-                                            <Button variant="outline" size="sm" className="h-8 gap-2">
-                                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
-                                              Download
-                                            </Button>
-                                          </a>
-                                        )}
-                                      </div>
-                                      {track.audio_file_url && (
-                                        <AudioPreviewPlayer audioUrl={track.audio_file_url} />
-                                      )}
-                                    </div>
-                                  ))}
+                                  <ReleaseDistributionDetails
+                                    release={selectedRelease}
+                                    tracks={tracks}
+                                  />
 
                                   <div className="flex gap-2">
                                     <Button
