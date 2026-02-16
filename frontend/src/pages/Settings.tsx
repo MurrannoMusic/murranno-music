@@ -454,7 +454,24 @@ export const Settings = () => {
                     // In a real scenario, we'd Trigger a dedicated DeleteAccountDialog
                     // For now, we'll just show a toast that this feature is protected
                     // or mock the call if the edge function isn't ready.
-                    toast.error("Please contact support to delete your account for security reasons, or use the web portal.");
+                    const handleDeleteAccount = async () => {
+                      try {
+                        const { error } = await supabase.functions.invoke('delete-account');
+                        if (error) throw error;
+
+                        toast.success("Account deleted successfully");
+                        await supabase.auth.signOut();
+                        navigate('/');
+                      } catch (error: any) {
+                        console.error('Error deleting account:', error);
+                        toast.error(error.message || "Failed to delete account. Please contact support.");
+                      } finally {
+                        // Assuming setIsDeleteOpen is a state setter for a dialog,
+                        // if not, this line might need adjustment or removal.
+                        // setIsDeleteOpen(false);
+                      }
+                    };
+                    handleDeleteAccount();
                   }
                 }}
               >
