@@ -1,5 +1,31 @@
+import { useState, useEffect } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
+import {
+  Settings,
+  Shield,
+  CreditCard,
+  Bell,
+  Database,
+  HelpCircle,
+  Scale,
+  Share2,
+  Save,
+  Users,
+  AlertTriangle,
+  Server
+} from 'lucide-react';
 import { AdminTeamSettings } from '@/components/admin/settings/AdminTeamSettings';
-import { Users } from 'lucide-react';
 
 interface PlatformSettings {
   platformName: string;
