@@ -97,6 +97,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         .single();
 
       if (profileError) throw profileError;
+
+      // Check if banned
+      if (profileData && (profileData as any).banned) {
+        throw new Error((profileData as any).ban_reason ? `Account Banned: ${(profileData as any).ban_reason}` : "Your account has been banned.");
+      }
+
       setProfile(profileData as Profile);
 
       // Fetch user role

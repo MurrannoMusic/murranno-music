@@ -25,6 +25,8 @@ export interface AdminUser {
     email: string;
     full_name: string | null;
     created_at: string;
+    banned?: boolean;
+    ban_reason?: string | null;
     user_roles: { tier: string }[];
     subscriptions: { status: string }[];
 }

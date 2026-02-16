@@ -21,6 +21,9 @@ import { useAdminReleases } from '@/hooks/admin/useAdminReleases';
 import { AdminRelease, AdminTrack } from '@/types/admin';
 import { supabase } from '@/integrations/supabase/client';
 
+import { AdminEditReleaseDialog } from '@/components/admin/AdminEditReleaseDialog';
+import { Pencil } from 'lucide-react';
+
 export default function AdminContent() {
   const {
     page,
@@ -54,7 +57,9 @@ export default function AdminContent() {
   const [selectedRelease, setSelectedRelease] = useState<AdminRelease | null>(null);
   const [selectedReleases, setSelectedReleases] = useState<Set<string>>(new Set());
   const [rejectionDialogOpen, setRejectionDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [releaseToReject, setReleaseToReject] = useState<AdminRelease | null>(null);
+  const [releaseToEdit, setReleaseToEdit] = useState<AdminRelease | null>(null);
   const [tracks, setTracks] = useState<AdminTrack[]>([]);
   const queryClient = useQueryClient();
 
@@ -123,6 +128,8 @@ export default function AdminContent() {
       case 'Pending':
         return 'outline';
       case 'Rejected':
+        return 'destructive';
+      case 'Takedown':
         return 'destructive';
       default:
         return 'secondary';
@@ -226,142 +233,167 @@ export default function AdminContent() {
                         {format(new Date(release.release_date), 'MMM d, yyyy')}
                       </TableCell>
                       <TableCell>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                setSelectedRelease(release);
-                                fetchTracks(release.id);
-                              }}
-                            >
-                              <Eye className="h-4 w-4 mr-1" />
-                              Review
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                            <DialogHeader>
-                              <DialogTitle>Review Release</DialogTitle>
-                              <DialogDescription>
-                                Moderate this release submission
-                              </DialogDescription>
-                            </DialogHeader>
-                            {selectedRelease && (
-                              <div className="space-y-4">
-                                <MetadataWarnings campaign={{
-                                  ...selectedRelease,
-                                  campaignAssets: [],
-                                  campaignBrief: '',
-                                  targetAudience: {},
-                                  socialLinks: {},
-                                  budget: '0',
-                                  artist: '',
-                                  platform: '',
-                                  status: selectedRelease.status || 'Draft',
-                                  spent: '0',
-                                  reach: '0',
-                                  engagement: '0',
-                                  startDate: new Date().toISOString(),
-                                  type: 'TikTok'
-                                } as any} />
+                        <div className="flex items-center gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedRelease(release);
+                                  fetchTracks(release.id);
+                                }}
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Review
+                              </Button>
+                            </DialogTrigger>
+                            <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                              <DialogHeader>
+                                <DialogTitle>Review Release</DialogTitle>
+                                <DialogDescription>
+                                  Moderate this release submission
+                                </DialogDescription>
+                              </DialogHeader>
+                              {selectedRelease && (
+                                <div className="space-y-4">
+                                  <MetadataWarnings campaign={{
+                                    ...selectedRelease,
+                                    campaignAssets: [],
+                                    campaignBrief: '',
+                                    targetAudience: {},
+                                    socialLinks: {},
+                                    budget: '0',
+                                    artist: '',
+                                    platform: '',
+                                    status: selectedRelease.status || 'Draft',
+                                    spent: '0',
+                                    reach: '0',
+                                    engagement: '0',
+                                    startDate: new Date().toISOString(),
+                                    type: 'TikTok'
+                                  } as any} />
 
-                                <div className="flex gap-4">
-                                  {selectedRelease.cover_art_url && (
-                                    <div className="relative group">
-                                      <img
-                                        src={selectedRelease.cover_art_url}
-                                        alt={selectedRelease.title}
-                                        className="h-32 w-32 rounded-lg object-cover"
-                                      />
-                                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
-                                        <a
-                                          href={selectedRelease.cover_art_url}
-                                          download={`cover-${selectedRelease.title}.jpg`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
-                                          title="Download Artwork"
-                                        >
-                                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
-                                        </a>
+                                  <div className="flex gap-4">
+                                    {selectedRelease.cover_art_url && (
+                                      <div className="relative group">
+                                        <img
+                                          src={selectedRelease.cover_art_url}
+                                          alt={selectedRelease.title}
+                                          className="h-32 w-32 rounded-lg object-cover"
+                                        />
+                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                          <a
+                                            href={selectedRelease.cover_art_url}
+                                            download={`cover-${selectedRelease.title}.jpg`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
+                                            title="Download Artwork"
+                                          >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                                          </a>
+                                        </div>
+                                      </div>
+                                    )}
+                                    <div className="flex-1 space-y-2">
+                                      <h3 className="font-semibold text-lg">{selectedRelease.title}</h3>
+                                      <div className="space-y-1 text-sm">
+                                        <p className="text-muted-foreground capitalize">
+                                          <span className="font-medium">Type:</span> {selectedRelease.release_type}
+                                        </p>
+                                        <p className="text-muted-foreground">
+                                          <span className="font-medium">Genre:</span> {selectedRelease.genre || 'Not specified'}
+                                        </p>
+                                        <p className="text-muted-foreground">
+                                          <span className="font-medium">Label:</span> {selectedRelease.label || 'Not specified'}
+                                        </p>
+                                        <p className="text-muted-foreground">
+                                          <span className="font-medium">UPC/EAN:</span> {selectedRelease.upc_ean || 'Not specified'}
+                                        </p>
                                       </div>
                                     </div>
-                                  )}
-                                  <div className="flex-1 space-y-2">
-                                    <h3 className="font-semibold text-lg">{selectedRelease.title}</h3>
-                                    <div className="space-y-1 text-sm">
-                                      <p className="text-muted-foreground capitalize">
-                                        <span className="font-medium">Type:</span> {selectedRelease.release_type}
-                                      </p>
-                                      <p className="text-muted-foreground">
-                                        <span className="font-medium">Genre:</span> {selectedRelease.genre || 'Not specified'}
-                                      </p>
-                                      <p className="text-muted-foreground">
-                                        <span className="font-medium">Label:</span> {selectedRelease.label || 'Not specified'}
-                                      </p>
-                                      <p className="text-muted-foreground">
-                                        <span className="font-medium">UPC/EAN:</span> {selectedRelease.upc_ean || 'Not specified'}
-                                      </p>
-                                    </div>
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => {
+                                        setReleaseToEdit(selectedRelease);
+                                        setEditDialogOpen(true);
+                                      }}
+                                    >
+                                      <Pencil className="h-4 w-4 mr-2" />
+                                      Edit
+                                    </Button>
                                   </div>
-                                </div>
 
-                                {tracks.length > 0 && tracks.map((track, i) => (
-                                  <div key={track.id} className="space-y-2 border p-3 rounded-lg bg-muted/20">
-                                    <div className="flex justify-between items-center">
-                                      <h4 className="font-semibold text-sm">Track {i + 1}: {track.title}</h4>
+                                  {tracks.length > 0 && tracks.map((track, i) => (
+                                    <div key={track.id} className="space-y-2 border p-3 rounded-lg bg-muted/20">
+                                      <div className="flex justify-between items-center">
+                                        <h4 className="font-semibold text-sm">Track {i + 1}: {track.title}</h4>
+                                        {track.audio_file_url && (
+                                          <a
+                                            href={track.audio_file_url}
+                                            download={`track-${track.title}.mp3`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                          >
+                                            <Button variant="outline" size="sm" className="h-8 gap-2">
+                                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                                              Download
+                                            </Button>
+                                          </a>
+                                        )}
+                                      </div>
                                       {track.audio_file_url && (
-                                        <a
-                                          href={track.audio_file_url}
-                                          download={`track-${track.title}.mp3`}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                        >
-                                          <Button variant="outline" size="sm" className="h-8 gap-2">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
-                                            Download
-                                          </Button>
-                                        </a>
+                                        <AudioPreviewPlayer audioUrl={track.audio_file_url} />
                                       )}
                                     </div>
-                                    {track.audio_file_url && (
-                                      <AudioPreviewPlayer audioUrl={track.audio_file_url} />
-                                    )}
-                                  </div>
-                                ))}
+                                  ))}
 
-                                <div className="flex gap-2">
-                                  <Button
-                                    onClick={() =>
-                                      moderateRelease.mutate({
-                                        releaseId: selectedRelease.id,
-                                        status: 'Published',
-                                      })
-                                    }
-                                    className="flex-1"
-                                    disabled={moderateRelease.isPending}
-                                  >
-                                    <CheckCircle className="h-4 w-4 mr-2" />
-                                    Approve
-                                  </Button>
-                                  <Button
-                                    onClick={() => {
-                                      setReleaseToReject(selectedRelease);
-                                      setRejectionDialogOpen(true);
-                                    }}
-                                    variant="destructive"
-                                    className="flex-1"
-                                    disabled={moderateRelease.isPending}
-                                  >
-                                    <XCircle className="h-4 w-4 mr-2" />
-                                    Reject
-                                  </Button>
+                                  <div className="flex gap-2">
+                                    <Button
+                                      onClick={() =>
+                                        moderateRelease.mutate({
+                                          releaseId: selectedRelease.id,
+                                          status: 'Published',
+                                        })
+                                      }
+                                      className="flex-1"
+                                      disabled={moderateRelease.isPending}
+                                    >
+                                      <CheckCircle className="h-4 w-4 mr-2" />
+                                      Approve
+                                    </Button>
+                                    <Button
+                                      onClick={() => {
+                                        setReleaseToReject(selectedRelease);
+                                        setRejectionDialogOpen(true);
+                                      }}
+                                      variant="destructive"
+                                      className="flex-1"
+                                      disabled={moderateRelease.isPending}
+                                    >
+                                      <XCircle className="h-4 w-4 mr-2" />
+                                      Reject
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                            )}
-                          </DialogContent>
-                        </Dialog>
+                              )}
+                            </DialogContent>
+                          </Dialog>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setReleaseToEdit(release);
+                              setEditDialogOpen(true);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                            <span className="sr-only">Edit</span>
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
@@ -409,6 +441,12 @@ export default function AdminContent() {
           onReject={handleRejectWithReason}
           releaseName={releaseToReject?.title || ''}
           isLoading={moderateRelease.isPending}
+        />
+
+        <AdminEditReleaseDialog
+          open={editDialogOpen}
+          onOpenChange={setEditDialogOpen}
+          release={releaseToEdit}
         />
       </div>
     </AdminLayout>

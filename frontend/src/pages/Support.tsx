@@ -31,12 +31,26 @@ export const Support = () => {
 
     setLoading(true);
 
-    // Simulate sending support request
-    setTimeout(() => {
+    try {
+      const { error } = await import('@/integrations/supabase/client').then(m => m.supabase)
+        .from('support_tickets')
+        .insert({
+          subject: formData.subject,
+          message: formData.message,
+          category: formData.category,
+          status: 'open'
+        });
+
+      if (error) throw error;
+
       toast.success('Support request submitted! We\'ll get back to you within 24 hours.');
       setFormData({ name: '', email: '', category: '', subject: '', message: '' });
+    } catch (error: any) {
+      console.error('Support error:', error);
+      toast.error(error.message || 'Failed to submit request');
+    } finally {
       setLoading(false);
-    }, 1000);
+    }
   };
 
   return (

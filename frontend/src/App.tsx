@@ -70,6 +70,10 @@ const AdminAnalytics = lazy(() => import("./pages/admin/AdminAnalytics"));
 const AdminNotifications = lazy(() => import("./pages/admin/AdminNotifications"));
 const AdminSettings = lazy(() => import("./pages/admin/AdminSettings"));
 const AdminAuditLogs = lazy(() => import("./pages/admin/AdminAuditLogs"));
+const AdminAnnouncements = lazy(() => import("./pages/admin/AdminAnnouncements"));
+const AdminSupport = lazy(() => import("./pages/admin/AdminSupport"));
+const AdminKYC = lazy(() => import("./pages/admin/AdminKYC"));
+const AdminEmailer = lazy(() => import("./pages/admin/AdminEmailer"));
 const AudioDemo = lazy(() => import("./pages/AudioDemo"));
 const CampaignPaymentSuccess = lazy(() => import("./pages/CampaignPaymentSuccess"));
 const CampaignTracking = lazy(() => import("./pages/CampaignTracking"));
@@ -247,6 +251,10 @@ const App = () => (
                   <Route path="/admin/notifications" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminNotifications /></Suspense></AdminRoute>} />
                   <Route path="/admin/settings" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminSettings /></Suspense></AdminRoute>} />
                   <Route path="/admin/audit-logs" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminAuditLogs /></Suspense></AdminRoute>} />
+                  <Route path="/admin/announcements" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminAnnouncements /></Suspense></AdminRoute>} />
+                  <Route path="/admin/support" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminSupport /></Suspense></AdminRoute>} />
+                  <Route path="/admin/kyc" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminKYC /></Suspense></AdminRoute>} />
+                  <Route path="/admin/emailer" element={<AdminRoute><Suspense fallback={<PageLoader />}><AdminEmailer /></Suspense></AdminRoute>} />
 
                   {/* Admin preview routes - access all dashboard types */}
                   {/* <Route path="/admin/preview/artist" element={<AdminRoute><DashboardPreviewLayout dashboardType="Artist"><ArtistDashboard /></DashboardPreviewLayout></AdminRoute>} /> */}

@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone, Eye, User, Building2, Tag, CreditCard, Bell } from 'lucide-react';
+import { LayoutDashboard, Users, FileCheck, DollarSign, BarChart3, Settings, FileText, Megaphone, Eye, User, Building2, Tag, CreditCard, Bell, ShieldCheck, MessageSquare, Mail } from 'lucide-react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Sidebar,
@@ -26,6 +26,10 @@ const menuItems = [
   { title: 'Analytics', url: '/admin/analytics', icon: BarChart3 },
   { title: 'Notifications', url: '/admin/notifications', icon: Bell },
   { title: 'Audit Logs', url: '/admin/audit-logs', icon: FileText },
+  { title: 'Announcements', url: '/admin/announcements', icon: Megaphone },
+  { title: 'Support Tickets', url: '/admin/support', icon: MessageSquare },
+  { title: 'KYC Verification', url: '/admin/kyc', icon: ShieldCheck },
+  { title: 'Email Broadcast', url: '/admin/emailer', icon: Mail },
   { title: 'Settings', url: '/admin/settings', icon: Settings },
 ];
 
