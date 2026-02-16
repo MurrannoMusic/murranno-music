@@ -1,32 +1,12 @@
-import { useState, useEffect } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { AdminLayout } from '@/components/admin/AdminLayout';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import {
-  Settings,
-  Shield,
-  Mail,
-  CreditCard,
-  Bell,
-  Globe,
-  Save,
-  Database
-} from 'lucide-react';
+import { AdminTeamSettings } from '@/components/admin/settings/AdminTeamSettings';
+import { Users } from 'lucide-react';
 
 interface PlatformSettings {
   platformName: string;
   supportEmail: string;
   autoApproveUploads: boolean;
   contentModerationEnabled: boolean;
+  maintenanceMode: boolean; // Added
   restrictedWords: string[];
   maxUploadsPerMonth: number;
   maxFileSize: number;
@@ -54,6 +34,7 @@ export default function AdminSettings() {
     supportEmail: 'support@murranno.com',
     autoApproveUploads: false,
     contentModerationEnabled: true,
+    maintenanceMode: false, // Added
     restrictedWords: [],
     maxUploadsPerMonth: 10,
     maxFileSize: 200,
@@ -93,6 +74,7 @@ export default function AdminSettings() {
         supportEmail: settingsData.support_email,
         autoApproveUploads: settingsData.auto_approve_uploads,
         contentModerationEnabled: settingsData.content_moderation_enabled,
+        maintenanceMode: settingsData.maintenance_mode || false, // Added
         restrictedWords: settingsData.restricted_words || [],
         maxUploadsPerMonth: settingsData.max_uploads_per_month,
         maxFileSize: settingsData.max_file_size_mb,
@@ -190,10 +172,14 @@ export default function AdminSettings() {
         </div>
 
         <Tabs defaultValue="general" className="space-y-4">
-          <TabsList>
+          <TabsList className="flex-wrap h-auto">
             <TabsTrigger value="general" className="gap-2">
               <Settings className="h-4 w-4" />
               General
+            </TabsTrigger>
+            <TabsTrigger value="team" className="gap-2">
+              <Users className="h-4 w-4" />
+              Team
             </TabsTrigger>
             <TabsTrigger value="security" className="gap-2">
               <Shield className="h-4 w-4" />
@@ -209,7 +195,7 @@ export default function AdminSettings() {
             </TabsTrigger>
             <TabsTrigger value="data" className="gap-2">
               <Database className="h-4 w-4" />
-              Data Management
+              Data
             </TabsTrigger>
             <TabsTrigger value="support" className="gap-2">
               <Mail className="h-4 w-4" />
@@ -258,6 +244,20 @@ export default function AdminSettings() {
                   />
                 </div>
 
+                <div className="flex items-center justify-between rounded-lg border p-4 border-destructive/20 bg-destructive/5">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="maintenance-mode" className="text-destructive font-semibold">Maintenance Mode</Label>
+                    <p className="text-sm text-destructive/80">
+                      When enabled, only admins can access the platform.
+                    </p>
+                  </div>
+                  <Switch
+                    id="maintenance-mode"
+                    checked={settings.maintenanceMode}
+                    onCheckedChange={(checked) => updateSetting('maintenanceMode', checked)}
+                  />
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="max-upload">Max Upload Size (MB)</Label>
                   <Input
@@ -285,6 +285,10 @@ export default function AdminSettings() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="team" className="space-y-4">
+            <AdminTeamSettings />
           </TabsContent>
 
           <TabsContent value="security" className="space-y-4">

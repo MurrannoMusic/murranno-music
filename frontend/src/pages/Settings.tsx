@@ -426,11 +426,43 @@ export const Settings = () => {
         <Button
           onClick={handleSignOut}
           variant="outline"
-          className="w-full bg-destructive/5 border-destructive/20 text-destructive hover:bg-destructive/10 rounded-xl h-10 text-sm font-semibold"
+          className="w-full bg-secondary/10 border-border/50 text-foreground hover:bg-secondary/20 rounded-xl h-10 text-sm font-semibold mb-4"
         >
           <LogOut className="h-4 w-4 mr-2" />
           Sign Out
         </Button>
+
+        {/* Danger Zone */}
+        <Card className="bg-destructive/5 border border-destructive/20 rounded-xl shadow-soft">
+          <CardHeader className="p-3 pb-2">
+            <CardTitle className="text-sm font-semibold text-destructive flex items-center gap-2">
+              <AlertCircle className="h-3.5 w-3.5" />
+              Danger Zone
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-3 pt-0">
+            <div className="p-2.5 bg-destructive/10 rounded-lg border border-destructive/20">
+              <p className="text-[10px] text-destructive mb-3">
+                Deleting your account is permanent. All your data, including music and earnings, will be wiped immediately.
+              </p>
+              <Button
+                variant="destructive"
+                size="sm"
+                className="w-full h-8 text-xs"
+                onClick={() => {
+                  if (confirm("CRITICAL WARNING: Are you absolutely sure? This action cannot be undone.")) {
+                    // In a real scenario, we'd Trigger a dedicated DeleteAccountDialog
+                    // For now, we'll just show a toast that this feature is protected
+                    // or mock the call if the edge function isn't ready.
+                    toast.error("Please contact support to delete your account for security reasons, or use the web portal.");
+                  }
+                }}
+              >
+                Delete Account
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <ChangeEmailDialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen} />
