@@ -268,11 +268,25 @@ export default function AdminContent() {
 
                                 <div className="flex gap-4">
                                   {selectedRelease.cover_art_url && (
-                                    <img
-                                      src={selectedRelease.cover_art_url}
-                                      alt={selectedRelease.title}
-                                      className="h-32 w-32 rounded-lg object-cover"
-                                    />
+                                    <div className="relative group">
+                                      <img
+                                        src={selectedRelease.cover_art_url}
+                                        alt={selectedRelease.title}
+                                        className="h-32 w-32 rounded-lg object-cover"
+                                      />
+                                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                                        <a
+                                          href={selectedRelease.cover_art_url}
+                                          download={`cover-${selectedRelease.title}.jpg`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                          className="text-white bg-black/50 p-2 rounded-full hover:bg-black/70"
+                                          title="Download Artwork"
+                                        >
+                                          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                                        </a>
+                                      </div>
+                                    </div>
                                   )}
                                   <div className="flex-1 space-y-2">
                                     <h3 className="font-semibold text-lg">{selectedRelease.title}</h3>
@@ -293,12 +307,29 @@ export default function AdminContent() {
                                   </div>
                                 </div>
 
-                                {tracks.length > 0 && tracks[0].audio_file_url && (
-                                  <div className="space-y-2">
-                                    <h4 className="font-semibold">Audio Preview</h4>
-                                    <AudioPreviewPlayer audioUrl={tracks[0].audio_file_url} />
+                                {tracks.length > 0 && tracks.map((track, i) => (
+                                  <div key={track.id} className="space-y-2 border p-3 rounded-lg bg-muted/20">
+                                    <div className="flex justify-between items-center">
+                                      <h4 className="font-semibold text-sm">Track {i + 1}: {track.title}</h4>
+                                      {track.audio_file_url && (
+                                        <a
+                                          href={track.audio_file_url}
+                                          download={`track-${track.title}.mp3`}
+                                          target="_blank"
+                                          rel="noopener noreferrer"
+                                        >
+                                          <Button variant="outline" size="sm" className="h-8 gap-2">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="7 10 12 15 17 10" /><line x1="12" x2="12" y1="15" y2="3" /></svg>
+                                            Download
+                                          </Button>
+                                        </a>
+                                      )}
+                                    </div>
+                                    {track.audio_file_url && (
+                                      <AudioPreviewPlayer audioUrl={track.audio_file_url} />
+                                    )}
                                   </div>
-                                )}
+                                ))}
 
                                 <div className="flex gap-2">
                                   <Button

@@ -250,8 +250,8 @@ const App = () => (
 
                   {/* Admin preview routes - access all dashboard types */}
                   {/* <Route path="/admin/preview/artist" element={<AdminRoute><DashboardPreviewLayout dashboardType="Artist"><ArtistDashboard /></DashboardPreviewLayout></AdminRoute>} /> */}
-                  <Route path="/admin/preview/label" element={<AdminRoute><DashboardPreviewLayout dashboardType="Label"><Suspense fallback={<PageLoader />}><LabelDashboard /></Suspense></DashboardPreviewLayout></AdminRoute>} />
-                  <Route path="/admin/preview/agency" element={<AdminRoute><DashboardPreviewLayout dashboardType="Agency"><Suspense fallback={<PageLoader />}><AgencyDashboard /></Suspense></DashboardPreviewLayout></AdminRoute>} />
+                  {/* <Route path="/admin/preview/label" element={<AdminRoute><DashboardPreviewLayout dashboardType="Label"><Suspense fallback={<PageLoader />}><LabelDashboard /></Suspense></DashboardPreviewLayout></AdminRoute>} /> */}
+                  {/* <Route path="/admin/preview/agency" element={<AdminRoute><DashboardPreviewLayout dashboardType="Agency"><Suspense fallback={<PageLoader />}><AgencyDashboard /></Suspense></DashboardPreviewLayout></AdminRoute>} /> */}
 
                   {/* Legacy route redirects */}
                   <Route path="/artist-dashboard" element={<Navigate to="/app/dashboard" replace />} />
